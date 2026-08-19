@@ -1,223 +1,29 @@
 {
-  "FJBWgfc8wdEeUc2n7BN9EcmEJQUauvvpp9ZXvmF2pump": {
-    "name": "Solug",
-    "symbol": "SOLUG",
-    "score": 25,
-    "previous_score": 32.0,
-    "score_delta": -7.0,
-    "v5": 20133.52,
-    "tx5": 625,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 25,
-        "p5": 4.75,
-        "p1h": 169.0
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "6ZC5kpZf9kLfxwMc4QVZfGJksTLrZQUTmKJCDaaopump": {
-    "name": "MEMESLY",
-    "symbol": "MEMESLY",
-    "score": 0,
-    "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 8.47,
-    "tx5": 1,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": -1.22,
-        "p1h": 9.21
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "593nS9yVmVHr3xN9REetTDSqfGNJggTsoQUVU4ympump": {
-    "name": "@ansem",
-    "symbol": "@ANSEM",
-    "score": 10,
-    "previous_score": 22.0,
-    "score_delta": -12.0,
-    "v5": 5295.74,
-    "tx5": 141,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 10,
-        "p5": -7.27,
-        "p1h": -2.87
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
   "HeXxaXU7jZS5LWjgCGSjSFjFPyzTkMkaJ4jHirzApump": {
     "name": "Bullug",
     "symbol": "BULLUG",
     "score": 30,
-    "previous_score": 52.0,
-    "score_delta": -22.0,
-    "v5": 16548.09,
-    "tx5": 463,
+    "previous_score": 30.0,
+    "score_delta": 0.0,
+    "v5": 16595.97,
+    "tx5": 427,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
         "score": 30,
         "p5": 35.58,
         "p1h": 49.27
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 30,
+        "p5": -11.33,
+        "p1h": 11.18
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "6hosezP1x4Ng4zgYZtDFx58e6VBnFmnQ4ojyX32wpump": {
-    "name": "CyberTrump",
-    "symbol": "CYBERTRUMP",
-    "score": 75,
-    "previous_score": 37.0,
-    "score_delta": 38.0,
-    "v5": 3466.62,
-    "tx5": 120,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 75,
-        "p5": 8.91,
-        "p1h": 13.03
-      }
-    ],
-    "last_alert": 1787113252.28387,
-    "last_alert_score": 75,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "aUWH9iX3BKKeMHP6aoAf2r2KPjLq8h9Kim2YC48pump": {
-    "name": "Meme Season",
-    "symbol": "MEMESEASON",
-    "score": 65,
-    "previous_score": 32.0,
-    "score_delta": 33.0,
-    "v5": 1411.61,
-    "tx5": 52,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 65,
-        "p5": 3.04,
-        "p1h": 9.37
-      }
-    ],
-    "last_alert": 1787113252.28387,
-    "last_alert_score": 65,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "4Xg9qDuEP1vMEwqMr2yWo92Yn9a7xZu5BNQBbXVfpump": {
-    "name": "Newbie",
-    "symbol": "NEWBIE",
-    "score": 0,
-    "previous_score": 17.0,
-    "score_delta": -17.0,
-    "v5": 1583.39,
-    "tx5": 38,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": -8.34,
-        "p1h": -30.84
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "GDAdCvjiRoGxA18ya3Qha1DD6bbzbR9Z9AGpMa9Tpump": {
-    "name": "The Fatal Boner",
-    "symbol": "BONER",
-    "score": 2,
-    "previous_score": 0.0,
-    "score_delta": 2.0,
-    "v5": 32569.33,
-    "tx5": 993,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 2,
-        "p5": -1.63,
-        "p1h": 46.35
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "37WhvcVyK6Mzk1oUmqRoS5zbcdZKhrxcU9Ry1vtBoR94": {
-    "name": "Hobbes",
-    "symbol": "HOBBES",
-    "score": 45,
-    "previous_score": 12.0,
-    "score_delta": 33.0,
-    "v5": 435.72,
-    "tx5": 7,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 45,
-        "p5": 3.77,
-        "p1h": -3.23
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "UMfGniBctBLYcy77zahNSWxrTLsdbphdbzasVJ8pump": {
-    "name": "memecoin.wiki",
-    "symbol": "WIKI",
-    "score": 0,
-    "previous_score": 17.0,
-    "score_delta": -17.0,
-    "v5": 51406.28,
-    "tx5": 905,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": -14.26,
-        "p1h": 586.0
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "6E8fPgsBvwjGRHcoeLUW8iugy736SKo54VvYLbYMpump": {
-    "name": "CryptoGDEX",
-    "symbol": "CGX",
-    "score": 10,
-    "previous_score": 12.0,
-    "score_delta": -2.0,
-    "v5": 0.0,
-    "tx5": 0,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 10,
-        "p5": 0.0,
-        "p1h": -8.61
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
   },
   "CcFVSzr9R4HioBCSZKLHT9eYGdAA4Xk9NqeR3qMVUzbG": {
     "name": "BULLANA",
@@ -225,19 +31,279 @@
     "score": 0,
     "previous_score": 0.0,
     "score_delta": 0.0,
-    "v5": 0.0,
-    "tx5": 0,
+    "v5": 26.45,
+    "tx5": 1,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
         "score": 0,
         "p5": 0.0,
         "p1h": -0.78
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": 1.72,
+        "p1h": 0.7
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "F4GpAFr6vrxU3Y887F3XWkXRgybCVjZNk63m72f6pump": {
+    "name": "Trump Coin",
+    "symbol": "TRUMPCOIN",
+    "score": 23,
+    "previous_score": 13.0,
+    "score_delta": 10.0,
+    "v5": 57.56,
+    "tx5": 2,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 13,
+        "p5": 2.22,
+        "p1h": 3.76
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 23,
+        "p5": 0.78,
+        "p1h": 4.55
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "UMfGniBctBLYcy77zahNSWxrTLsdbphdbzasVJ8pump": {
+    "name": "memecoin.wiki",
+    "symbol": "WIKI",
+    "score": 0,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 65554.06,
+    "tx5": 1138,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 0,
+        "p5": -14.26,
+        "p1h": 586.0
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": -17.76,
+        "p1h": 470.0
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "6E8fPgsBvwjGRHcoeLUW8iugy736SKo54VvYLbYMpump": {
+    "name": "CryptoGDEX",
+    "symbol": "CGX",
+    "score": 15,
+    "previous_score": 10.0,
+    "score_delta": 5.0,
+    "v5": 9.83,
+    "tx5": 1,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 10,
+        "p5": 0.0,
+        "p1h": -8.61
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 15,
+        "p5": 0.22,
+        "p1h": -8.87
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "FJBWgfc8wdEeUc2n7BN9EcmEJQUauvvpp9ZXvmF2pump": {
+    "name": "Solug",
+    "symbol": "SOLUG",
+    "score": 5,
+    "previous_score": 25.0,
+    "score_delta": -20.0,
+    "v5": 16008.16,
+    "tx5": 469,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 25,
+        "p5": 4.75,
+        "p1h": 169.0
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 5,
+        "p5": 1.12,
+        "p1h": 157.0
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "6hosezP1x4Ng4zgYZtDFx58e6VBnFmnQ4ojyX32wpump": {
+    "name": "CyberTrump",
+    "symbol": "CYBERTRUMP",
+    "score": 60,
+    "previous_score": 75.0,
+    "score_delta": -15.0,
+    "v5": 3985.65,
+    "tx5": 123,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 75,
+        "p5": 8.91,
+        "p1h": 13.03
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 60,
+        "p5": 12.86,
+        "p1h": 36.86
+      }
+    ],
+    "last_alert": 1787113252.28387,
+    "last_alert_score": 75,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "37WhvcVyK6Mzk1oUmqRoS5zbcdZKhrxcU9Ry1vtBoR94": {
+    "name": "Hobbes",
+    "symbol": "HOBBES",
+    "score": 10,
+    "previous_score": 45.0,
+    "score_delta": -35.0,
+    "v5": 115.29,
+    "tx5": 6,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 45,
+        "p5": 3.77,
+        "p1h": -3.23
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 10,
+        "p5": -0.16,
+        "p1h": -3.55
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "9sw5nypHtFYJLpaitjL1sbe9o9tZQNoKJZDy6UKTpump": {
+    "name": "Meme Dream",
+    "symbol": "MEMEDREAM",
+    "score": 0,
+    "previous_score": 5.0,
+    "score_delta": -5.0,
+    "v5": 925.08,
+    "tx5": 545,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 5,
+        "p5": -5.75,
+        "p1h": 28.16
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": 0.83,
+        "p1h": 28.55
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "5E8ifewWjdGPDCRdmvbua3YvV1QzjiZs63qJYwuFpump": {
+    "name": "TrumpClug",
+    "symbol": "TRUMPCLUG",
+    "score": 48,
+    "previous_score": 0.0,
+    "score_delta": 48.0,
+    "v5": 33295.83,
+    "tx5": 1206,
+    "history": [
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 48,
+        "p5": 18.05,
+        "p1h": 73.57
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "6ZC5kpZf9kLfxwMc4QVZfGJksTLrZQUTmKJCDaaopump": {
+    "name": "MEMESLY",
+    "symbol": "MEMESLY",
+    "score": 0,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 0.0,
+    "tx5": 0,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 0,
+        "p5": -1.22,
+        "p1h": 9.21
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": 0.0,
+        "p1h": 5.48
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
+  },
+  "4Xg9qDuEP1vMEwqMr2yWo92Yn9a7xZu5BNQBbXVfpump": {
+    "name": "Newbie",
+    "symbol": "NEWBIE",
+    "score": 0,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 1856.9,
+    "tx5": 33,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 0,
+        "p5": -8.34,
+        "p1h": -30.84
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": -4.03,
+        "p1h": -32.59
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
   },
   "xwLEcRFvSLhXBwWuW1HL3UEH1VpVPanjA3JvXRGpump": {
     "name": "elims",
@@ -245,58 +311,50 @@
     "score": 0,
     "previous_score": 0.0,
     "score_delta": 0.0,
-    "v5": 20002.67,
-    "tx5": 304,
+    "v5": 31503.78,
+    "tx5": 362,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
         "score": 0,
         "p5": 125.0,
         "p1h": 286.0
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": -31.06,
+        "p1h": 62.88
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
   },
-  "9sw5nypHtFYJLpaitjL1sbe9o9tZQNoKJZDy6UKTpump": {
-    "name": "Meme Dream",
-    "symbol": "MEMEDREAM",
-    "score": 5,
-    "previous_score": 0.0,
-    "score_delta": 5.0,
-    "v5": 503.35,
-    "tx5": 476,
+  "aUWH9iX3BKKeMHP6aoAf2r2KPjLq8h9Kim2YC48pump": {
+    "name": "Meme Season",
+    "symbol": "MEMESEASON",
+    "score": 50,
+    "previous_score": 65.0,
+    "score_delta": -15.0,
+    "v5": 1931.26,
+    "tx5": 42,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 5,
-        "p5": -5.75,
-        "p1h": 28.16
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
-  },
-  "F4GpAFr6vrxU3Y887F3XWkXRgybCVjZNk63m72f6pump": {
-    "name": "Trump Coin",
-    "symbol": "TRUMPCOIN",
-    "score": 13,
-    "previous_score": 27.0,
-    "score_delta": -14.0,
-    "v5": 236.11,
-    "tx5": 1,
-    "history": [
+        "score": 65,
+        "p5": 3.04,
+        "p1h": 9.37
+      },
       {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 13,
-        "p5": 2.22,
-        "p1h": 3.76
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 50,
+        "p5": -2.32,
+        "p1h": 7.24
       }
     ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "timestamp": "2026-08-19T04:20:52.283870+00:00"
+    "last_alert": 1787113252.28387,
+    "last_alert_score": 65,
+    "timestamp": "2026-08-19T04:25:42.328412+00:00"
   }
 }
