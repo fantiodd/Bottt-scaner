@@ -1,37 +1,34 @@
 {
-  "5LLz8uE9izS5dZPtwauySJmjfyN5z3sH55cNXZDpump": {
-    "name": "bootstrapped",
-    "symbol": "BOOT",
-    "v1h": 73220.51,
-    "score": 37,
-    "timestamp": "2026-08-19T03:54:37.586944+00:00"
+  "UMfGniBctBLYcy77zahNSWxrTLsdbphdbzasVJ8pump": {
+    "name": "memecoin.wiki",
+    "symbol": "WIKI",
+    "v5": 166939.72,
+    "tx5": 3032,
+    "price": 0.000194,
+    "timestamp": "2026-08-19T04:04:43.736794+00:00"
   },
   "FJBWgfc8wdEeUc2n7BN9EcmEJQUauvvpp9ZXvmF2pump": {
     "name": "Solug",
     "symbol": "SOLUG",
-    "v1h": 227150.01,
-    "score": 65,
-    "timestamp": "2026-08-19T03:54:37.888413+00:00"
-  },
-  "78Bz5GnZ9W53QmsdRx6GCp26kbC4aQFq5env1nQNpump": {
-    "name": "Mr Froggy",
-    "symbol": "FROGGY",
-    "v1h": 310263.5,
-    "score": 0,
-    "timestamp": "2026-08-19T03:54:37.983579+00:00"
+    "v5": 19124.34,
+    "tx5": 763,
+    "price": 0.0001305,
+    "timestamp": "2026-08-19T04:04:43.736794+00:00"
   },
   "HeXxaXU7jZS5LWjgCGSjSFjFPyzTkMkaJ4jHirzApump": {
     "name": "Bullug",
     "symbol": "BULLUG",
-    "v1h": 240393.0,
-    "score": 65,
-    "timestamp": "2026-08-19T03:54:39.435493+00:00"
+    "v5": 17977.06,
+    "tx5": 456,
+    "price": 0.0002797,
+    "timestamp": "2026-08-19T04:04:43.736794+00:00"
   },
   "593nS9yVmVHr3xN9REetTDSqfGNJggTsoQUVU4ympump": {
     "name": "@ansem",
     "symbol": "@ANSEM",
-    "v1h": 292260.98,
-    "score": 29,
-    "timestamp": "2026-08-19T03:54:39.561609+00:00"
+    "v5": 3489.24,
+    "tx5": 131,
+    "price": 9.053e-05,
+    "timestamp": "2026-08-19T04:04:43.736794+00:00"
   }
 }
