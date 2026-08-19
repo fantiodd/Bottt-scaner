@@ -1,21 +1,36 @@
 import os
+import json
 import requests
-import time
+from datetime import datetime, timezone
 
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram import Bot, Update
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    ContextTypes,
+)
 
-
-TOKEN = os.environ["BOT_TOKEN"]
+BOT_TOKEN = os.environ["BOT_TOKEN"]
 
 PROFILES_API = "https://api.dexscreener.com/token-profiles/latest/v1"
 TOKEN_PAIRS_API = "https://api.dexscreener.com/token-pairs/v1/solana/{}"
+
+STATE_FILE = "state.json"
+
+BLOCKED_SYMBOLS = {
+    "SOL",
+    "WSOL",
+    "USDC",
+    "USDT",
+    "USD1",
+    "USDE",
+}
 
 
 def num(value):
     try:
         return float(value or 0)
-    except:
+    except Exception:
         return 0.0
 
 
@@ -31,15 +46,23 @@ def money(value):
     return f"${value:.0f}"
 
 
-def percent(value):
-    value = num(value)
-    return f"{value:+.1f}%"
+def load_state():
+    if not os.path.exists(STATE_FILE):
+        return {}
+
+    try:
+        with open(STATE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
 
-def score_pair(pair):
-    score = 0
-    reasons = []
+def save_state(state):
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2)
 
+
+def analyse(pair, previous=None):
     change = pair.get("priceChange", {})
     volume = pair.get("volume", {})
     liquidity_data = pair.get("liquidity", {})
@@ -58,157 +81,147 @@ def score_pair(pair):
     buys = int(tx1h.get("buys", 0) or 0)
     sells = int(tx1h.get("sells", 0) or 0)
 
-    total_tx = buys + sells
+    total = buys + sells
 
-    # ------------------------------------------------
-    # 1. PRICE MOMENTUM
-    # ------------------------------------------------
+    score = 0
+    reasons = []
 
-    if p5 >= 20:
-        score += 25
-        reasons.append("🔥 сильный импульс 5м")
+    # -----------------------------
+    # PRICE MOMENTUM
+    # -----------------------------
 
-    elif p5 >= 10:
-        score += 18
-        reasons.append("рост 5м")
+    if 5 <= p5 <= 30:
+        score += 20
+        reasons.append("цена ускоряется")
 
-    elif p5 >= 5:
-        score += 10
-        reasons.append("положительная динамика")
-
-    # ------------------------------------------------
-    # 2. 1 HOUR MOMENTUM
-    # ------------------------------------------------
-
-    if p1h >= 50:
-        score += 15
-        reasons.append("сильный рост за 1ч")
-
-    elif p1h >= 20:
-        score += 10
-        reasons.append("рост за 1ч")
-
-    # ------------------------------------------------
-    # 3. VOLUME
-    # ------------------------------------------------
-
-    if v1h >= 250_000:
-        score += 15
-        reasons.append("высокий объём")
-
-    elif v1h >= 50_000:
+    elif p5 > 30:
         score += 8
-        reasons.append("заметный объём")
+        reasons.append("сильный памп, но уже поздняя стадия")
 
-    # ------------------------------------------------
-    # 4. VOLUME / LIQUIDITY
-    # ------------------------------------------------
+    elif p5 < -10:
+        score -= 25
 
-    if liquidity > 0:
+    # -----------------------------
+    # 1H TREND
+    # -----------------------------
 
-        ratio = v24 / liquidity
+    if 5 <= p1h <= 60:
+        score += 15
+        reasons.append("положительный тренд 1ч")
 
-        if ratio >= 5:
-            score += 15
-            reasons.append("очень высокий оборот")
+    elif p1h > 60:
+        score += 5
+        reasons.append("токен уже сильно вырос")
 
-        elif ratio >= 2:
-            score += 10
-            reasons.append("высокий оборот")
+    elif p1h <= -40:
+        score -= 30
+        reasons.append("сильное падение 1ч")
 
-        elif ratio >= 1:
-            score += 5
-            reasons.append("активная торговля")
-
-    # ------------------------------------------------
-    # 5. BUY / SELL PRESSURE
-    # ------------------------------------------------
-
-    if total_tx > 0:
-
-        buy_ratio = buys / total_tx
-
-        if buy_ratio >= 0.70:
-            score += 15
-            reasons.append("покупатели доминируют")
-
-        elif buy_ratio >= 0.60:
-            score += 8
-            reasons.append("покупок больше продаж")
-
-        elif buy_ratio <= 0.35:
-            score -= 10
-            reasons.append("много продаж")
-
-    # ------------------------------------------------
-    # 6. LIQUIDITY
-    # ------------------------------------------------
+    # -----------------------------
+    # LIQUIDITY
+    # -----------------------------
 
     if liquidity >= 100_000:
-        score += 10
+        score += 15
         reasons.append("хорошая ликвидность")
 
     elif liquidity >= 25_000:
-        score += 6
+        score += 10
         reasons.append("нормальная ликвидность")
 
-    elif liquidity < 10_000:
+    elif liquidity >= 10_000:
+        score += 4
+
+    else:
         score -= 20
-        reasons.append("⚠️ низкая ликвидность")
+        reasons.append("низкая ликвидность")
 
-    # ------------------------------------------------
-    # 7. TOO FEW TRANSACTIONS
-    # ------------------------------------------------
+    # -----------------------------
+    # BUY / SELL PRESSURE
+    # -----------------------------
 
-    if total_tx < 10:
-        score -= 15
-        reasons.append("мало сделок")
+    if total >= 20:
 
-    # ------------------------------------------------
-    # LIMIT
-    # ------------------------------------------------
+        buy_ratio = buys / total
 
-    score = max(0, min(100, score))
+        if buy_ratio >= 0.70:
+            score += 20
+            reasons.append("покупатели доминируют")
 
-    return score, reasons
+        elif buy_ratio >= 0.60:
+            score += 12
+            reasons.append("покупок больше продаж")
 
+        elif buy_ratio <= 0.40:
+            score -= 15
+            reasons.append("продавцы доминируют")
 
-def analyse_pair(pair):
+    else:
+        score -= 5
 
-    base = pair.get("baseToken", {})
+    # -----------------------------
+    # VOLUME / LIQUIDITY
+    # -----------------------------
 
-    symbol = base.get("symbol", "?")
-    name = base.get("name", "Unknown")
-    address = base.get("address", "")
+    turnover = 0
 
-    price = num(pair.get("priceUsd"))
+    if liquidity > 0:
+        turnover = v24 / liquidity
 
-    change = pair.get("priceChange", {})
-    p5 = num(change.get("m5"))
-    p1h = num(change.get("h1"))
+    if 1 <= turnover <= 20:
+        score += 10
+        reasons.append("активный оборот")
 
-    volume = pair.get("volume", {})
+    elif turnover > 50:
+        score -= 10
+        reasons.append("аномально высокий оборот")
 
-    v5 = num(volume.get("m5"))
-    v1h = num(volume.get("h1"))
-    v24 = num(volume.get("h24"))
+    # -----------------------------
+    # VOLUME ACCELERATION
+    # -----------------------------
 
-    liquidity = num(
-        pair.get("liquidity", {}).get("usd")
-    )
+    volume_acceleration = 1.0
 
-    txns = pair.get("txns", {}).get("h1", {})
+    if previous:
 
-    buys = int(txns.get("buys", 0) or 0)
-    sells = int(txns.get("sells", 0) or 0)
+        old_v1h = num(previous.get("v1h"))
 
-    score, reasons = score_pair(pair)
+        if old_v1h > 0:
+            volume_acceleration = v1h / old_v1h
+
+            if volume_acceleration >= 3:
+                score += 20
+                reasons.append(
+                    f"объём ускорился {volume_acceleration:.1f}x"
+                )
+
+            elif volume_acceleration >= 1.7:
+                score += 12
+                reasons.append(
+                    f"объём растёт {volume_acceleration:.1f}x"
+                )
+
+    score = max(0, min(score, 100))
+
+    # -----------------------------
+    # CLASSIFICATION
+    # -----------------------------
+
+    if score >= 70:
+        category = "🔥 EARLY MOVE"
+
+    elif score >= 50:
+        category = "🟢 OPPORTUNITY"
+
+    elif score >= 35:
+        category = "🟡 WATCH"
+
+    else:
+        category = None
 
     return {
-        "name": name,
-        "symbol": symbol,
-        "address": address,
-        "price": price,
+        "score": score,
+        "category": category,
         "p5": p5,
         "p1h": p1h,
         "v5": v5,
@@ -217,268 +230,286 @@ def analyse_pair(pair):
         "liquidity": liquidity,
         "buys": buys,
         "sells": sells,
-        "score": score,
+        "volume_acceleration": volume_acceleration,
         "reasons": reasons,
-        "url": pair.get("url", "")
     }
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def get_profiles():
+    r = requests.get(
+        PROFILES_API,
+        timeout=15
+    )
+
+    r.raise_for_status()
+
+    data = r.json()
+
+    return [
+        x
+        for x in data
+        if x.get("chainId") == "solana"
+        and x.get("tokenAddress")
+    ]
+
+
+def get_pair(address):
+    r = requests.get(
+        TOKEN_PAIRS_API.format(address),
+        timeout=10
+    )
+
+    if r.status_code != 200:
+        return None
+
+    data = r.json()
+
+    if not isinstance(data, list):
+        return None
+
+    if not data:
+        return None
+
+    data.sort(
+        key=lambda x: num(
+            x.get("liquidity", {}).get("usd")
+        ),
+        reverse=True
+    )
+
+    return data[0]
+
+
+def scan_market():
+    state = load_state()
+    new_state = {}
+
+    profiles = get_profiles()
+
+    results = []
+
+    for profile in profiles[:30]:
+
+        address = profile["tokenAddress"]
+
+        try:
+            pair = get_pair(address)
+
+            if not pair:
+                continue
+
+            base = pair.get("baseToken", {})
+
+            symbol = (
+                base.get("symbol", "")
+                .upper()
+            )
+
+            name = base.get(
+                "name",
+                "Unknown"
+            )
+
+            if symbol in BLOCKED_SYMBOLS:
+                continue
+
+            liquidity = num(
+                pair.get(
+                    "liquidity",
+                    {}
+                ).get("usd")
+            )
+
+            volume = num(
+                pair.get(
+                    "volume",
+                    {}
+                ).get("h24")
+            )
+
+            if liquidity < 10_000:
+                continue
+
+            if volume < 10_000:
+                continue
+
+            previous = state.get(address)
+
+            result = analyse(
+                pair,
+                previous
+            )
+
+            # Сохраняем текущее состояние
+            new_state[address] = {
+                "name": name,
+                "symbol": symbol,
+                "v1h": result["v1h"],
+                "score": result["score"],
+                "timestamp": datetime.now(
+                    timezone.utc
+                ).isoformat()
+            }
+
+            if result["category"]:
+
+                result["name"] = name
+                result["symbol"] = symbol
+                result["address"] = address
+                result["url"] = pair.get(
+                    "url",
+                    ""
+                )
+
+                results.append(result)
+
+        except Exception as e:
+            print(
+                "ERROR:",
+                address,
+                e
+            )
+
+    save_state(new_state)
+
+    results.sort(
+        key=lambda x: x["score"],
+        reverse=True
+    )
+
+    return results[:8]
+
+
+def format_result(item):
+
+    reasons = ", ".join(
+        item["reasons"][:4]
+    )
+
+    return (
+        f"{item['category']}\n\n"
+
+        f"🚀 {item['name']} "
+        f"({item['symbol']})\n"
+
+        f"⭐ Momentum: "
+        f"{item['score']}/100\n\n"
+
+        f"📈 5m: "
+        f"{item['p5']:+.1f}%\n"
+
+        f"📈 1h: "
+        f"{item['p1h']:+.1f}%\n\n"
+
+        f"📊 Volume 1h: "
+        f"{money(item['v1h'])}\n"
+
+        f"💰 Volume 24h: "
+        f"{money(item['v24'])}\n"
+
+        f"💧 Liquidity: "
+        f"{money(item['liquidity'])}\n\n"
+
+        f"🟢 Buys: "
+        f"{item['buys']}\n"
+
+        f"🔴 Sells: "
+        f"{item['sells']}\n\n"
+
+        f"⚡ Volume acceleration: "
+        f"{item['volume_acceleration']:.1f}x\n\n"
+
+        f"🧠 {reasons}\n\n"
+
+        f"🔗 `{item['address']}`"
+    )
+
+
+async def start(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
 
     await update.message.reply_text(
-        "🤖 Token Scanner v3\n\n"
-        "🔥 Новый сканер Solana-токенов\n\n"
-        "/scan — найти самые интересные движения\n"
+        "🤖 Token Scanner v4\n\n"
+
+        "🔥 Сканер ранних движений Solana\n\n"
+
+        "/scan — ручной скан\n"
         "/help — помощь"
     )
 
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def help_command(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
 
     await update.message.reply_text(
-        "📋 Команды:\n\n"
-        "/scan — сканирование новых токенов\n"
-        "/help — помощь"
+        "/scan — найти текущие сигналы"
     )
 
 
-async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def scan_command(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
 
-    message = await update.message.reply_text(
-        "🔎 Сканирую Solana...\n\n"
-        "1️⃣ Получаю новые токены\n"
-        "2️⃣ Проверяю торговые пары\n"
-        "3️⃣ Анализирую объём\n"
-        "4️⃣ Считаю давление покупателей\n"
-        "5️⃣ Формирую рейтинг"
+    msg = await update.message.reply_text(
+        "🔎 Анализирую рынок..."
     )
 
     try:
 
-        # ============================================
-        # GET LATEST TOKEN PROFILES
-        # ============================================
+        results = scan_market()
 
-        response = requests.get(
-            PROFILES_API,
-            timeout=15
-        )
+        if not results:
 
-        if response.status_code != 200:
-
-            await message.edit_text(
-                f"❌ Profiles API: {response.status_code}"
+            await msg.edit_text(
+                "😴 Сейчас подходящих "
+                "движений не обнаружено."
             )
 
             return
 
-        profiles = response.json()
-
-        solana_profiles = [
-            x for x in profiles
-            if x.get("chainId") == "solana"
-            and x.get("tokenAddress")
-        ]
-
-        # ограничиваем количество API запросов
-        solana_profiles = solana_profiles[:30]
-
-        analysed = []
-
-        # ============================================
-        # GET PAIRS
-        # ============================================
-
-        for profile in solana_profiles:
-
-            address = profile["tokenAddress"]
-
-            try:
-
-                r = requests.get(
-                    TOKEN_PAIRS_API.format(address),
-                    timeout=10
-                )
-
-                if r.status_code != 200:
-                    continue
-
-                data = r.json()
-
-                pairs = data if isinstance(data, list) else []
-
-                if not pairs:
-                    continue
-
-                # выбираем наиболее ликвидную пару
-                pairs.sort(
-                    key=lambda p: num(
-                        p.get("liquidity", {}).get("usd")
-                    ),
-                    reverse=True
-                )
-
-                pair = pairs[0]
-
-                # ====================================
-                # BASIC FILTERS
-                # ====================================
-
-                base = pair.get("baseToken", {})
-
-                symbol = (
-                    base.get("symbol", "")
-                    .upper()
-                )
-
-                # исключаем крупные/стабильные активы
-                blocked = {
-                    "SOL",
-                    "WSOL",
-                    "USDC",
-                    "USDT",
-                    "USD1",
-                    "USDE"
-                }
-
-                if symbol in blocked:
-                    continue
-
-                liquidity = num(
-                    pair.get(
-                        "liquidity",
-                        {}
-                    ).get("usd")
-                )
-
-                volume = num(
-                    pair.get(
-                        "volume",
-                        {}
-                    ).get("h24")
-                )
-
-                # совсем маленький мусор
-                if liquidity < 5_000:
-                    continue
-
-                if volume < 5_000:
-                    continue
-
-                result = analyse_pair(pair)
-
-                analysed.append(result)
-
-            except Exception as e:
-
-                print(
-                    "PAIR ERROR:",
-                    address,
-                    e
-                )
-
-            # не создаём слишком много запросов мгновенно
-            time.sleep(0.15)
-
-        # ============================================
-        # SORT
-        # ============================================
-
-        analysed.sort(
-            key=lambda x: x["score"],
-            reverse=True
+        text = (
+            "🔥 SOLANA EARLY MOVES\n\n"
         )
 
-        analysed = analysed[:8]
-
-        if not analysed:
-
-            await message.edit_text(
-                "😕 Сейчас подходящих токенов не найдено."
-            )
-
-            return
-
-        # ============================================
-        # FORMAT
-        # ============================================
-
-        text = "🔥 SOLANA TOKEN SCANNER\n\n"
-
-        for i, token in enumerate(
-            analysed,
-            1
-        ):
-
-            reasons = ", ".join(
-                token["reasons"][:3]
-            )
+        for item in results:
 
             text += (
-                f"{i}. 🚀 "
-                f"{token['name']} "
-                f"({token['symbol']})\n"
-
-                f"⭐ Score: "
-                f"{token['score']}/100\n"
-
-                f"💵 Price: "
-                f"${token['price']:.8f}\n"
-
-                f"📈 5m: "
-                f"{percent(token['p5'])} | "
-                f"1h: "
-                f"{percent(token['p1h'])}\n"
-
-                f"📊 Volume 1h: "
-                f"{money(token['v1h'])}\n"
-
-                f"💰 Volume 24h: "
-                f"{money(token['v24'])}\n"
-
-                f"💧 Liquidity: "
-                f"{money(token['liquidity'])}\n"
-
-                f"🟢 Buys: "
-                f"{token['buys']} | "
-                f"🔴 Sells: "
-                f"{token['sells']}\n"
-
-                f"🧠 {reasons}\n"
-
-                f"🔗 `{token['address']}`\n\n"
+                format_result(item)
+                + "\n\n"
+                + "────────────\n\n"
             )
 
         text += (
-            "⚠️ Score — это только алгоритмическая "
-            "оценка активности, а не гарантия роста."
+            "⚠️ Это алгоритмический "
+            "сигнал, а не гарантия роста."
         )
 
-        await message.edit_text(
+        await msg.edit_text(
             text,
             parse_mode="Markdown"
         )
 
     except Exception as e:
 
-        print(
-            "SCAN ERROR:",
-            e
-        )
+        print("SCAN ERROR:", e)
 
-        await message.edit_text(
-            "❌ Ошибка сканирования.\n\n"
-            f"`{str(e)[:300]}`",
-            parse_mode="Markdown"
+        await msg.edit_text(
+            "❌ Ошибка сканирования:\n"
+            f"{str(e)[:300]}"
         )
 
 
-def main():
+async def main_async():
 
     app = (
         Application
         .builder()
-        .token(TOKEN)
+        .token(BOT_TOKEN)
         .build()
     )
 
@@ -499,15 +530,46 @@ def main():
     app.add_handler(
         CommandHandler(
             "scan",
-            scan
+            scan_command
         )
     )
 
-    print(
-        "Token Scanner v3 started"
-    )
+    await app.initialize()
+    await app.start()
 
-    app.run_polling()
+    bot = Bot(BOT_TOKEN)
+
+    try:
+        results = scan_market()
+
+        # CHAT_ID нужен только для автоматических уведомлений.
+        chat_id = os.environ.get(
+            "CHAT_ID"
+        )
+
+        if chat_id and results:
+
+            for item in results:
+
+                await bot.send_message(
+                    chat_id=chat_id,
+                    text=format_result(item),
+                    parse_mode="Markdown"
+                )
+
+    finally:
+
+        await app.stop()
+        await app.shutdown()
+
+
+def main():
+
+    import asyncio
+
+    asyncio.run(
+        main_async()
+    )
 
 
 if __name__ == "__main__":
