@@ -2,33 +2,33 @@
   "UMfGniBctBLYcy77zahNSWxrTLsdbphdbzasVJ8pump": {
     "name": "memecoin.wiki",
     "symbol": "WIKI",
-    "v5": 166939.72,
-    "tx5": 3032,
-    "price": 0.000194,
-    "timestamp": "2026-08-19T04:04:43.736794+00:00"
+    "v5": 94493.52,
+    "tx5": 1538,
+    "price": 0.0002804,
+    "timestamp": "2026-08-19T04:12:53.015525+00:00"
   },
   "FJBWgfc8wdEeUc2n7BN9EcmEJQUauvvpp9ZXvmF2pump": {
     "name": "Solug",
     "symbol": "SOLUG",
-    "v5": 19124.34,
-    "tx5": 763,
-    "price": 0.0001305,
-    "timestamp": "2026-08-19T04:04:43.736794+00:00"
+    "v5": 17481.5,
+    "tx5": 742,
+    "price": 0.0001172,
+    "timestamp": "2026-08-19T04:12:53.015525+00:00"
   },
   "HeXxaXU7jZS5LWjgCGSjSFjFPyzTkMkaJ4jHirzApump": {
     "name": "Bullug",
     "symbol": "BULLUG",
-    "v5": 17977.06,
-    "tx5": 456,
-    "price": 0.0002797,
-    "timestamp": "2026-08-19T04:04:43.736794+00:00"
+    "v5": 17165.89,
+    "tx5": 477,
+    "price": 0.0002865,
+    "timestamp": "2026-08-19T04:12:53.015525+00:00"
   },
   "593nS9yVmVHr3xN9REetTDSqfGNJggTsoQUVU4ympump": {
     "name": "@ansem",
     "symbol": "@ANSEM",
-    "v5": 3489.24,
-    "tx5": 131,
-    "price": 9.053e-05,
-    "timestamp": "2026-08-19T04:04:43.736794+00:00"
+    "v5": 4494.18,
+    "tx5": 145,
+    "price": 0.0001044,
+    "timestamp": "2026-08-19T04:12:53.015525+00:00"
   }
 }
