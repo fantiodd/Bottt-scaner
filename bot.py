@@ -19,24 +19,48 @@ TOP_RESULTS = 10
 MIN_LIQUIDITY = 10_000
 MIN_VOLUME_24H = 10_000
 
-# Сигналы
+# ------------------------------------------------------------
+# SIGNAL SCORES
+# ------------------------------------------------------------
+
 EARLY_SCORE = 65
 STRONG_SCORE = 75
 VERY_STRONG_SCORE = 85
 
-# Breakout
+# ------------------------------------------------------------
+# BREAKOUT
+# ------------------------------------------------------------
+
 BREAKOUT_DELTA = 25
 BREAKOUT_MIN_5M = 5
 BREAKOUT_MIN_1H = 0
 BREAKOUT_MIN_LIQUIDITY = 20_000
 
-# Повторное уведомление
+# ------------------------------------------------------------
+# ALERTS
+# ------------------------------------------------------------
+
 ALERT_COOLDOWN = 30 * 60
 RE_ALERT_SCORE_INCREASE = 15
 
-# Не уведомлять по токену после сильного падения
+# ------------------------------------------------------------
+# DUMP
+# ------------------------------------------------------------
+
 DUMP_5M = -12
 DUMP_1H = -20
+
+# ------------------------------------------------------------
+# RUG / RISK
+# ------------------------------------------------------------
+
+MAX_SIGNAL_RISK = 50
+MAX_BREAKOUT_RISK = 40
+MAX_RUG_RISK = 55
+
+# ------------------------------------------------------------
+# BLOCKED
+# ------------------------------------------------------------
 
 BLOCKED = {
     "SOL",
@@ -46,6 +70,10 @@ BLOCKED = {
     "USD1",
     "USDE",
 }
+
+# ------------------------------------------------------------
+# SOURCES
+# ------------------------------------------------------------
 
 ENDPOINTS = [
     "https://api.dexscreener.com/token-profiles/latest/v1",
@@ -58,13 +86,16 @@ ENDPOINTS = [
 # ============================================================
 
 def num(x):
+
     try:
         return float(x or 0)
+
     except Exception:
         return 0.0
 
 
 def money(x):
+
     x = num(x)
 
     if x >= 1_000_000:
@@ -77,19 +108,33 @@ def money(x):
 
 
 def load_json(filename, default):
+
     if not os.path.exists(filename):
         return default
 
     try:
-        with open(filename, "r", encoding="utf-8") as f:
+
+        with open(
+            filename,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
             return json.load(f)
 
     except Exception:
+
         return default
 
 
 def save_json(filename, data):
-    with open(filename, "w", encoding="utf-8") as f:
+
+    with open(
+        filename,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
         json.dump(
             data,
             f,
@@ -133,14 +178,19 @@ def get_addresses():
                 if item.get("chainId") != "solana":
                     continue
 
-                address = item.get("tokenAddress")
+                address = item.get(
+                    "tokenAddress"
+                )
 
                 if address:
                     addresses.add(address)
 
         except Exception as e:
 
-            print("SOURCE ERROR:", e)
+            print(
+                "SOURCE ERROR:",
+                e
+            )
 
     return list(addresses)
 
@@ -168,7 +218,10 @@ def get_pair(address):
 
         data = response.json()
 
-        if not isinstance(data, list) or not data:
+        if not isinstance(data, list):
+            return None
+
+        if not data:
             return None
 
         data.sort(
@@ -205,13 +258,17 @@ def calculate_risk(
     v24,
     buys,
     sells,
-    turnover
+    turnover,
+    pair_age_hours
 ):
 
     risk = 0
     reasons = []
 
-    # Очень маленькая ликвидность
+    # --------------------------------------------------------
+    # LIQUIDITY
+    # --------------------------------------------------------
+
     if liquidity < 10_000:
 
         risk += 35
@@ -236,7 +293,38 @@ def calculate_risk(
             "небольшая ликвидность"
         )
 
-    # Слишком сильный рост
+    # --------------------------------------------------------
+    # PAIR AGE
+    # --------------------------------------------------------
+
+    if 0 < pair_age_hours < 1:
+
+        risk += 20
+
+        reasons.append(
+            "пара создана недавно"
+        )
+
+    elif 1 <= pair_age_hours < 3:
+
+        risk += 12
+
+        reasons.append(
+            "очень молодая пара"
+        )
+
+    elif 3 <= pair_age_hours < 12:
+
+        risk += 5
+
+        reasons.append(
+            "молодая пара"
+        )
+
+    # --------------------------------------------------------
+    # EXTREME GROWTH
+    # --------------------------------------------------------
+
     if p1h >= 200:
 
         risk += 30
@@ -261,7 +349,10 @@ def calculate_risk(
             "сильный рост 1ч"
         )
 
-    # Резкий памп за 5 минут
+    # --------------------------------------------------------
+    # 5M PUMP
+    # --------------------------------------------------------
+
     if p5 >= 40:
 
         risk += 25
@@ -278,7 +369,10 @@ def calculate_risk(
             "сильный памп 5м"
         )
 
-    # Сильное падение
+    # --------------------------------------------------------
+    # DUMP
+    # --------------------------------------------------------
+
     if p5 <= DUMP_5M:
 
         risk += 20
@@ -295,7 +389,10 @@ def calculate_risk(
             "негативный тренд"
         )
 
-    # Аномальный оборот
+    # --------------------------------------------------------
+    # TURNOVER
+    # --------------------------------------------------------
+
     if turnover >= 50:
 
         risk += 15
@@ -304,7 +401,18 @@ def calculate_risk(
             "аномальный оборот"
         )
 
-    # Дисбаланс сделок
+    elif turnover >= 30:
+
+        risk += 8
+
+        reasons.append(
+            "очень высокий оборот"
+        )
+
+    # --------------------------------------------------------
+    # BUY / SELL IMBALANCE
+    # --------------------------------------------------------
+
     total = buys + sells
 
     if total >= 30:
@@ -327,9 +435,210 @@ def calculate_risk(
                 "аномальный перевес покупок"
             )
 
-    risk = min(100, risk)
+    # --------------------------------------------------------
+    # VOLUME VS LIQUIDITY
+    # --------------------------------------------------------
+
+    if liquidity > 0:
+
+        volume_liq = v24 / liquidity
+
+        if volume_liq >= 100:
+
+            risk += 20
+
+            reasons.append(
+                "аномальное соотношение объёма"
+            )
+
+        elif volume_liq >= 50:
+
+            risk += 10
+
+            reasons.append(
+                "очень высокий оборот относительно ликвидности"
+            )
+
+    risk = min(
+        100,
+        risk
+    )
 
     return risk, reasons
+
+
+# ============================================================
+# RUG RISK
+# ============================================================
+
+def calculate_rug_risk(
+    pair,
+    risk,
+    p5,
+    p1h,
+    liquidity,
+    v24,
+    buys,
+    sells,
+    turnover,
+    pair_age_hours
+):
+
+    rug = 0
+    reasons = []
+
+    # --------------------------------------------------------
+    # VERY NEW PAIR
+    # --------------------------------------------------------
+
+    if 0 < pair_age_hours < 1:
+
+        rug += 20
+
+        reasons.append(
+            "очень новая пара"
+        )
+
+    elif 1 <= pair_age_hours < 3:
+
+        rug += 10
+
+        reasons.append(
+            "молодая пара"
+        )
+
+    # --------------------------------------------------------
+    # LOW LIQUIDITY
+    # --------------------------------------------------------
+
+    if liquidity < 15_000:
+
+        rug += 20
+
+        reasons.append(
+            "малая ликвидность"
+        )
+
+    elif liquidity < 25_000:
+
+        rug += 10
+
+        reasons.append(
+            "ликвидность ниже желательной"
+        )
+
+    # --------------------------------------------------------
+    # EXTREME PRICE ACTION
+    # --------------------------------------------------------
+
+    if p1h >= 300:
+
+        rug += 25
+
+        reasons.append(
+            "экстремальный рост"
+        )
+
+    elif p1h >= 200:
+
+        rug += 15
+
+        reasons.append(
+            "очень сильный рост"
+        )
+
+    # --------------------------------------------------------
+    # FAST PUMP
+    # --------------------------------------------------------
+
+    if p5 >= 50:
+
+        rug += 20
+
+        reasons.append(
+            "экстремальный памп 5м"
+        )
+
+    elif p5 >= 30:
+
+        rug += 10
+
+        reasons.append(
+            "сильный памп 5м"
+        )
+
+    # --------------------------------------------------------
+    # DUMP
+    # --------------------------------------------------------
+
+    if p5 <= -20:
+
+        rug += 20
+
+        reasons.append(
+            "резкий дамп"
+        )
+
+    # --------------------------------------------------------
+    # TURNOVER
+    # --------------------------------------------------------
+
+    if turnover >= 100:
+
+        rug += 20
+
+        reasons.append(
+            "экстремальный turnover"
+        )
+
+    elif turnover >= 50:
+
+        rug += 10
+
+        reasons.append(
+            "высокий turnover"
+        )
+
+    # --------------------------------------------------------
+    # SELL PRESSURE
+    # --------------------------------------------------------
+
+    total = buys + sells
+
+    if total >= 30:
+
+        ratio = buys / total
+
+        if ratio < 0.25:
+
+            rug += 20
+
+            reasons.append(
+                "очень много продаж"
+            )
+
+    # --------------------------------------------------------
+    # COMBINATION
+    # --------------------------------------------------------
+
+    if (
+        risk >= 60
+        and p1h >= 100
+        and liquidity < 30_000
+    ):
+
+        rug += 15
+
+        reasons.append(
+            "опасная комбинация факторов"
+        )
+
+    rug = min(
+        100,
+        rug
+    )
+
+    return rug, reasons
 
 
 # ============================================================
@@ -358,16 +667,45 @@ def analyse(pair, old):
         {}
     )
 
-    p5 = num(change.get("m5"))
-    p1h = num(change.get("h1"))
+    # --------------------------------------------------------
+    # PRICE
+    # --------------------------------------------------------
 
-    v5 = num(volume.get("m5"))
-    v1h = num(volume.get("h1"))
-    v24 = num(volume.get("h24"))
+    p5 = num(
+        change.get("m5")
+    )
+
+    p1h = num(
+        change.get("h1")
+    )
+
+    # --------------------------------------------------------
+    # VOLUME
+    # --------------------------------------------------------
+
+    v5 = num(
+        volume.get("m5")
+    )
+
+    v1h = num(
+        volume.get("h1")
+    )
+
+    v24 = num(
+        volume.get("h24")
+    )
+
+    # --------------------------------------------------------
+    # LIQUIDITY
+    # --------------------------------------------------------
 
     liquidity = num(
         liquidity_data.get("usd")
     )
+
+    # --------------------------------------------------------
+    # TRANSACTIONS
+    # --------------------------------------------------------
 
     tx5 = txns.get(
         "m5",
@@ -375,26 +713,72 @@ def analyse(pair, old):
     )
 
     buys5 = int(
-        tx5.get("buys", 0) or 0
+        tx5.get(
+            "buys",
+            0
+        ) or 0
     )
 
     sells5 = int(
-        tx5.get("sells", 0) or 0
+        tx5.get(
+            "sells",
+            0
+        ) or 0
     )
 
-    total_tx = buys5 + sells5
+    total_tx = (
+        buys5 + sells5
+    )
 
     buy_ratio = 0
 
     if total_tx > 0:
-        buy_ratio = buys5 / total_tx
+
+        buy_ratio = (
+            buys5 / total_tx
+        )
+
+    # ========================================================
+    # PAIR AGE
+    # ========================================================
+
+    pair_created = num(
+        pair.get(
+            "pairCreatedAt"
+        )
+    )
+
+    pair_age_hours = 0
+
+    if pair_created > 0:
+
+        # DexScreener timestamp is milliseconds
+        created_seconds = (
+            pair_created / 1000
+        )
+
+        age_seconds = (
+            datetime.now(
+                timezone.utc
+            ).timestamp()
+            - created_seconds
+        )
+
+        pair_age_hours = max(
+            0,
+            age_seconds / 3600
+        )
+
+    # ========================================================
+    # MOMENTUM SCORE
+    # ========================================================
 
     score = 0
     reasons = []
 
-    # ========================================================
-    # 5M MOMENTUM
-    # ========================================================
+    # --------------------------------------------------------
+    # 5M
+    # --------------------------------------------------------
 
     if 2 <= p5 < 5:
 
@@ -452,9 +836,9 @@ def analyse(pair, old):
             "падение 5м"
         )
 
-    # ========================================================
-    # 1H TREND
-    # ========================================================
+    # --------------------------------------------------------
+    # 1H
+    # --------------------------------------------------------
 
     if 3 <= p1h < 15:
 
@@ -504,9 +888,9 @@ def analyse(pair, old):
             "негативный тренд 1ч"
         )
 
-    # ========================================================
+    # --------------------------------------------------------
     # LIQUIDITY
-    # ========================================================
+    # --------------------------------------------------------
 
     if liquidity >= 100_000:
 
@@ -548,9 +932,9 @@ def analyse(pair, old):
             "низкая ликвидность"
         )
 
-    # ========================================================
-    # BUY / SELL PRESSURE
-    # ========================================================
+    # --------------------------------------------------------
+    # BUY / SELL
+    # --------------------------------------------------------
 
     if total_tx >= 10:
 
@@ -586,9 +970,9 @@ def analyse(pair, old):
                 "продавцы доминируют"
             )
 
-    # ========================================================
+    # --------------------------------------------------------
     # VOLUME ACCELERATION
-    # ========================================================
+    # --------------------------------------------------------
 
     old_v5 = num(
         old.get("v5")
@@ -598,14 +982,17 @@ def analyse(pair, old):
 
     if old_v5 > 0 and v5 > 0:
 
-        volume_acceleration = v5 / old_v5
+        volume_acceleration = (
+            v5 / old_v5
+        )
 
         if volume_acceleration >= 3:
 
             score += 20
 
             reasons.append(
-                f"объём ускорился {volume_acceleration:.1f}x"
+                f"объём ускорился "
+                f"{volume_acceleration:.1f}x"
             )
 
         elif volume_acceleration >= 2:
@@ -613,7 +1000,8 @@ def analyse(pair, old):
             score += 15
 
             reasons.append(
-                f"объём ускоряется {volume_acceleration:.1f}x"
+                f"объём ускоряется "
+                f"{volume_acceleration:.1f}x"
             )
 
         elif volume_acceleration >= 1.5:
@@ -621,7 +1009,8 @@ def analyse(pair, old):
             score += 10
 
             reasons.append(
-                f"объём растёт {volume_acceleration:.1f}x"
+                f"объём растёт "
+                f"{volume_acceleration:.1f}x"
             )
 
         elif volume_acceleration >= 1.2:
@@ -629,22 +1018,28 @@ def analyse(pair, old):
             score += 5
 
             reasons.append(
-                f"объём растёт {volume_acceleration:.1f}x"
+                f"объём растёт "
+                f"{volume_acceleration:.1f}x"
             )
 
-    # ========================================================
+    # --------------------------------------------------------
     # TX ACCELERATION
-    # ========================================================
+    # --------------------------------------------------------
 
     old_tx = int(
-        old.get("tx5", 0) or 0
+        old.get(
+            "tx5",
+            0
+        ) or 0
     )
 
     tx_acceleration = 1.0
 
     if old_tx > 0 and total_tx > 0:
 
-        tx_acceleration = total_tx / old_tx
+        tx_acceleration = (
+            total_tx / old_tx
+        )
 
         if tx_acceleration >= 2:
 
@@ -662,14 +1057,17 @@ def analyse(pair, old):
                 "количество сделок растёт"
             )
 
-    # ========================================================
+    # --------------------------------------------------------
     # TURNOVER
-    # ========================================================
+    # --------------------------------------------------------
 
     turnover = 0
 
     if liquidity > 0:
-        turnover = v24 / liquidity
+
+        turnover = (
+            v24 / liquidity
+        )
 
     if 2 <= turnover <= 20:
 
@@ -688,12 +1086,15 @@ def analyse(pair, old):
         )
 
     # ========================================================
-    # SCORE
+    # FINAL MOMENTUM
     # ========================================================
 
     score = max(
         0,
-        min(100, score)
+        min(
+            100,
+            score
+        )
     )
 
     # ========================================================
@@ -703,37 +1104,69 @@ def analyse(pair, old):
     quality = 0
 
     if liquidity >= 100_000:
+
         quality += 30
+
     elif liquidity >= 50_000:
+
         quality += 25
+
     elif liquidity >= 30_000:
+
         quality += 20
+
     elif liquidity >= 20_000:
+
         quality += 12
 
+    # --------------------------------------------------------
+
     if v24 >= 1_000_000:
+
         quality += 25
+
     elif v24 >= 500_000:
+
         quality += 20
+
     elif v24 >= 100_000:
+
         quality += 15
+
     elif v24 >= 50_000:
+
         quality += 10
+
+    # --------------------------------------------------------
 
     if total_tx >= 1000:
+
         quality += 20
+
     elif total_tx >= 500:
+
         quality += 15
+
     elif total_tx >= 100:
+
         quality += 10
+
+    # --------------------------------------------------------
 
     if 0.40 <= buy_ratio <= 0.80:
+
         quality += 15
 
+    # --------------------------------------------------------
+
     if 0 < p1h < 100:
+
         quality += 10
 
-    quality = min(100, quality)
+    quality = min(
+        100,
+        quality
+    )
 
     # ========================================================
     # RISK
@@ -746,26 +1179,67 @@ def analyse(pair, old):
         v24,
         buys5,
         sells5,
-        turnover
+        turnover,
+        pair_age_hours
+    )
+
+    # ========================================================
+    # RUG RISK
+    # ========================================================
+
+    rug_risk, rug_reasons = calculate_rug_risk(
+        pair,
+        risk,
+        p5,
+        p1h,
+        liquidity,
+        v24,
+        buys5,
+        sells5,
+        turnover,
+        pair_age_hours
     )
 
     return {
-        "score": score,
-        "quality": quality,
 
-        "p5": p5,
-        "p1h": p1h,
+        "score":
+            score,
 
-        "v5": v5,
-        "v1h": v1h,
-        "v24": v24,
+        "quality":
+            quality,
 
-        "liquidity": liquidity,
+        "risk":
+            risk,
 
-        "buys5": buys5,
-        "sells5": sells5,
+        "rug_risk":
+            rug_risk,
 
-        "buy_ratio": buy_ratio,
+        "p5":
+            p5,
+
+        "p1h":
+            p1h,
+
+        "v5":
+            v5,
+
+        "v1h":
+            v1h,
+
+        "v24":
+            v24,
+
+        "liquidity":
+            liquidity,
+
+        "buys5":
+            buys5,
+
+        "sells5":
+            sells5,
+
+        "buy_ratio":
+            buy_ratio,
 
         "volume_acceleration":
             volume_acceleration,
@@ -776,14 +1250,17 @@ def analyse(pair, old):
         "turnover":
             turnover,
 
+        "pair_age_hours":
+            pair_age_hours,
+
         "reasons":
             reasons,
 
-        "risk":
-            risk,
-
         "risk_reasons":
             risk_reasons,
+
+        "rug_reasons":
+            rug_reasons,
     }
 
 
@@ -795,12 +1272,19 @@ def classify(item):
 
     p5 = item["p5"]
     p1h = item["p1h"]
+
     score = item["score"]
     quality = item["quality"]
+
     risk = item["risk"]
+    rug_risk = item["rug_risk"]
+
     liquidity = item["liquidity"]
 
+    # --------------------------------------------------------
     # DUMPING
+    # --------------------------------------------------------
+
     if (
         p5 <= -12
         or (
@@ -808,9 +1292,13 @@ def classify(item):
             and p5 < 0
         )
     ):
+
         return "🔻 DUMPING"
 
+    # --------------------------------------------------------
     # OVEREXTENDED
+    # --------------------------------------------------------
+
     if (
         p1h >= 200
         or (
@@ -818,49 +1306,78 @@ def classify(item):
             and p5 >= 5
         )
     ):
+
         return "🔴 OVEREXTENDED"
 
+    # --------------------------------------------------------
+    # SUSPICIOUS
+    # --------------------------------------------------------
+
+    if rug_risk >= MAX_RUG_RISK:
+
+        return "⚠️ SUSPICIOUS"
+
+    # --------------------------------------------------------
     # VERY STRONG
+    # --------------------------------------------------------
+
     if (
         score >= 85
         and quality >= 50
-        and risk < 50
+        and risk < MAX_SIGNAL_RISK
+        and rug_risk < MAX_RUG_RISK
         and p5 > 0
         and p1h > 0
         and liquidity >= 20_000
     ):
+
         return "🚨 VERY STRONG"
 
+    # --------------------------------------------------------
     # STRONG
+    # --------------------------------------------------------
+
     if (
         score >= 75
         and quality >= 45
-        and risk < 50
+        and risk < MAX_SIGNAL_RISK
+        and rug_risk < MAX_RUG_RISK
         and p5 > 0
         and p1h > 0
         and liquidity >= 20_000
     ):
+
         return "🔥 STRONG"
 
+    # --------------------------------------------------------
     # EARLY
+    # --------------------------------------------------------
+
     if (
         score >= 65
         and quality >= 35
-        and risk < 50
+        and risk < MAX_SIGNAL_RISK
+        and rug_risk < MAX_RUG_RISK
         and p5 > 0
         and p1h > 0
         and p1h < 60
         and liquidity >= 20_000
     ):
+
         return "🟢 EARLY"
 
+    # --------------------------------------------------------
     # WATCH
+    # --------------------------------------------------------
+
     if (
         score >= 40
         and p5 > 0
         and p1h > 0
         and risk < 70
+        and rug_risk < 70
     ):
+
         return "🟡 WATCH"
 
     return "⚪ LOW MOMENTUM"
@@ -877,8 +1394,10 @@ def get_signal_type(item):
     if stage in (
         "🔻 DUMPING",
         "🔴 OVEREXTENDED",
+        "⚠️ SUSPICIOUS",
         "⚪ LOW MOMENTUM"
     ):
+
         return None
 
     score = item["score"]
@@ -888,25 +1407,60 @@ def get_signal_type(item):
     p1h = item["p1h"]
 
     liquidity = item["liquidity"]
-    risk = item["risk"]
 
+    risk = item["risk"]
+    rug_risk = item["rug_risk"]
+
+    # ========================================================
     # BREAKOUT
+    # ========================================================
+
     if (
         delta >= BREAKOUT_DELTA
         and p5 >= BREAKOUT_MIN_5M
         and p1h > BREAKOUT_MIN_1H
         and liquidity >= BREAKOUT_MIN_LIQUIDITY
-        and risk < 60
+        and risk < MAX_BREAKOUT_RISK
+        and rug_risk < MAX_RUG_RISK
+        and score >= 65
     ):
+
         return "🚀 BREAKOUT"
 
-    if score >= 85:
+    # ========================================================
+    # VERY STRONG
+    # ========================================================
+
+    if (
+        score >= VERY_STRONG_SCORE
+        and risk < MAX_SIGNAL_RISK
+        and rug_risk < MAX_RUG_RISK
+    ):
+
         return "🚨 VERY STRONG"
 
-    if score >= 75:
+    # ========================================================
+    # STRONG
+    # ========================================================
+
+    if (
+        score >= STRONG_SCORE
+        and risk < MAX_SIGNAL_RISK
+        and rug_risk < MAX_RUG_RISK
+    ):
+
         return "🔥 STRONG"
 
-    if score >= 65:
+    # ========================================================
+    # EARLY
+    # ========================================================
+
+    if (
+        score >= EARLY_SCORE
+        and risk < MAX_SIGNAL_RISK
+        and rug_risk < MAX_RUG_RISK
+    ):
+
         return "🟢 EARLY"
 
     return None
@@ -941,7 +1495,10 @@ def scan():
     checked = 0
     filtered = 0
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(
+        timezone.utc
+    )
+
     now_iso = now.isoformat()
     now_ts = now.timestamp()
 
@@ -970,6 +1527,7 @@ def scan():
         ).upper()
 
         if symbol in BLOCKED:
+
             filtered += 1
             continue
 
@@ -988,10 +1546,12 @@ def scan():
         )
 
         if liquidity < MIN_LIQUIDITY:
+
             filtered += 1
             continue
 
         if volume < MIN_VOLUME_24H:
+
             filtered += 1
             continue
 
@@ -1026,30 +1586,65 @@ def scan():
             result
         )
 
+        # ----------------------------------------------------
+        # HISTORY
+        # ----------------------------------------------------
+
         history = old.get(
             "history",
             []
         )
 
         history.append({
-            "time": now_iso,
-            "score": result["score"],
-            "quality": result["quality"],
-            "risk": result["risk"],
-            "p5": result["p5"],
-            "p1h": result["p1h"],
+
+            "time":
+                now_iso,
+
+            "score":
+                result["score"],
+
+            "quality":
+                result["quality"],
+
+            "risk":
+                result["risk"],
+
+            "rug_risk":
+                result["rug_risk"],
+
+            "p5":
+                result["p5"],
+
+            "p1h":
+                result["p1h"],
+
         })
 
         history = history[-40:]
 
+        # ----------------------------------------------------
+        # STATE
+        # ----------------------------------------------------
+
         new_state[address] = {
 
-            "name": name,
-            "symbol": symbol,
+            "name":
+                name,
 
-            "score": result["score"],
-            "quality": result["quality"],
-            "risk": result["risk"],
+            "symbol":
+                symbol,
+
+            "score":
+                result["score"],
+
+            "quality":
+                result["quality"],
+
+            "risk":
+                result["risk"],
+
+            "rug_risk":
+                result["rug_risk"],
 
             "previous_score":
                 previous_score,
@@ -1089,7 +1684,9 @@ def scan():
                 now_iso,
         }
 
-        results.append(result)
+        results.append(
+            result
+        )
 
     # ========================================================
     # SORT
@@ -1105,22 +1702,27 @@ def scan():
     )
 
     print(
-        f"Pairs checked: {checked}"
+        f"Pairs checked: "
+        f"{checked}"
     )
 
     print(
-        f"Filtered: {filtered}"
+        f"Filtered: "
+        f"{filtered}"
     )
 
     print(
-        f"Candidates: {len(results)}"
+        f"Candidates: "
+        f"{len(results)}"
     )
 
     # ========================================================
     # TOP
     # ========================================================
 
-    print("\nTOP CANDIDATES:")
+    print(
+        "\nTOP CANDIDATES:"
+    )
 
     for item in results[:TOP_RESULTS]:
 
@@ -1133,7 +1735,8 @@ def scan():
             f"5m {item['p5']:+.1f}% | "
             f"1h {item['p1h']:+.1f}% | "
             f"liq {money(item['liquidity'])} | "
-            f"risk {item['risk']}/100"
+            f"risk {item['risk']}/100 | "
+            f"rug {item['rug_risk']}/100"
         )
 
     # ========================================================
@@ -1176,34 +1779,47 @@ def scan():
         )
 
         cooldown_passed = (
+
             last_alert == 0
+
             or
+
             now_ts - last_alert
             >= ALERT_COOLDOWN
         )
 
         score_jump = (
+
             item["score"]
-            >= last_alert_score
+            >=
+            last_alert_score
             + RE_ALERT_SCORE_INCREASE
         )
 
         new_signal_type = (
+
             signal_type
-            != last_alert_type
+            !=
+            last_alert_type
         )
 
         should_alert = (
+
             last_alert == 0
+
             or cooldown_passed
+
             or score_jump
+
             or new_signal_type
         )
 
         if not should_alert:
             continue
 
-        signal_items.append(item)
+        signal_items.append(
+            item
+        )
 
         new_state[
             item["address"]
@@ -1226,13 +1842,17 @@ def scan():
         )
 
     # ========================================================
-    # SAVE
+    # SAVE STATE
     # ========================================================
 
     save_json(
         STATE_FILE,
         new_state
     )
+
+    # ========================================================
+    # SAVE SIGNAL HISTORY
+    # ========================================================
 
     for item in signal_items:
 
@@ -1256,6 +1876,9 @@ def scan():
             "risk":
                 item["risk"],
 
+            "rug_risk":
+                item["rug_risk"],
+
             "score_delta":
                 item["score_delta"],
 
@@ -1267,6 +1890,7 @@ def scan():
 
             "p1h":
                 item["p1h"],
+
         })
 
     signals = signals[-1000:]
@@ -1297,9 +1921,22 @@ def format_signal(item):
     risk_text = "🟢 LOW"
 
     if item["risk"] >= 70:
+
         risk_text = "🔴 HIGH"
+
     elif item["risk"] >= 40:
+
         risk_text = "🟡 MEDIUM"
+
+    rug_text = "🟢 LOW"
+
+    if item["rug_risk"] >= 70:
+
+        rug_text = "🔴 HIGH"
+
+    elif item["rug_risk"] >= 40:
+
+        rug_text = "🟡 MEDIUM"
 
     address = item["address"]
 
@@ -1309,6 +1946,7 @@ def format_signal(item):
     )
 
     return (
+
         f"{item['signal_type']}\n\n"
 
         f"🚀 {item['name']} "
@@ -1349,7 +1987,14 @@ def format_signal(item):
 
         f"⚠️ Risk: "
         f"{item['risk']}/100 "
-        f"({risk_text})\n\n"
+        f"({risk_text})\n"
+
+        f"🛡️ Rug Risk: "
+        f"{item['rug_risk']}/100 "
+        f"({rug_text})\n\n"
+
+        f"🕐 Pair age: "
+        f"{item['pair_age_hours']:.1f}h\n\n"
 
         f"🧠 {reasons}\n\n"
 
