@@ -1,185 +1,15 @@
 {
-  "6hosezP1x4Ng4zgYZtDFx58e6VBnFmnQ4ojyX32wpump": {
-    "name": "CyberTrump",
-    "symbol": "CYBERTRUMP",
-    "score": 55,
-    "quality": 60,
-    "risk": 0,
-    "previous_score": 55.0,
-    "score_delta": 0.0,
-    "v5": 2858.56,
-    "tx5": 267,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 75,
-        "p5": 8.91,
-        "p1h": 13.03
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 60,
-        "p5": 12.86,
-        "p1h": 36.86
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 30,
-        "p5": -13.12,
-        "p1h": 22.33
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 70,
-        "quality": 84,
-        "price": 0.0003466,
-        "p5": 3.5,
-        "p1h": 38.43
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 55,
-        "p5": -0.45,
-        "p1h": 6.38
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 55,
-        "quality": 60,
-        "risk": 0,
-        "p5": 0.76,
-        "p1h": 3.28
-      }
-    ],
-    "last_alert": 1787114348.129413,
-    "last_alert_score": 70,
-    "last_alert_type": "🟢 EARLY",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
-  "6E8fPgsBvwjGRHcoeLUW8iugy736SKo54VvYLbYMpump": {
-    "name": "CryptoGDEX",
-    "symbol": "CGX",
-    "score": 30,
-    "quality": 22,
-    "risk": 10,
-    "previous_score": 10.0,
-    "score_delta": 20.0,
-    "v5": 100.33,
-    "tx5": 1,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 10,
-        "p5": 0.0,
-        "p1h": -8.61
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 15,
-        "p5": 0.22,
-        "p1h": -8.87
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 15,
-        "p5": 0.0,
-        "p1h": -9.03
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 10,
-        "quality": 51,
-        "price": 0.000176,
-        "p5": -2.01,
-        "p1h": -15.63
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 10,
-        "p5": -0.77,
-        "p1h": -16.28
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 30,
-        "quality": 22,
-        "risk": 10,
-        "p5": -0.71,
-        "p1h": -17.08
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
-  "9sw5nypHtFYJLpaitjL1sbe9o9tZQNoKJZDy6UKTpump": {
-    "name": "Meme Dream",
-    "symbol": "MEMEDREAM",
-    "score": 0,
-    "quality": 25,
-    "risk": 40,
-    "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 2116.38,
-    "tx5": 111,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 5,
-        "p5": -5.75,
-        "p1h": 28.16
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 0,
-        "p5": 0.83,
-        "p1h": 28.55
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 0,
-        "p5": -3.56,
-        "p1h": 10.15
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 0,
-        "quality": 30,
-        "price": 6.287e-05,
-        "p5": -12.48,
-        "p1h": -26.75
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 0,
-        "p5": 2.93,
-        "p1h": 38.73
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 0,
-        "quality": 25,
-        "risk": 40,
-        "p5": 7.11,
-        "p1h": -8.82
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
   "FJBWgfc8wdEeUc2n7BN9EcmEJQUauvvpp9ZXvmF2pump": {
     "name": "Solug",
     "symbol": "SOLUG",
-    "score": 50,
-    "quality": 62,
-    "risk": 10,
-    "previous_score": 25.0,
-    "score_delta": 25.0,
-    "v5": 19309.42,
-    "tx5": 253,
+    "score": 48,
+    "quality": 75,
+    "risk": 42,
+    "rug_risk": 35,
+    "previous_score": 50.0,
+    "score_delta": -2.0,
+    "v5": 66867.11,
+    "tx5": 823,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
@@ -220,137 +50,149 @@
         "risk": 10,
         "p5": 22.57,
         "p1h": 40.59
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 48,
+        "quality": 75,
+        "risk": 42,
+        "rug_risk": 35,
+        "p5": 12.83,
+        "p1h": 451.0
       }
     ],
     "last_alert": 1787114781.198417,
     "last_alert_score": 50,
     "last_alert_type": "🚀 BREAKOUT",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
   },
-  "xwLEcRFvSLhXBwWuW1HL3UEH1VpVPanjA3JvXRGpump": {
-    "name": "elims",
-    "symbol": "ELIMS",
-    "score": 0,
-    "quality": 50,
-    "risk": 40,
-    "previous_score": 0.0,
+  "Fw9LotRCnRPR5KWGD1GKuU6Y93E4xA8ngDds4S3Gpump": {
+    "name": "ANSEMUG",
+    "symbol": "ANSEMUG",
+    "score": 10,
+    "quality": 70,
+    "risk": 12,
+    "rug_risk": 10,
+    "previous_score": 10.0,
     "score_delta": 0.0,
-    "v5": 9224.84,
-    "tx5": 151,
+    "v5": 15653.4,
+    "tx5": 505,
     "history": [
       {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": 125.0,
-        "p1h": 286.0
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 0,
-        "p5": -31.06,
-        "p1h": 62.88
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 0,
-        "p5": -10.42,
-        "p1h": 76.77
-      },
-      {
         "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 0,
-        "quality": 18,
-        "price": 0.0001351,
-        "p5": 69.69,
-        "p1h": 313.0
+        "score": 20,
+        "quality": 48,
+        "price": 0.0002305,
+        "p5": 11.53,
+        "p1h": 235.0
       },
       {
         "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 0,
-        "p5": -24.09,
-        "p1h": 193.0
+        "score": 25,
+        "p5": 8.7,
+        "p1h": 245.0
       },
       {
         "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 0,
-        "quality": 50,
-        "risk": 40,
-        "p5": -63.11,
-        "p1h": 9.57
+        "score": 10,
+        "quality": 65,
+        "risk": 30,
+        "p5": -4.22,
+        "p1h": 274.0
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 10,
+        "quality": 70,
+        "risk": 12,
+        "rug_risk": 10,
+        "p5": -11.87,
+        "p1h": -4.61
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
   },
-  "UMfGniBctBLYcy77zahNSWxrTLsdbphdbzasVJ8pump": {
-    "name": "memecoin.wiki",
-    "symbol": "WIKI",
+  "9sw5nypHtFYJLpaitjL1sbe9o9tZQNoKJZDy6UKTpump": {
+    "name": "Meme Dream",
+    "symbol": "MEMEDREAM",
     "score": 0,
-    "quality": 60,
-    "risk": 55,
+    "quality": 15,
+    "risk": 40,
+    "rug_risk": 30,
     "previous_score": 0.0,
     "score_delta": 0.0,
-    "v5": 14541.55,
-    "tx5": 359,
+    "v5": 16.12,
+    "tx5": 82,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": -14.26,
-        "p1h": 586.0
+        "score": 5,
+        "p5": -5.75,
+        "p1h": 28.16
       },
       {
         "time": "2026-08-19T04:25:42.328412+00:00",
         "score": 0,
-        "p5": -17.76,
-        "p1h": 470.0
+        "p5": 0.83,
+        "p1h": 28.55
       },
       {
         "time": "2026-08-19T04:33:28.598824+00:00",
         "score": 0,
-        "p5": -2.16,
-        "p1h": 482.0
+        "p5": -3.56,
+        "p1h": 10.15
       },
       {
         "time": "2026-08-19T04:39:08.129413+00:00",
         "score": 0,
         "quality": 30,
-        "price": 6.002e-05,
-        "p5": -54.88,
-        "p1h": 89.48
+        "price": 6.287e-05,
+        "p5": -12.48,
+        "p1h": -26.75
       },
       {
         "time": "2026-08-19T04:43:05.049312+00:00",
         "score": 0,
-        "p5": -18.61,
-        "p1h": 80.84
+        "p5": 2.93,
+        "p1h": 38.73
       },
       {
         "time": "2026-08-19T04:46:21.198417+00:00",
         "score": 0,
-        "quality": 60,
-        "risk": 55,
-        "p5": -16.04,
-        "p1h": 72.59
+        "quality": 25,
+        "risk": 40,
+        "p5": 7.11,
+        "p1h": -8.82
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 0,
+        "quality": 15,
+        "risk": 40,
+        "rug_risk": 30,
+        "p5": 0.33,
+        "p1h": -12.05
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
   },
   "HeXxaXU7jZS5LWjgCGSjSFjFPyzTkMkaJ4jHirzApump": {
     "name": "Bullug",
     "symbol": "BULLUG",
-    "score": 5,
-    "quality": 55,
-    "risk": 20,
-    "previous_score": 35.0,
-    "score_delta": -30.0,
-    "v5": 18786.45,
-    "tx5": 503,
+    "score": 68,
+    "quality": 60,
+    "risk": 15,
+    "rug_risk": 0,
+    "previous_score": 5.0,
+    "score_delta": 63.0,
+    "v5": 10452.59,
+    "tx5": 432,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
@@ -391,220 +233,32 @@
         "risk": 20,
         "p5": -16.19,
         "p1h": -11.29
-      }
-    ],
-    "last_alert": 1787114008.598824,
-    "last_alert_score": 75,
-    "last_alert_type": "🚀 BREAKOUT",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
-  "F4GpAFr6vrxU3Y887F3XWkXRgybCVjZNk63m72f6pump": {
-    "name": "Trump Coin",
-    "symbol": "TRUMPCOIN",
-    "score": 33,
-    "quality": 35,
-    "risk": 0,
-    "previous_score": 33.0,
-    "score_delta": 0.0,
-    "v5": 31.74,
-    "tx5": 1,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 13,
-        "p5": 2.22,
-        "p1h": 3.76
       },
       {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 23,
-        "p5": 0.78,
-        "p1h": 4.55
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 28,
-        "p5": -0.41,
-        "p1h": 4.1
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 53,
-        "quality": 76,
-        "price": 0.0002988,
-        "p5": 2.23,
-        "p1h": 6.43
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 33,
-        "p5": 0.97,
-        "p1h": 6.43
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 33,
-        "quality": 35,
-        "risk": 0,
-        "p5": 0.37,
-        "p1h": 6.82
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
-  "CcFVSzr9R4HioBCSZKLHT9eYGdAA4Xk9NqeR3qMVUzbG": {
-    "name": "BULLANA",
-    "symbol": "BULLANA",
-    "score": 0,
-    "quality": 15,
-    "risk": 20,
-    "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 112.98,
-    "tx5": 3,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": 0.0,
-        "p1h": -0.78
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 0,
-        "p5": 1.72,
-        "p1h": 0.7
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 0,
-        "p5": 0.0,
-        "p1h": 0.8
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 0,
-        "quality": 20,
-        "price": 2.473e-05,
-        "p5": 0.0,
-        "p1h": -2.2
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 0,
-        "p5": 0.0,
-        "p1h": -3.49
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 0,
-        "quality": 15,
-        "risk": 20,
-        "p5": -3.25,
-        "p1h": -6.63
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
-  "5uoPKjTVSydv4LQVgAnPP6gkPsP1mKSTem5Rqn4pump": {
-    "name": "1000X Memecoin",
-    "symbol": "1000X",
-    "score": 0,
-    "quality": 60,
-    "risk": 50,
-    "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 85036.68,
-    "tx5": 2165,
-    "history": [
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 10,
-        "p5": 22.61,
-        "p1h": 22.61
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 0,
-        "quality": 13,
-        "price": 7.282e-05,
-        "p5": 35.33,
-        "p1h": 133.0
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 0,
-        "p5": -33.98,
-        "p1h": 65.12
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 0,
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 68,
         "quality": 60,
-        "risk": 50,
-        "p5": -14.47,
-        "p1h": 89.3
+        "risk": 15,
+        "rug_risk": 0,
+        "p5": 13.78,
+        "p1h": 31.63
       }
     ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
-  "Fw9LotRCnRPR5KWGD1GKuU6Y93E4xA8ngDds4S3Gpump": {
-    "name": "ANSEMUG",
-    "symbol": "ANSEMUG",
-    "score": 10,
-    "quality": 65,
-    "risk": 30,
-    "previous_score": 25.0,
-    "score_delta": -15.0,
-    "v5": 17393.12,
-    "tx5": 582,
-    "history": [
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 20,
-        "quality": 48,
-        "price": 0.0002305,
-        "p5": 11.53,
-        "p1h": 235.0
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 25,
-        "p5": 8.7,
-        "p1h": 245.0
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 10,
-        "quality": 65,
-        "risk": 30,
-        "p5": -4.22,
-        "p1h": 274.0
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
+    "last_alert": 1787117751.926274,
+    "last_alert_score": 68,
+    "last_alert_type": "🚀 BREAKOUT",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
   },
   "6ZC5kpZf9kLfxwMc4QVZfGJksTLrZQUTmKJCDaaopump": {
     "name": "MEMESLY",
     "symbol": "MEMESLY",
-    "score": 0,
-    "quality": 0,
-    "risk": 20,
+    "score": 15,
+    "quality": 10,
+    "risk": 32,
+    "rug_risk": 30,
     "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 16.01,
+    "score_delta": 15.0,
+    "v5": 29.73,
     "tx5": 1,
     "history": [
       {
@@ -646,137 +300,127 @@
         "risk": 20,
         "p5": 1.33,
         "p1h": -4.2
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
-  "4Xg9qDuEP1vMEwqMr2yWo92Yn9a7xZu5BNQBbXVfpump": {
-    "name": "Newbie",
-    "symbol": "NEWBIE",
-    "score": 0,
-    "quality": 42,
-    "risk": 30,
-    "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 260.21,
-    "tx5": 15,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": -8.34,
-        "p1h": -30.84
       },
       {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 0,
-        "p5": -4.03,
-        "p1h": -32.59
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 37,
-        "p5": 3.6,
-        "p1h": -27.27
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 10,
-        "quality": 51,
-        "price": 0.0001161,
-        "p5": 1.13,
-        "p1h": -26.72
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 0,
-        "p5": 0.54,
-        "p1h": -32.04
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
-        "score": 0,
-        "quality": 42,
-        "risk": 30,
-        "p5": -4.15,
-        "p1h": -29.52
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
-  },
-  "37WhvcVyK6Mzk1oUmqRoS5zbcdZKhrxcU9Ry1vtBoR94": {
-    "name": "Hobbes",
-    "symbol": "HOBBES",
-    "score": 15,
-    "quality": 37,
-    "risk": 10,
-    "previous_score": 30.0,
-    "score_delta": -15.0,
-    "v5": 262.54,
-    "tx5": 10,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 45,
-        "p5": 3.77,
-        "p1h": -3.23
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 10,
-        "p5": -0.16,
-        "p1h": -3.55
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 20,
-        "p5": -0.08,
-        "p1h": 1.22
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 87,
-        "quality": 94,
-        "price": 0.0001275,
-        "p5": 11.72,
-        "p1h": 16.69
-      },
-      {
-        "time": "2026-08-19T04:43:05.049312+00:00",
-        "score": 30,
-        "p5": -6.53,
-        "p1h": 5.47
-      },
-      {
-        "time": "2026-08-19T04:46:21.198417+00:00",
+        "time": "2026-08-19T05:35:51.926274+00:00",
         "score": 15,
-        "quality": 37,
-        "risk": 10,
-        "p5": -2.14,
-        "p1h": 4.05
+        "quality": 10,
+        "risk": 32,
+        "rug_risk": 30,
+        "p5": -1.74,
+        "p1h": 26.87
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
+  },
+  "6hosezP1x4Ng4zgYZtDFx58e6VBnFmnQ4ojyX32wpump": {
+    "name": "CyberTrump",
+    "symbol": "CYBERTRUMP",
+    "score": 20,
+    "quality": 50,
+    "risk": 25,
+    "rug_risk": 0,
+    "previous_score": 55.0,
+    "score_delta": -35.0,
+    "v5": 2075.86,
+    "tx5": 162,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 75,
+        "p5": 8.91,
+        "p1h": 13.03
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 60,
+        "p5": 12.86,
+        "p1h": 36.86
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 30,
+        "p5": -13.12,
+        "p1h": 22.33
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 70,
+        "quality": 84,
+        "price": 0.0003466,
+        "p5": 3.5,
+        "p1h": 38.43
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 55,
+        "p5": -0.45,
+        "p1h": 6.38
+      },
+      {
+        "time": "2026-08-19T04:46:21.198417+00:00",
+        "score": 55,
+        "quality": 60,
+        "risk": 0,
+        "p5": 0.76,
+        "p1h": 3.28
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 20,
+        "quality": 50,
+        "risk": 25,
+        "rug_risk": 0,
+        "p5": 2.25,
+        "p1h": -37.59
       }
     ],
     "last_alert": 1787114348.129413,
-    "last_alert_score": 87,
-    "last_alert_type": "🚀 BREAKOUT + 🚨 VERY STRONG",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
+    "last_alert_score": 70,
+    "last_alert_type": "🟢 EARLY",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
+  },
+  "5xe24cPXcEj1hKLrUBzgP3P1dUYp1N5afDheYde8sfGa": {
+    "name": "@ansemㅤ",
+    "symbol": "@ANSEMㅤ",
+    "score": 0,
+    "quality": 40,
+    "risk": 47,
+    "rug_risk": 40,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 2409.49,
+    "tx5": 65,
+    "history": [
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 0,
+        "quality": 40,
+        "risk": 47,
+        "rug_risk": 40,
+        "p5": 33.58,
+        "p1h": 20.53
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
   },
   "aUWH9iX3BKKeMHP6aoAf2r2KPjLq8h9Kim2YC48pump": {
     "name": "Meme Season",
     "symbol": "MEMESEASON",
-    "score": 73,
-    "quality": 50,
+    "score": 3,
+    "quality": 40,
     "risk": 0,
-    "previous_score": 50.0,
-    "score_delta": 23.0,
-    "v5": 599.87,
-    "tx5": 26,
+    "rug_risk": 0,
+    "previous_score": 73.0,
+    "score_delta": -70.0,
+    "v5": 490.23,
+    "tx5": 11,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
@@ -817,11 +461,370 @@
         "risk": 0,
         "p5": 2.51,
         "p1h": 14.62
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 3,
+        "quality": 40,
+        "risk": 0,
+        "rug_risk": 0,
+        "p5": -1.25,
+        "p1h": -4.98
       }
     ],
     "last_alert": 1787114781.198417,
     "last_alert_score": 73,
     "last_alert_type": "🟢 EARLY",
-    "timestamp": "2026-08-19T04:46:21.198417+00:00"
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
+  },
+  "37WhvcVyK6Mzk1oUmqRoS5zbcdZKhrxcU9Ry1vtBoR94": {
+    "name": "Hobbes",
+    "symbol": "HOBBES",
+    "score": 35,
+    "quality": 27,
+    "risk": 10,
+    "rug_risk": 0,
+    "previous_score": 15.0,
+    "score_delta": 20.0,
+    "v5": 524.26,
+    "tx5": 6,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 45,
+        "p5": 3.77,
+        "p1h": -3.23
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 10,
+        "p5": -0.16,
+        "p1h": -3.55
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 20,
+        "p5": -0.08,
+        "p1h": 1.22
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 87,
+        "quality": 94,
+        "price": 0.0001275,
+        "p5": 11.72,
+        "p1h": 16.69
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 30,
+        "p5": -6.53,
+        "p1h": 5.47
+      },
+      {
+        "time": "2026-08-19T04:46:21.198417+00:00",
+        "score": 15,
+        "quality": 37,
+        "risk": 10,
+        "p5": -2.14,
+        "p1h": 4.05
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 35,
+        "quality": 27,
+        "risk": 10,
+        "rug_risk": 0,
+        "p5": 2.48,
+        "p1h": -5.7
+      }
+    ],
+    "last_alert": 1787114348.129413,
+    "last_alert_score": 87,
+    "last_alert_type": "🚀 BREAKOUT + 🚨 VERY STRONG",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
+  },
+  "F4GpAFr6vrxU3Y887F3XWkXRgybCVjZNk63m72f6pump": {
+    "name": "Trump Coin",
+    "symbol": "TRUMPCOIN",
+    "score": 43,
+    "quality": 50,
+    "risk": 0,
+    "rug_risk": 0,
+    "previous_score": 33.0,
+    "score_delta": 10.0,
+    "v5": 31.17,
+    "tx5": 2,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 13,
+        "p5": 2.22,
+        "p1h": 3.76
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 23,
+        "p5": 0.78,
+        "p1h": 4.55
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 28,
+        "p5": -0.41,
+        "p1h": 4.1
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 53,
+        "quality": 76,
+        "price": 0.0002988,
+        "p5": 2.23,
+        "p1h": 6.43
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 33,
+        "p5": 0.97,
+        "p1h": 6.43
+      },
+      {
+        "time": "2026-08-19T04:46:21.198417+00:00",
+        "score": 33,
+        "quality": 35,
+        "risk": 0,
+        "p5": 0.37,
+        "p1h": 6.82
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 43,
+        "quality": 50,
+        "risk": 0,
+        "rug_risk": 0,
+        "p5": -0.09,
+        "p1h": 10.59
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
+  },
+  "4Xg9qDuEP1vMEwqMr2yWo92Yn9a7xZu5BNQBbXVfpump": {
+    "name": "Newbie",
+    "symbol": "NEWBIE",
+    "score": 15,
+    "quality": 42,
+    "risk": 10,
+    "rug_risk": 10,
+    "previous_score": 0.0,
+    "score_delta": 15.0,
+    "v5": 335.17,
+    "tx5": 18,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 0,
+        "p5": -8.34,
+        "p1h": -30.84
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": -4.03,
+        "p1h": -32.59
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 37,
+        "p5": 3.6,
+        "p1h": -27.27
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 10,
+        "quality": 51,
+        "price": 0.0001161,
+        "p5": 1.13,
+        "p1h": -26.72
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 0,
+        "p5": 0.54,
+        "p1h": -32.04
+      },
+      {
+        "time": "2026-08-19T04:46:21.198417+00:00",
+        "score": 0,
+        "quality": 42,
+        "risk": 30,
+        "p5": -4.15,
+        "p1h": -29.52
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 15,
+        "quality": 42,
+        "risk": 10,
+        "rug_risk": 10,
+        "p5": 0.96,
+        "p1h": -6.85
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
+  },
+  "5uoPKjTVSydv4LQVgAnPP6gkPsP1mKSTem5Rqn4pump": {
+    "name": "1000X Memecoin",
+    "symbol": "1000X",
+    "score": 0,
+    "quality": 45,
+    "risk": 97,
+    "rug_risk": 40,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 10418.31,
+    "tx5": 372,
+    "history": [
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 10,
+        "p5": 22.61,
+        "p1h": 22.61
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 0,
+        "quality": 13,
+        "price": 7.282e-05,
+        "p5": 35.33,
+        "p1h": 133.0
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 0,
+        "p5": -33.98,
+        "p1h": 65.12
+      },
+      {
+        "time": "2026-08-19T04:46:21.198417+00:00",
+        "score": 0,
+        "quality": 60,
+        "risk": 50,
+        "p5": -14.47,
+        "p1h": 89.3
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 0,
+        "quality": 45,
+        "risk": 97,
+        "rug_risk": 40,
+        "p5": -16.25,
+        "p1h": -57.89
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
+  },
+  "CKSfQyGQAHtXPm6EYvguGb9Kd5gt73utYASdabQ9pump": {
+    "name": "Keyboard Cat",
+    "symbol": "KEYCAT",
+    "score": 63,
+    "quality": 52,
+    "risk": 30,
+    "rug_risk": 30,
+    "previous_score": 0.0,
+    "score_delta": 63.0,
+    "v5": 20008.1,
+    "tx5": 971,
+    "history": [
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 63,
+        "quality": 52,
+        "risk": 30,
+        "rug_risk": 30,
+        "p5": 13.74,
+        "p1h": 47.84
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
+  },
+  "6E8fPgsBvwjGRHcoeLUW8iugy736SKo54VvYLbYMpump": {
+    "name": "CryptoGDEX",
+    "symbol": "CGX",
+    "score": 10,
+    "quality": 22,
+    "risk": 10,
+    "rug_risk": 0,
+    "previous_score": 30.0,
+    "score_delta": -20.0,
+    "v5": 2.31,
+    "tx5": 1,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 10,
+        "p5": 0.0,
+        "p1h": -8.61
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 15,
+        "p5": 0.22,
+        "p1h": -8.87
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 15,
+        "p5": 0.0,
+        "p1h": -9.03
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 10,
+        "quality": 51,
+        "price": 0.000176,
+        "p5": -2.01,
+        "p1h": -15.63
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 10,
+        "p5": -0.77,
+        "p1h": -16.28
+      },
+      {
+        "time": "2026-08-19T04:46:21.198417+00:00",
+        "score": 30,
+        "quality": 22,
+        "risk": 10,
+        "p5": -0.71,
+        "p1h": -17.08
+      },
+      {
+        "time": "2026-08-19T05:35:51.926274+00:00",
+        "score": 10,
+        "quality": 22,
+        "risk": 10,
+        "rug_risk": 0,
+        "p5": -0.1,
+        "p1h": -0.37
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T05:35:51.926274+00:00"
   }
 }
