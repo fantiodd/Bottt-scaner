@@ -11,20 +11,21 @@ SIGNALS_FILE = "signals.json"
 
 TOP_RESULTS = 10
 
-# Сигнал отправляется начиная с этого Score
+MIN_LIQUIDITY = 10_000
+MIN_VOLUME_24H = 10_000
+
+# Обычный сигнал
 ALERT_SCORE = 65
 
-# Повторный сигнал только если Score вырос ещё на столько
+# BREAKOUT
+BREAKOUT_DELTA = 30
+BREAKOUT_MIN_5M = 5
+BREAKOUT_MIN_1H = 0
+BREAKOUT_MIN_LIQUIDITY = 20_000
+
+# Повторное уведомление
 RE_ALERT_SCORE_INCREASE = 15
-
-# Минимальная пауза между сигналами одного токена
 ALERT_COOLDOWN = 30 * 60
-
-# Минимальная ликвидность
-MIN_LIQUIDITY = 10_000
-
-# Минимальный объём за 24 часа
-MIN_VOLUME_24H = 10_000
 
 BLOCKED = {
     "SOL",
@@ -65,6 +66,7 @@ def money(x):
 
 
 def load_json(filename, default):
+
     if not os.path.exists(filename):
         return default
 
@@ -81,6 +83,7 @@ def load_json(filename, default):
 
 
 def save_json(filename, data):
+
     with open(
         filename,
         "w",
@@ -96,7 +99,7 @@ def save_json(filename, data):
 
 
 # ==================================================
-# TOKEN ADDRESSES
+# GET TOKEN ADDRESSES
 # ==================================================
 
 def get_addresses():
@@ -148,7 +151,7 @@ def get_addresses():
 
 
 # ==================================================
-# GET PAIR
+# GET BEST PAIR
 # ==================================================
 
 def get_pair(address):
@@ -176,7 +179,6 @@ def get_pair(address):
         if not data:
             return None
 
-        # Выбираем наиболее ликвидную пару
         data.sort(
             key=lambda p: num(
                 p.get(
@@ -208,8 +210,6 @@ def classify(
     p5,
     p1h,
     liquidity,
-    buy_ratio,
-    volume_acceleration,
     score
 ):
 
@@ -267,20 +267,17 @@ def classify(
     # ------------------------------------------
 
     if (
-        score >= 45
+        score >= 40
         and p5 > 0
         and p1h > 0
     ):
-        return "🟡 WATCH"
-
-    if p5 > 0 and p1h > 0:
         return "🟡 WATCH"
 
     return "⚪ LOW MOMENTUM"
 
 
 # ==================================================
-# ANALYZE TOKEN
+# ANALYZE
 # ==================================================
 
 def analyse(pair, old):
@@ -305,10 +302,6 @@ def analyse(pair, old):
         {}
     )
 
-    # ------------------------------------------
-    # PRICE
-    # ------------------------------------------
-
     p5 = num(
         change.get("m5")
     )
@@ -316,10 +309,6 @@ def analyse(pair, old):
     p1h = num(
         change.get("h1")
     )
-
-    # ------------------------------------------
-    # VOLUME
-    # ------------------------------------------
 
     v5 = num(
         volume.get("m5")
@@ -333,17 +322,9 @@ def analyse(pair, old):
         volume.get("h24")
     )
 
-    # ------------------------------------------
-    # LIQUIDITY
-    # ------------------------------------------
-
     liquidity = num(
         liquidity_data.get("usd")
     )
-
-    # ------------------------------------------
-    # TRANSACTIONS
-    # ------------------------------------------
 
     tx5 = txns.get(
         "m5",
@@ -371,7 +352,6 @@ def analyse(pair, old):
     buy_ratio = 0
 
     if total_tx > 0:
-
         buy_ratio = (
             buys5 / total_tx
         )
@@ -381,7 +361,7 @@ def analyse(pair, old):
     reasons = []
 
     # ==================================================
-    # 5 MINUTE MOMENTUM
+    # 5M MOMENTUM
     # ==================================================
 
     if 3 <= p5 <= 10:
@@ -425,7 +405,7 @@ def analyse(pair, old):
         )
 
     # ==================================================
-    # 1 HOUR TREND
+    # 1H TREND
     # ==================================================
 
     if 5 <= p1h <= 30:
@@ -677,16 +657,10 @@ def analyse(pair, old):
         )
     )
 
-    # ==================================================
-    # CLASS
-    # ==================================================
-
     stage = classify(
         p5,
         p1h,
         liquidity,
-        buy_ratio,
-        volume_acceleration,
         score
     )
 
@@ -724,6 +698,60 @@ def analyse(pair, old):
 
         "reasons": reasons,
     }
+
+
+# ==================================================
+# DETERMINE SIGNAL
+# ==================================================
+
+def get_signal_type(item):
+
+    # Не ловим сильно перегретые токены
+    if item["stage"] == "🔴 OVEREXTENDED":
+        return None
+
+    score = item["score"]
+    delta = item["score_delta"]
+
+    p5 = item["p5"]
+    p1h = item["p1h"]
+    liquidity = item["liquidity"]
+
+    # ==================================================
+    # BREAKOUT
+    # ==================================================
+
+    if (
+        delta >= BREAKOUT_DELTA
+        and p5 >= BREAKOUT_MIN_5M
+        and p1h > BREAKOUT_MIN_1H
+        and liquidity >= BREAKOUT_MIN_LIQUIDITY
+        and p1h < 150
+    ):
+        return "🚀 BREAKOUT"
+
+    # ==================================================
+    # VERY STRONG
+    # ==================================================
+
+    if score >= 85:
+        return "🚨 VERY STRONG"
+
+    # ==================================================
+    # STRONG
+    # ==================================================
+
+    if score >= 75:
+        return "🔥 STRONG"
+
+    # ==================================================
+    # EARLY
+    # ==================================================
+
+    if score >= 65:
+        return "🟢 EARLY"
+
+    return None
 
 
 # ==================================================
@@ -789,7 +817,6 @@ def scan():
         if symbol in BLOCKED:
 
             filtered += 1
-
             continue
 
         liquidity = num(
@@ -809,13 +836,11 @@ def scan():
         if liquidity < MIN_LIQUIDITY:
 
             filtered += 1
-
             continue
 
         if volume < MIN_VOLUME_24H:
 
             filtered += 1
-
             continue
 
         old = state.get(
@@ -828,15 +853,6 @@ def scan():
             old
         )
 
-        # ------------------------------------------
-        # SCORE HISTORY
-        # ------------------------------------------
-
-        history = old.get(
-            "history",
-            []
-        )
-
         previous_score = num(
             old.get(
                 "score",
@@ -847,6 +863,16 @@ def scan():
         score_delta = (
             result["score"]
             - previous_score
+        )
+
+        result["name"] = name
+        result["symbol"] = symbol
+        result["address"] = address
+        result["score_delta"] = score_delta
+
+        history = old.get(
+            "history",
+            []
         )
 
         history.append({
@@ -865,12 +891,7 @@ def scan():
 
         })
 
-        # Храним последние 30 измерений
         history = history[-30:]
-
-        # ------------------------------------------
-        # STATE
-        # ------------------------------------------
 
         new_state[address] = {
 
@@ -911,17 +932,15 @@ def scan():
                     0
                 ),
 
+            "last_alert_type":
+                old.get(
+                    "last_alert_type",
+                    ""
+                ),
+
             "timestamp":
                 now_iso,
         }
-
-        result["name"] = name
-
-        result["symbol"] = symbol
-
-        result["address"] = address
-
-        result["score_delta"] = score_delta
 
         results.append(
             result
@@ -955,7 +974,7 @@ def scan():
     )
 
     # ==================================================
-    # TOP RESULTS
+    # TOP
     # ==================================================
 
     print(
@@ -975,22 +994,20 @@ def scan():
         )
 
     # ==================================================
-    # TELEGRAM ALERTS
+    # SIGNALS
     # ==================================================
+
+    signal_items = []
 
     now_ts = now.timestamp()
 
-    strong = []
-
     for item in results:
 
-        # Перегретые токены не отправляем
-        if item["stage"] == "🔴 OVEREXTENDED":
+        signal_type = get_signal_type(
+            item
+        )
 
-            continue
-
-        if item["score"] < ALERT_SCORE:
-
+        if not signal_type:
             continue
 
         old = state.get(
@@ -1012,6 +1029,11 @@ def scan():
             )
         )
 
+        last_alert_type = old.get(
+            "last_alert_type",
+            ""
+        )
+
         cooldown_passed = (
 
             last_alert == 0
@@ -1023,17 +1045,19 @@ def scan():
         )
 
         score_jump = (
-
             item["score"]
             >=
             last_alert_score
             + RE_ALERT_SCORE_INCREASE
         )
 
-        # Первый сигнал
-        # или cooldown закончился
-        # или Score резко вырос
-        if (
+        # BREAKOUT должен иметь возможность
+        # отправиться отдельно от старого сигнала
+        new_signal_type = (
+            signal_type != last_alert_type
+        )
+
+        should_alert = (
 
             last_alert == 0
 
@@ -1041,24 +1065,38 @@ def scan():
 
             or score_jump
 
-        ):
+            or new_signal_type
+        )
 
-            strong.append(
-                item
-            )
+        if not should_alert:
+            continue
 
-            new_state[
-                item["address"]
-            ]["last_alert"] = now_ts
+        signal_items.append(
+            item
+        )
 
-            new_state[
-                item["address"]
-            ]["last_alert_score"] = (
-                item["score"]
-            )
+        new_state[
+            item["address"]
+        ]["last_alert"] = now_ts
+
+        new_state[
+            item["address"]
+        ]["last_alert_score"] = (
+            item["score"]
+        )
+
+        new_state[
+            item["address"]
+        ]["last_alert_type"] = (
+            signal_type
+        )
+
+        item["signal_type"] = (
+            signal_type
+        )
 
     # ==================================================
-    # SAVE STATE
+    # SAVE
     # ==================================================
 
     save_json(
@@ -1066,11 +1104,7 @@ def scan():
         new_state
     )
 
-    # ==================================================
-    # SAVE SIGNAL HISTORY
-    # ==================================================
-
-    for item in strong:
+    for item in signal_items:
 
         signals.append({
 
@@ -1090,7 +1124,7 @@ def scan():
                 item["score_delta"],
 
             "stage":
-                item["stage"],
+                item["signal_type"],
 
             "p5":
                 item["p5"],
@@ -1108,15 +1142,15 @@ def scan():
     )
 
     print(
-        f"\nStrong signals: "
-        f"{len(strong)}"
+        f"Strong signals: "
+        f"{len(signal_items)}"
     )
 
-    return strong
+    return signal_items
 
 
 # ==================================================
-# TELEGRAM MESSAGE
+# TELEGRAM FORMAT
 # ==================================================
 
 def format_signal(item):
@@ -1134,7 +1168,7 @@ def format_signal(item):
 
     return (
 
-        f"{item['stage']}\n\n"
+        f"{item['signal_type']}\n\n"
 
         f"🚀 {item['name']} "
         f"({item['symbol']})\n"
@@ -1178,7 +1212,7 @@ def format_signal(item):
 
 
 # ==================================================
-# SEND TELEGRAM
+# TELEGRAM
 # ==================================================
 
 def send_telegram(text):
@@ -1215,6 +1249,7 @@ def send_telegram(text):
 
                 "disable_web_page_preview":
                     False,
+
             },
 
             timeout=15
@@ -1240,14 +1275,14 @@ def send_telegram(text):
 
 def main():
 
-    strong = scan()
+    signals = scan()
 
     print(
         f"Strong signals to Telegram: "
-        f"{len(strong)}"
+        f"{len(signals)}"
     )
 
-    for item in strong:
+    for item in signals:
 
         send_telegram(
             format_signal(item)
