@@ -1,0 +1,37 @@
+{
+  "5LLz8uE9izS5dZPtwauySJmjfyN5z3sH55cNXZDpump": {
+    "name": "bootstrapped",
+    "symbol": "BOOT",
+    "v1h": 68027.52,
+    "score": 49,
+    "timestamp": "2026-08-19T03:53:43.146340+00:00"
+  },
+  "FJBWgfc8wdEeUc2n7BN9EcmEJQUauvvpp9ZXvmF2pump": {
+    "name": "Solug",
+    "symbol": "SOLUG",
+    "v1h": 225416.83,
+    "score": 65,
+    "timestamp": "2026-08-19T03:53:43.505706+00:00"
+  },
+  "78Bz5GnZ9W53QmsdRx6GCp26kbC4aQFq5env1nQNpump": {
+    "name": "Mr Froggy",
+    "symbol": "FROGGY",
+    "v1h": 283519.72,
+    "score": 4,
+    "timestamp": "2026-08-19T03:53:43.594184+00:00"
+  },
+  "HeXxaXU7jZS5LWjgCGSjSFjFPyzTkMkaJ4jHirzApump": {
+    "name": "Bullug",
+    "symbol": "BULLUG",
+    "v1h": 240068.0,
+    "score": 65,
+    "timestamp": "2026-08-19T03:53:44.772949+00:00"
+  },
+  "593nS9yVmVHr3xN9REetTDSqfGNJggTsoQUVU4ympump": {
+    "name": "@ansem",
+    "symbol": "@ANSEM",
+    "v1h": 299517.64,
+    "score": 41,
+    "timestamp": "2026-08-19T03:53:44.900885+00:00"
+  }
+}
