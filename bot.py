@@ -11,14 +11,20 @@ SIGNALS_FILE = "signals.json"
 
 TOP_RESULTS = 10
 
-# Минимальный Score для сильного сигнала
+# Сигнал отправляется начиная с этого Score
 ALERT_SCORE = 65
 
-# Минимальный прирост Score для повторного сигнала
+# Повторный сигнал только если Score вырос ещё на столько
 RE_ALERT_SCORE_INCREASE = 15
 
-# Минимальное время между одинаковыми сигналами
+# Минимальная пауза между сигналами одного токена
 ALERT_COOLDOWN = 30 * 60
+
+# Минимальная ликвидность
+MIN_LIQUIDITY = 10_000
+
+# Минимальный объём за 24 часа
+MIN_VOLUME_24H = 10_000
 
 BLOCKED = {
     "SOL",
@@ -63,14 +69,24 @@ def load_json(filename, default):
         return default
 
     try:
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(
+            filename,
+            "r",
+            encoding="utf-8"
+        ) as f:
             return json.load(f)
+
     except Exception:
         return default
 
 
 def save_json(filename, data):
-    with open(filename, "w", encoding="utf-8") as f:
+    with open(
+        filename,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
         json.dump(
             data,
             f,
@@ -80,7 +96,7 @@ def save_json(filename, data):
 
 
 # ==================================================
-# GET TOKEN ADDRESSES
+# TOKEN ADDRESSES
 # ==================================================
 
 def get_addresses():
@@ -119,9 +135,7 @@ def get_addresses():
                 )
 
                 if address:
-                    addresses.add(
-                        address
-                    )
+                    addresses.add(address)
 
         except Exception as e:
 
@@ -162,7 +176,7 @@ def get_pair(address):
         if not data:
             return None
 
-        # Берём наиболее ликвидную пару
+        # Выбираем наиболее ликвидную пару
         data.sort(
             key=lambda p: num(
                 p.get(
@@ -199,45 +213,74 @@ def classify(
     score
 ):
 
-    # Уже слишком сильно вырос
-    if p1h >= 150:
+    # ------------------------------------------
+    # OVEREXTENDED
+    # ------------------------------------------
 
+    if p1h >= 150:
         return "🔴 OVEREXTENDED"
 
     if p1h >= 100 and p5 >= 5:
-
         return "🔴 OVEREXTENDED"
 
-    # Сильное раннее движение
+    # ------------------------------------------
+    # VERY STRONG
+    # ------------------------------------------
+
+    if (
+        score >= 85
+        and p5 > 0
+        and p1h > 0
+        and p1h < 100
+        and liquidity >= 20_000
+    ):
+        return "🚨 VERY STRONG"
+
+    # ------------------------------------------
+    # STRONG
+    # ------------------------------------------
+
+    if (
+        score >= 75
+        and p5 > 0
+        and p1h > 0
+        and p1h < 100
+        and liquidity >= 20_000
+    ):
+        return "🔥 STRONG"
+
+    # ------------------------------------------
+    # EARLY
+    # ------------------------------------------
+
     if (
         score >= 65
-        and 3 <= p5 <= 20
-        and 5 <= p1h <= 60
+        and p5 > 0
+        and p1h > 0
+        and p1h < 100
         and liquidity >= 20_000
-        and buy_ratio >= 0.60
-        and volume_acceleration >= 1.3
     ):
-
         return "🟢 EARLY"
 
-    # Средняя стадия
+    # ------------------------------------------
+    # WATCH
+    # ------------------------------------------
+
     if (
         score >= 45
         and p5 > 0
         and p1h > 0
     ):
-
         return "🟡 WATCH"
 
     if p5 > 0 and p1h > 0:
-
         return "🟡 WATCH"
 
     return "⚪ LOW MOMENTUM"
 
 
 # ==================================================
-# ANALYZE
+# ANALYZE TOKEN
 # ==================================================
 
 def analyse(pair, old):
@@ -262,6 +305,10 @@ def analyse(pair, old):
         {}
     )
 
+    # ------------------------------------------
+    # PRICE
+    # ------------------------------------------
+
     p5 = num(
         change.get("m5")
     )
@@ -269,6 +316,10 @@ def analyse(pair, old):
     p1h = num(
         change.get("h1")
     )
+
+    # ------------------------------------------
+    # VOLUME
+    # ------------------------------------------
 
     v5 = num(
         volume.get("m5")
@@ -282,9 +333,17 @@ def analyse(pair, old):
         volume.get("h24")
     )
 
+    # ------------------------------------------
+    # LIQUIDITY
+    # ------------------------------------------
+
     liquidity = num(
         liquidity_data.get("usd")
     )
+
+    # ------------------------------------------
+    # TRANSACTIONS
+    # ------------------------------------------
 
     tx5 = txns.get(
         "m5",
@@ -292,11 +351,17 @@ def analyse(pair, old):
     )
 
     buys5 = int(
-        tx5.get("buys", 0) or 0
+        tx5.get(
+            "buys",
+            0
+        ) or 0
     )
 
     sells5 = int(
-        tx5.get("sells", 0) or 0
+        tx5.get(
+            "sells",
+            0
+        ) or 0
     )
 
     total_tx = (
@@ -316,7 +381,7 @@ def analyse(pair, old):
     reasons = []
 
     # ==================================================
-    # 5M MOMENTUM
+    # 5 MINUTE MOMENTUM
     # ==================================================
 
     if 3 <= p5 <= 10:
@@ -360,7 +425,7 @@ def analyse(pair, old):
         )
 
     # ==================================================
-    # 1H TREND
+    # 1 HOUR TREND
     # ==================================================
 
     if 5 <= p1h <= 30:
@@ -448,7 +513,7 @@ def analyse(pair, old):
         )
 
     # ==================================================
-    # BUY PRESSURE
+    # BUY / SELL PRESSURE
     # ==================================================
 
     if total_tx >= 10:
@@ -601,7 +666,7 @@ def analyse(pair, old):
         )
 
     # ==================================================
-    # SCORE
+    # FINAL SCORE
     # ==================================================
 
     score = max(
@@ -626,19 +691,25 @@ def analyse(pair, old):
     )
 
     return {
+
         "score": score,
+
         "stage": stage,
 
         "p5": p5,
+
         "p1h": p1h,
 
         "v5": v5,
+
         "v1h": v1h,
+
         "v24": v24,
 
         "liquidity": liquidity,
 
         "buys5": buys5,
+
         "sells5": sells5,
 
         "buy_ratio": buy_ratio,
@@ -718,6 +789,7 @@ def scan():
         if symbol in BLOCKED:
 
             filtered += 1
+
             continue
 
         liquidity = num(
@@ -734,14 +806,16 @@ def scan():
             ).get("h24")
         )
 
-        if liquidity < 10_000:
+        if liquidity < MIN_LIQUIDITY:
 
             filtered += 1
+
             continue
 
-        if volume < 10_000:
+        if volume < MIN_VOLUME_24H:
 
             filtered += 1
+
             continue
 
         old = state.get(
@@ -754,9 +828,9 @@ def scan():
             old
         )
 
-        # ==================================================
+        # ------------------------------------------
         # SCORE HISTORY
-        # ==================================================
+        # ------------------------------------------
 
         history = old.get(
             "history",
@@ -776,22 +850,35 @@ def scan():
         )
 
         history.append({
-            "time": now_iso,
-            "score": result["score"],
-            "p5": result["p5"],
-            "p1h": result["p1h"],
+
+            "time":
+                now_iso,
+
+            "score":
+                result["score"],
+
+            "p5":
+                result["p5"],
+
+            "p1h":
+                result["p1h"],
+
         })
 
         # Храним последние 30 измерений
         history = history[-30:]
 
-        # ==================================================
+        # ------------------------------------------
         # STATE
-        # ==================================================
+        # ------------------------------------------
 
         new_state[address] = {
-            "name": name,
-            "symbol": symbol,
+
+            "name":
+                name,
+
+            "symbol":
+                symbol,
 
             "score":
                 result["score"],
@@ -829,8 +916,11 @@ def scan():
         }
 
         result["name"] = name
+
         result["symbol"] = symbol
+
         result["address"] = address
+
         result["score_delta"] = score_delta
 
         results.append(
@@ -850,19 +940,22 @@ def scan():
     )
 
     print(
-        f"Pairs checked: {checked}"
+        f"Pairs checked: "
+        f"{checked}"
     )
 
     print(
-        f"Filtered: {filtered}"
+        f"Filtered: "
+        f"{filtered}"
     )
 
     print(
-        f"Candidates: {len(results)}"
+        f"Candidates: "
+        f"{len(results)}"
     )
 
     # ==================================================
-    # TOP
+    # TOP RESULTS
     # ==================================================
 
     print(
@@ -874,7 +967,7 @@ def scan():
         print(
             f"{item['symbol']} | "
             f"{item['score']}/100 | "
-            f"Δ {item['score_delta']:+} | "
+            f"Δ {item['score_delta']:+.0f} | "
             f"{item['stage']} | "
             f"5m {item['p5']:+.1f}% | "
             f"1h {item['p1h']:+.1f}% | "
@@ -882,7 +975,7 @@ def scan():
         )
 
     # ==================================================
-    # ALERTS
+    # TELEGRAM ALERTS
     # ==================================================
 
     now_ts = now.timestamp()
@@ -891,11 +984,13 @@ def scan():
 
     for item in results:
 
-        # OVEREXTENDED никогда не отправляем
+        # Перегретые токены не отправляем
         if item["stage"] == "🔴 OVEREXTENDED":
+
             continue
 
         if item["score"] < ALERT_SCORE:
+
             continue
 
         old = state.get(
@@ -918,25 +1013,34 @@ def scan():
         )
 
         cooldown_passed = (
+
             last_alert == 0
+
             or
+
             now_ts - last_alert
             >= ALERT_COOLDOWN
         )
 
         score_jump = (
+
             item["score"]
-            >= last_alert_score
+            >=
+            last_alert_score
             + RE_ALERT_SCORE_INCREASE
         )
 
         # Первый сигнал
-        # или сильное ускорение
-        # или закончился cooldown
+        # или cooldown закончился
+        # или Score резко вырос
         if (
+
             last_alert == 0
+
             or cooldown_passed
+
             or score_jump
+
         ):
 
             strong.append(
@@ -954,7 +1058,7 @@ def scan():
             )
 
     # ==================================================
-    # SAVE
+    # SAVE STATE
     # ==================================================
 
     save_json(
@@ -962,9 +1066,14 @@ def scan():
         new_state
     )
 
+    # ==================================================
+    # SAVE SIGNAL HISTORY
+    # ==================================================
+
     for item in strong:
 
         signals.append({
+
             "timestamp":
                 now_iso,
 
@@ -988,6 +1097,7 @@ def scan():
 
             "p1h":
                 item["p1h"],
+
         })
 
     signals = signals[-1000:]
@@ -1006,7 +1116,7 @@ def scan():
 
 
 # ==================================================
-# TELEGRAM
+# TELEGRAM MESSAGE
 # ==================================================
 
 def format_signal(item):
@@ -1015,7 +1125,15 @@ def format_signal(item):
         item["reasons"][:6]
     )
 
+    address = item["address"]
+
+    dex_url = (
+        "https://dexscreener.com/solana/"
+        + address
+    )
+
     return (
+
         f"{item['stage']}\n\n"
 
         f"🚀 {item['name']} "
@@ -1025,7 +1143,7 @@ def format_signal(item):
         f"{item['score']}/100\n"
 
         f"📊 Score change: "
-        f"{item['score_delta']:+}\n\n"
+        f"{item['score_delta']:+.0f}\n\n"
 
         f"📈 5m: "
         f"{item['p5']:+.1f}%\n"
@@ -1053,9 +1171,15 @@ def format_signal(item):
 
         f"🧠 {reasons}\n\n"
 
-        f"🔗 `{item['address']}`"
+        f"🔎 [DexScreener]({dex_url})\n\n"
+
+        f"📋 `{address}`"
     )
 
+
+# ==================================================
+# SEND TELEGRAM
+# ==================================================
 
 def send_telegram(text):
 
@@ -1075,8 +1199,11 @@ def send_telegram(text):
     try:
 
         response = requests.post(
+
             url,
+
             json={
+
                 "chat_id":
                     CHAT_ID,
 
@@ -1085,7 +1212,11 @@ def send_telegram(text):
 
                 "parse_mode":
                     "Markdown",
+
+                "disable_web_page_preview":
+                    False,
             },
+
             timeout=15
         )
 
