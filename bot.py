@@ -14,18 +14,16 @@ TOP_RESULTS = 10
 MIN_LIQUIDITY = 10_000
 MIN_VOLUME_24H = 10_000
 
-# Обычный сигнал
-ALERT_SCORE = 65
-
-# BREAKOUT
 BREAKOUT_DELTA = 30
 BREAKOUT_MIN_5M = 5
 BREAKOUT_MIN_1H = 0
 BREAKOUT_MIN_LIQUIDITY = 20_000
 
-# Повторное уведомление
 RE_ALERT_SCORE_INCREASE = 15
 ALERT_COOLDOWN = 30 * 60
+
+# Через сколько минут проверяем результат сигнала
+TRACK_MINUTES = [5, 15, 30]
 
 BLOCKED = {
     "SOL",
@@ -71,11 +69,7 @@ def load_json(filename, default):
         return default
 
     try:
-        with open(
-            filename,
-            "r",
-            encoding="utf-8"
-        ) as f:
+        with open(filename, "r", encoding="utf-8") as f:
             return json.load(f)
 
     except Exception:
@@ -84,12 +78,7 @@ def load_json(filename, default):
 
 def save_json(filename, data):
 
-    with open(
-        filename,
-        "w",
-        encoding="utf-8"
-    ) as f:
-
+    with open(filename, "w", encoding="utf-8") as f:
         json.dump(
             data,
             f,
@@ -99,7 +88,7 @@ def save_json(filename, data):
 
 
 # ==================================================
-# GET TOKEN ADDRESSES
+# TOKEN SOURCES
 # ==================================================
 
 def get_addresses():
@@ -133,9 +122,7 @@ def get_addresses():
                 if item.get("chainId") != "solana":
                     continue
 
-                address = item.get(
-                    "tokenAddress"
-                )
+                address = item.get("tokenAddress")
 
                 if address:
                     addresses.add(address)
@@ -151,7 +138,7 @@ def get_addresses():
 
 
 # ==================================================
-# GET BEST PAIR
+# PAIR
 # ==================================================
 
 def get_pair(address):
@@ -206,26 +193,13 @@ def get_pair(address):
 # CLASSIFICATION
 # ==================================================
 
-def classify(
-    p5,
-    p1h,
-    liquidity,
-    score
-):
-
-    # ------------------------------------------
-    # OVEREXTENDED
-    # ------------------------------------------
+def classify(p5, p1h, liquidity, score):
 
     if p1h >= 150:
         return "🔴 OVEREXTENDED"
 
     if p1h >= 100 and p5 >= 5:
         return "🔴 OVEREXTENDED"
-
-    # ------------------------------------------
-    # VERY STRONG
-    # ------------------------------------------
 
     if (
         score >= 85
@@ -236,10 +210,6 @@ def classify(
     ):
         return "🚨 VERY STRONG"
 
-    # ------------------------------------------
-    # STRONG
-    # ------------------------------------------
-
     if (
         score >= 75
         and p5 > 0
@@ -248,10 +218,6 @@ def classify(
         and liquidity >= 20_000
     ):
         return "🔥 STRONG"
-
-    # ------------------------------------------
-    # EARLY
-    # ------------------------------------------
 
     if (
         score >= 65
@@ -262,15 +228,7 @@ def classify(
     ):
         return "🟢 EARLY"
 
-    # ------------------------------------------
-    # WATCH
-    # ------------------------------------------
-
-    if (
-        score >= 40
-        and p5 > 0
-        and p1h > 0
-    ):
+    if score >= 40 and p5 > 0 and p1h > 0:
         return "🟡 WATCH"
 
     return "⚪ LOW MOMENTUM"
@@ -282,171 +240,103 @@ def classify(
 
 def analyse(pair, old):
 
-    change = pair.get(
-        "priceChange",
-        {}
-    )
+    change = pair.get("priceChange", {})
+    volume = pair.get("volume", {})
+    liquidity_data = pair.get("liquidity", {})
+    txns = pair.get("txns", {})
 
-    volume = pair.get(
-        "volume",
-        {}
-    )
+    p5 = num(change.get("m5"))
+    p1h = num(change.get("h1"))
 
-    liquidity_data = pair.get(
-        "liquidity",
-        {}
-    )
-
-    txns = pair.get(
-        "txns",
-        {}
-    )
-
-    p5 = num(
-        change.get("m5")
-    )
-
-    p1h = num(
-        change.get("h1")
-    )
-
-    v5 = num(
-        volume.get("m5")
-    )
-
-    v1h = num(
-        volume.get("h1")
-    )
-
-    v24 = num(
-        volume.get("h24")
-    )
+    v5 = num(volume.get("m5"))
+    v1h = num(volume.get("h1"))
+    v24 = num(volume.get("h24"))
 
     liquidity = num(
         liquidity_data.get("usd")
     )
 
-    tx5 = txns.get(
-        "m5",
-        {}
+    price = num(
+        pair.get("priceUsd")
     )
 
+    tx5 = txns.get("m5", {})
+
     buys5 = int(
-        tx5.get(
-            "buys",
-            0
-        ) or 0
+        tx5.get("buys", 0) or 0
     )
 
     sells5 = int(
-        tx5.get(
-            "sells",
-            0
-        ) or 0
+        tx5.get("sells", 0) or 0
     )
 
-    total_tx = (
-        buys5 + sells5
-    )
+    total_tx = buys5 + sells5
 
     buy_ratio = 0
 
     if total_tx > 0:
-        buy_ratio = (
-            buys5 / total_tx
-        )
+        buy_ratio = buys5 / total_tx
 
     score = 0
-
     reasons = []
 
     # ==================================================
-    # 5M MOMENTUM
+    # 5M
     # ==================================================
 
     if 3 <= p5 <= 10:
 
         score += 20
-
-        reasons.append(
-            "умеренный рост 5м"
-        )
+        reasons.append("умеренный рост 5м")
 
     elif 10 < p5 <= 20:
 
         score += 15
-
-        reasons.append(
-            "сильный импульс 5м"
-        )
+        reasons.append("сильный импульс 5м")
 
     elif 20 < p5 <= 30:
 
         score += 5
-
-        reasons.append(
-            "резкий рост 5м"
-        )
+        reasons.append("резкий рост 5м")
 
     elif p5 > 30:
 
         score -= 15
-
-        reasons.append(
-            "слишком резкий памп"
-        )
+        reasons.append("слишком резкий памп")
 
     elif p5 < -10:
 
         score -= 25
-
-        reasons.append(
-            "падение 5м"
-        )
+        reasons.append("падение 5м")
 
     # ==================================================
-    # 1H TREND
+    # 1H
     # ==================================================
 
     if 5 <= p1h <= 30:
 
         score += 20
-
-        reasons.append(
-            "здоровый тренд 1ч"
-        )
+        reasons.append("здоровый тренд 1ч")
 
     elif 30 < p1h <= 60:
 
         score += 10
-
-        reasons.append(
-            "сильный тренд 1ч"
-        )
+        reasons.append("сильный тренд 1ч")
 
     elif 60 < p1h < 100:
 
         score += 3
-
-        reasons.append(
-            "сильный рост 1ч"
-        )
+        reasons.append("сильный рост 1ч")
 
     elif p1h >= 100:
 
         score -= 25
-
-        reasons.append(
-            "токен уже сильно вырос"
-        )
+        reasons.append("токен уже сильно вырос")
 
     elif p1h < -30:
 
         score -= 20
-
-        reasons.append(
-            "негативный тренд 1ч"
-        )
+        reasons.append("негативный тренд 1ч")
 
     # ==================================================
     # LIQUIDITY
@@ -455,45 +345,30 @@ def analyse(pair, old):
     if liquidity >= 100_000:
 
         score += 15
-
-        reasons.append(
-            "высокая ликвидность"
-        )
+        reasons.append("высокая ликвидность")
 
     elif liquidity >= 50_000:
 
         score += 13
-
-        reasons.append(
-            "хорошая ликвидность"
-        )
+        reasons.append("хорошая ликвидность")
 
     elif liquidity >= 30_000:
 
         score += 10
-
-        reasons.append(
-            "нормальная ликвидность"
-        )
+        reasons.append("нормальная ликвидность")
 
     elif liquidity >= 20_000:
 
         score += 5
-
-        reasons.append(
-            "приемлемая ликвидность"
-        )
+        reasons.append("приемлемая ликвидность")
 
     else:
 
         score -= 20
-
-        reasons.append(
-            "низкая ликвидность"
-        )
+        reasons.append("низкая ликвидность")
 
     # ==================================================
-    # BUY / SELL PRESSURE
+    # BUY / SELL
     # ==================================================
 
     if total_tx >= 10:
@@ -501,7 +376,6 @@ def analyse(pair, old):
         if buy_ratio >= 0.75:
 
             score += 20
-
             reasons.append(
                 "сильное давление покупателей"
             )
@@ -509,7 +383,6 @@ def analyse(pair, old):
         elif buy_ratio >= 0.65:
 
             score += 15
-
             reasons.append(
                 "покупатели доминируют"
             )
@@ -517,7 +390,6 @@ def analyse(pair, old):
         elif buy_ratio >= 0.55:
 
             score += 7
-
             reasons.append(
                 "покупателей немного больше"
             )
@@ -525,7 +397,6 @@ def analyse(pair, old):
         elif buy_ratio <= 0.40:
 
             score -= 15
-
             reasons.append(
                 "продавцы доминируют"
             )
@@ -534,22 +405,17 @@ def analyse(pair, old):
     # VOLUME ACCELERATION
     # ==================================================
 
-    old_v5 = num(
-        old.get("v5")
-    )
+    old_v5 = num(old.get("v5"))
 
     volume_acceleration = 1.0
 
     if old_v5 > 0 and v5 > 0:
 
-        volume_acceleration = (
-            v5 / old_v5
-        )
+        volume_acceleration = v5 / old_v5
 
         if volume_acceleration >= 3:
 
             score += 20
-
             reasons.append(
                 f"объём ускорился "
                 f"{volume_acceleration:.1f}x"
@@ -558,7 +424,6 @@ def analyse(pair, old):
         elif volume_acceleration >= 2:
 
             score += 15
-
             reasons.append(
                 f"объём ускоряется "
                 f"{volume_acceleration:.1f}x"
@@ -567,7 +432,6 @@ def analyse(pair, old):
         elif volume_acceleration >= 1.5:
 
             score += 10
-
             reasons.append(
                 f"объём растёт "
                 f"{volume_acceleration:.1f}x"
@@ -576,35 +440,28 @@ def analyse(pair, old):
         elif volume_acceleration >= 1.2:
 
             score += 5
-
             reasons.append(
                 f"объём немного растёт "
                 f"{volume_acceleration:.1f}x"
             )
 
     # ==================================================
-    # TRANSACTION ACCELERATION
+    # TX ACCELERATION
     # ==================================================
 
     old_tx = int(
-        old.get(
-            "tx5",
-            0
-        ) or 0
+        old.get("tx5", 0) or 0
     )
 
     tx_acceleration = 1.0
 
     if old_tx > 0 and total_tx > 0:
 
-        tx_acceleration = (
-            total_tx / old_tx
-        )
+        tx_acceleration = total_tx / old_tx
 
         if tx_acceleration >= 2:
 
             score += 10
-
             reasons.append(
                 "число сделок резко растёт"
             )
@@ -612,7 +469,6 @@ def analyse(pair, old):
         elif tx_acceleration >= 1.5:
 
             score += 5
-
             reasons.append(
                 "число сделок растёт"
             )
@@ -624,37 +480,23 @@ def analyse(pair, old):
     turnover = 0
 
     if liquidity > 0:
-
-        turnover = (
-            v24 / liquidity
-        )
+        turnover = v24 / liquidity
 
     if turnover >= 2:
 
         score += 5
-
-        reasons.append(
-            "активный оборот"
-        )
+        reasons.append("активный оборот")
 
     if turnover > 50:
 
         score -= 10
-
         reasons.append(
             "аномальный оборот"
         )
 
-    # ==================================================
-    # FINAL SCORE
-    # ==================================================
-
     score = max(
         0,
-        min(
-            100,
-            score
-        )
+        min(100, score)
     )
 
     stage = classify(
@@ -664,49 +506,114 @@ def analyse(pair, old):
         score
     )
 
+    # ==================================================
+    # QUALITY SCORE
+    # ==================================================
+
+    quality = 50
+
+    # Текущий momentum
+    quality += min(
+        15,
+        max(0, score * 0.15)
+    )
+
+    # Покупатели
+    if total_tx >= 10:
+
+        if buy_ratio >= 0.70:
+            quality += 15
+
+        elif buy_ratio >= 0.60:
+            quality += 8
+
+        elif buy_ratio < 0.45:
+            quality -= 15
+
+    # Ликвидность
+    if liquidity >= 100_000:
+        quality += 12
+
+    elif liquidity >= 50_000:
+        quality += 8
+
+    elif liquidity >= 30_000:
+        quality += 5
+
+    elif liquidity < 15_000:
+        quality -= 15
+
+    # Ускорение объёма
+    if volume_acceleration >= 3:
+        quality += 10
+
+    elif volume_acceleration >= 2:
+        quality += 7
+
+    elif volume_acceleration >= 1.5:
+        quality += 4
+
+    # Ускорение транзакций
+    if tx_acceleration >= 2:
+        quality += 8
+
+    elif tx_acceleration >= 1.5:
+        quality += 4
+
+    # Штраф за перегрев
+    if p1h >= 100:
+        quality -= 25
+
+    elif p1h >= 70:
+        quality -= 10
+
+    if p5 > 30:
+        quality -= 15
+
+    # Низкая ликвидность
+    if liquidity < 20_000:
+        quality -= 15
+
+    # Аномальный оборот
+    if turnover > 50:
+        quality -= 10
+
+    quality = int(
+        max(
+            0,
+            min(100, quality)
+        )
+    )
+
     return {
-
         "score": score,
-
+        "quality": quality,
         "stage": stage,
-
+        "price": price,
         "p5": p5,
-
         "p1h": p1h,
-
         "v5": v5,
-
         "v1h": v1h,
-
         "v24": v24,
-
         "liquidity": liquidity,
-
         "buys5": buys5,
-
         "sells5": sells5,
-
         "buy_ratio": buy_ratio,
-
         "volume_acceleration":
             volume_acceleration,
-
         "tx_acceleration":
             tx_acceleration,
-
         "turnover": turnover,
-
         "reasons": reasons,
     }
 
 
 # ==================================================
-# DETERMINE SIGNAL
+# SIGNAL TYPE
 # ==================================================
 
 def get_signal_type(item):
 
-    # Не ловим сильно перегретые токены
     if item["stage"] == "🔴 OVEREXTENDED":
         return None
 
@@ -717,41 +624,268 @@ def get_signal_type(item):
     p1h = item["p1h"]
     liquidity = item["liquidity"]
 
-    # ==================================================
-    # BREAKOUT
-    # ==================================================
-
-    if (
+    breakout = (
         delta >= BREAKOUT_DELTA
         and p5 >= BREAKOUT_MIN_5M
         and p1h > BREAKOUT_MIN_1H
         and liquidity >= BREAKOUT_MIN_LIQUIDITY
         and p1h < 150
-    ):
-        return "🚀 BREAKOUT"
+    )
 
-    # ==================================================
-    # VERY STRONG
-    # ==================================================
+    if breakout:
+
+        if score >= 85:
+            return "🚀 BREAKOUT + 🚨 VERY STRONG"
+
+        if score >= 75:
+            return "🚀 BREAKOUT + 🔥 STRONG"
+
+        if score >= 65:
+            return "🚀 BREAKOUT + 🟢 EARLY"
+
+        return "🚀 BREAKOUT"
 
     if score >= 85:
         return "🚨 VERY STRONG"
 
-    # ==================================================
-    # STRONG
-    # ==================================================
-
     if score >= 75:
         return "🔥 STRONG"
-
-    # ==================================================
-    # EARLY
-    # ==================================================
 
     if score >= 65:
         return "🟢 EARLY"
 
     return None
+
+
+# ==================================================
+# TRACK OLD SIGNALS
+# ==================================================
+
+def update_tracking(state, results, now_ts):
+
+    stats_changed = False
+
+    result_map = {
+        x["address"]: x
+        for x in results
+    }
+
+    for address, data in state.items():
+
+        tracking = data.get(
+            "tracking"
+        )
+
+        if not tracking:
+            continue
+
+        item = result_map.get(address)
+
+        if not item:
+            continue
+
+        current_price = item["price"]
+
+        if current_price <= 0:
+            continue
+
+        start_price = num(
+            tracking.get(
+                "price",
+                0
+            )
+        )
+
+        if start_price <= 0:
+            continue
+
+        elapsed = (
+            now_ts
+            - num(
+                tracking.get(
+                    "timestamp",
+                    now_ts
+                )
+            )
+        ) / 60
+
+        change = (
+            (current_price / start_price)
+            - 1
+        ) * 100
+
+        tracking["current_price"] = (
+            current_price
+        )
+
+        tracking["last_change"] = (
+            change
+        )
+
+        # 5 минут
+        if (
+            elapsed >= 5
+            and not tracking.get(
+                "checked_5m"
+            )
+        ):
+
+            tracking["change_5m"] = (
+                change
+            )
+
+            tracking["checked_5m"] = True
+
+            stats_changed = True
+
+        # 15 минут
+        if (
+            elapsed >= 15
+            and not tracking.get(
+                "checked_15m"
+            )
+        ):
+
+            tracking["change_15m"] = (
+                change
+            )
+
+            tracking["checked_15m"] = True
+
+            stats_changed = True
+
+        # 30 минут
+        if (
+            elapsed >= 30
+            and not tracking.get(
+                "checked_30m"
+            )
+        ):
+
+            tracking["change_30m"] = (
+                change
+            )
+
+            tracking["checked_30m"] = True
+
+            stats_changed = True
+
+        if (
+            tracking.get("checked_30m")
+        ):
+
+            result = tracking.get(
+                "change_30m"
+            )
+
+            data.setdefault(
+                "completed_stats",
+                []
+            ).append({
+
+                "signal_type":
+                    tracking.get(
+                        "signal_type"
+                    ),
+
+                "quality":
+                    tracking.get(
+                        "quality"
+                    ),
+
+                "change_5m":
+                    tracking.get(
+                        "change_5m"
+                    ),
+
+                "change_15m":
+                    tracking.get(
+                        "change_15m"
+                    ),
+
+                "change_30m":
+                    result,
+
+                "timestamp":
+                    tracking.get(
+                        "timestamp"
+                    ),
+            })
+
+            data["completed_stats"] = (
+                data["completed_stats"][-100:]
+            )
+
+            data.pop(
+                "tracking",
+                None
+            )
+
+            stats_changed = True
+
+    return stats_changed
+
+
+# ==================================================
+# STATISTICS
+# ==================================================
+
+def calculate_stats(state):
+
+    completed = []
+
+    for data in state.values():
+
+        completed.extend(
+            data.get(
+                "completed_stats",
+                []
+            )
+        )
+
+    if not completed:
+        return None
+
+    total = len(completed)
+
+    positive_5 = sum(
+        1
+        for x in completed
+        if num(
+            x.get("change_5m")
+        ) > 0
+    )
+
+    positive_15 = sum(
+        1
+        for x in completed
+        if num(
+            x.get("change_15m")
+        ) > 0
+    )
+
+    positive_30 = sum(
+        1
+        for x in completed
+        if num(
+            x.get("change_30m")
+        ) > 0
+    )
+
+    avg_30 = sum(
+        num(
+            x.get("change_30m")
+        )
+        for x in completed
+    ) / total
+
+    return {
+        "total": total,
+        "positive_5m": positive_5,
+        "positive_15m": positive_15,
+        "positive_30m": positive_30,
+        "avg_30m": avg_30,
+    }
 
 
 # ==================================================
@@ -779,7 +913,7 @@ def scan():
 
     results = []
 
-    new_state = {}
+    new_state = dict(state)
 
     checked = 0
     filtered = 0
@@ -789,6 +923,7 @@ def scan():
     )
 
     now_iso = now.isoformat()
+    now_ts = now.timestamp()
 
     for address in addresses:
 
@@ -883,6 +1018,12 @@ def scan():
             "score":
                 result["score"],
 
+            "quality":
+                result["quality"],
+
+            "price":
+                result["price"],
+
             "p5":
                 result["p5"],
 
@@ -903,6 +1044,9 @@ def scan():
 
             "score":
                 result["score"],
+
+            "quality":
+                result["quality"],
 
             "previous_score":
                 previous_score,
@@ -938,6 +1082,17 @@ def scan():
                     ""
                 ),
 
+            "tracking":
+                old.get(
+                    "tracking"
+                ),
+
+            "completed_stats":
+                old.get(
+                    "completed_stats",
+                    []
+                ),
+
             "timestamp":
                 now_iso,
         }
@@ -947,11 +1102,22 @@ def scan():
         )
 
     # ==================================================
+    # UPDATE TRACKING
+    # ==================================================
+
+    update_tracking(
+        new_state,
+        results,
+        now_ts
+    )
+
+    # ==================================================
     # SORT
     # ==================================================
 
     results.sort(
         key=lambda x: (
+            x["quality"],
             x["score"],
             x["score_delta"]
         ),
@@ -959,23 +1125,16 @@ def scan():
     )
 
     print(
-        f"Pairs checked: "
-        f"{checked}"
+        f"Pairs checked: {checked}"
     )
 
     print(
-        f"Filtered: "
-        f"{filtered}"
+        f"Filtered: {filtered}"
     )
 
     print(
-        f"Candidates: "
-        f"{len(results)}"
+        f"Candidates: {len(results)}"
     )
-
-    # ==================================================
-    # TOP
-    # ==================================================
 
     print(
         "\nTOP CANDIDATES:"
@@ -985,7 +1144,8 @@ def scan():
 
         print(
             f"{item['symbol']} | "
-            f"{item['score']}/100 | "
+            f"Q {item['quality']}/100 | "
+            f"M {item['score']}/100 | "
             f"Δ {item['score_delta']:+.0f} | "
             f"{item['stage']} | "
             f"5m {item['p5']:+.1f}% | "
@@ -998,8 +1158,6 @@ def scan():
     # ==================================================
 
     signal_items = []
-
-    now_ts = now.timestamp()
 
     for item in results:
 
@@ -1035,36 +1193,26 @@ def scan():
         )
 
         cooldown_passed = (
-
             last_alert == 0
-
             or
-
             now_ts - last_alert
             >= ALERT_COOLDOWN
         )
 
         score_jump = (
             item["score"]
-            >=
-            last_alert_score
+            >= last_alert_score
             + RE_ALERT_SCORE_INCREASE
         )
 
-        # BREAKOUT должен иметь возможность
-        # отправиться отдельно от старого сигнала
         new_signal_type = (
             signal_type != last_alert_type
         )
 
         should_alert = (
-
             last_alert == 0
-
             or cooldown_passed
-
             or score_jump
-
             or new_signal_type
         )
 
@@ -1090,6 +1238,47 @@ def scan():
         ]["last_alert_type"] = (
             signal_type
         )
+
+        # Начинаем отслеживание
+        if item["price"] > 0:
+
+            new_state[
+                item["address"]
+            ]["tracking"] = {
+
+                "timestamp":
+                    now_ts,
+
+                "price":
+                    item["price"],
+
+                "signal_type":
+                    signal_type,
+
+                "quality":
+                    item["quality"],
+
+                "score":
+                    item["score"],
+
+                "change_5m":
+                    None,
+
+                "change_15m":
+                    None,
+
+                "change_30m":
+                    None,
+
+                "checked_5m":
+                    False,
+
+                "checked_15m":
+                    False,
+
+                "checked_30m":
+                    False,
+            }
 
         item["signal_type"] = (
             signal_type
@@ -1120,18 +1309,23 @@ def scan():
             "score":
                 item["score"],
 
+            "quality":
+                item["quality"],
+
             "score_delta":
                 item["score_delta"],
 
             "stage":
                 item["signal_type"],
 
+            "price":
+                item["price"],
+
             "p5":
                 item["p5"],
 
             "p1h":
                 item["p1h"],
-
         })
 
     signals = signals[-1000:]
@@ -1140,6 +1334,48 @@ def scan():
         SIGNALS_FILE,
         signals
     )
+
+    # ==================================================
+    # STATS
+    # ==================================================
+
+    stats = calculate_stats(
+        new_state
+    )
+
+    if stats:
+
+        print(
+            "\nTRACKING STATS:"
+        )
+
+        print(
+            f"Completed: "
+            f"{stats['total']}"
+        )
+
+        print(
+            f"Positive 5m: "
+            f"{stats['positive_5m']}/"
+            f"{stats['total']}"
+        )
+
+        print(
+            f"Positive 15m: "
+            f"{stats['positive_15m']}/"
+            f"{stats['total']}"
+        )
+
+        print(
+            f"Positive 30m: "
+            f"{stats['positive_30m']}/"
+            f"{stats['total']}"
+        )
+
+        print(
+            f"Average 30m: "
+            f"{stats['avg_30m']:+.2f}%"
+        )
 
     print(
         f"Strong signals: "
@@ -1150,13 +1386,14 @@ def scan():
 
 
 # ==================================================
-# TELEGRAM FORMAT
+# TELEGRAM
 # ==================================================
 
 def format_signal(item):
 
-    reasons = ", ".join(
-        item["reasons"][:6]
+    reasons = "\n".join(
+        "• " + x
+        for x in item["reasons"][:6]
     )
 
     address = item["address"]
@@ -1171,12 +1408,15 @@ def format_signal(item):
         f"{item['signal_type']}\n\n"
 
         f"🚀 {item['name']} "
-        f"({item['symbol']})\n"
+        f"({item['symbol']})\n\n"
 
-        f"⭐ Momentum: "
+        f"🎯 QUALITY: "
+        f"{item['quality']}/100\n"
+
+        f"⭐ MOMENTUM: "
         f"{item['score']}/100\n"
 
-        f"📊 Score change: "
+        f"📊 SCORE Δ: "
         f"{item['score_delta']:+.0f}\n\n"
 
         f"📈 5m: "
@@ -1185,35 +1425,33 @@ def format_signal(item):
         f"📈 1h: "
         f"{item['p1h']:+.1f}%\n\n"
 
-        f"⚡ Volume 5m: "
-        f"{money(item['v5'])}\n"
+        f"💰 Volume 24h: "
+        f"{money(item['v24'])}\n"
 
-        f"📈 Volume acceleration: "
+        f"💧 Liquidity: "
+        f"{money(item['liquidity'])}\n\n"
+
+        f"🟢 Buys: "
+        f"{item['buys5']}\n"
+
+        f"🔴 Sells: "
+        f"{item['sells5']}\n\n"
+
+        f"⚡ Volume acceleration: "
         f"{item['volume_acceleration']:.1f}x\n"
 
         f"🔄 TX acceleration: "
         f"{item['tx_acceleration']:.1f}x\n\n"
 
-        f"💧 Liquidity: "
-        f"{money(item['liquidity'])}\n\n"
+        f"🧠 WHY:\n"
+        f"{reasons}\n\n"
 
-        f"🟢 Buys 5m: "
-        f"{item['buys5']}\n"
-
-        f"🔴 Sells 5m: "
-        f"{item['sells5']}\n\n"
-
-        f"🧠 {reasons}\n\n"
-
-        f"🔎 [DexScreener]({dex_url})\n\n"
+        f"🔎 [DexScreener]"
+        f"({dex_url})\n\n"
 
         f"📋 `{address}`"
     )
 
-
-# ==================================================
-# TELEGRAM
-# ==================================================
 
 def send_telegram(text):
 
@@ -1249,7 +1487,6 @@ def send_telegram(text):
 
                 "disable_web_page_preview":
                     False,
-
             },
 
             timeout=15
