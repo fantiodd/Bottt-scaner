@@ -1,421 +1,12 @@
 {
-  "6hosezP1x4Ng4zgYZtDFx58e6VBnFmnQ4ojyX32wpump": {
-    "name": "CyberTrump",
-    "symbol": "CYBERTRUMP",
-    "score": 70,
-    "quality": 84,
-    "previous_score": 30.0,
-    "score_delta": 40.0,
-    "v5": 3552.07,
-    "tx5": 264,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 75,
-        "p5": 8.91,
-        "p1h": 13.03
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 60,
-        "p5": 12.86,
-        "p1h": 36.86
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 30,
-        "p5": -13.12,
-        "p1h": 22.33
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 70,
-        "quality": 84,
-        "price": 0.0003466,
-        "p5": 3.5,
-        "p1h": 38.43
-      }
-    ],
-    "last_alert": 1787114348.129413,
-    "last_alert_score": 70,
-    "last_alert_type": "🟢 EARLY",
-    "tracking": {
-      "timestamp": 1787114348.129413,
-      "price": 0.0003466,
-      "signal_type": "🟢 EARLY",
-      "quality": 84,
-      "score": 70,
-      "change_5m": null,
-      "change_15m": null,
-      "change_30m": null,
-      "checked_5m": false,
-      "checked_15m": false,
-      "checked_30m": false
-    },
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "UMfGniBctBLYcy77zahNSWxrTLsdbphdbzasVJ8pump": {
-    "name": "memecoin.wiki",
-    "symbol": "WIKI",
-    "score": 0,
-    "quality": 30,
-    "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 68253.05,
-    "tx5": 1310,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": -14.26,
-        "p1h": 586.0
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 0,
-        "p5": -17.76,
-        "p1h": 470.0
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 0,
-        "p5": -2.16,
-        "p1h": 482.0
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 0,
-        "quality": 30,
-        "price": 6.002e-05,
-        "p5": -54.88,
-        "p1h": 89.48
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "6E8fPgsBvwjGRHcoeLUW8iugy736SKo54VvYLbYMpump": {
-    "name": "CryptoGDEX",
-    "symbol": "CGX",
-    "score": 10,
-    "quality": 51,
-    "previous_score": 15.0,
-    "score_delta": -5.0,
-    "v5": 100.44,
-    "tx5": 1,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 10,
-        "p5": 0.0,
-        "p1h": -8.61
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 15,
-        "p5": 0.22,
-        "p1h": -8.87
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 15,
-        "p5": 0.0,
-        "p1h": -9.03
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 10,
-        "quality": 51,
-        "price": 0.000176,
-        "p5": -2.01,
-        "p1h": -15.63
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "FJBWgfc8wdEeUc2n7BN9EcmEJQUauvvpp9ZXvmF2pump": {
-    "name": "Solug",
-    "symbol": "SOLUG",
-    "score": 50,
-    "quality": 57,
-    "previous_score": 30.0,
-    "score_delta": 20.0,
-    "v5": 16165.77,
-    "tx5": 123,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 25,
-        "p5": 4.75,
-        "p1h": 169.0
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 5,
-        "p5": 1.12,
-        "p1h": 157.0
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 30,
-        "p5": -7.14,
-        "p1h": 7.2
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 50,
-        "quality": 57,
-        "price": 0.0001153,
-        "p5": 7.01,
-        "p1h": 22.86
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "HeXxaXU7jZS5LWjgCGSjSFjFPyzTkMkaJ4jHirzApump": {
-    "name": "Bullug",
-    "symbol": "BULLUG",
-    "score": 35,
-    "quality": 75,
-    "previous_score": 75.0,
-    "score_delta": -40.0,
-    "v5": 17279.37,
-    "tx5": 410,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 30,
-        "p5": 35.58,
-        "p1h": 49.27
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 30,
-        "p5": -11.33,
-        "p1h": 11.18
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 75,
-        "p5": 8.74,
-        "p1h": 12.91
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 35,
-        "quality": 75,
-        "price": 0.0003127,
-        "p5": -4.26,
-        "p1h": -5.52
-      }
-    ],
-    "last_alert": 1787114008.598824,
-    "last_alert_score": 75,
-    "last_alert_type": "🚀 BREAKOUT",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "aUWH9iX3BKKeMHP6aoAf2r2KPjLq8h9Kim2YC48pump": {
-    "name": "Meme Season",
-    "symbol": "MEMESEASON",
-    "score": 45,
-    "quality": 64,
-    "previous_score": 45.0,
-    "score_delta": 0.0,
-    "v5": 903.02,
-    "tx5": 31,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 65,
-        "p5": 3.04,
-        "p1h": 9.37
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 50,
-        "p5": -2.32,
-        "p1h": 7.24
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 45,
-        "p5": 0.61,
-        "p1h": 12.32
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 45,
-        "quality": 64,
-        "price": 0.0007169,
-        "p5": -3.81,
-        "p1h": 7.29
-      }
-    ],
-    "last_alert": 1787113252.28387,
-    "last_alert_score": 65,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "F4GpAFr6vrxU3Y887F3XWkXRgybCVjZNk63m72f6pump": {
-    "name": "Trump Coin",
-    "symbol": "TRUMPCOIN",
-    "score": 53,
-    "quality": 76,
-    "previous_score": 28.0,
-    "score_delta": 25.0,
-    "v5": 258.66,
-    "tx5": 3,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 13,
-        "p5": 2.22,
-        "p1h": 3.76
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 23,
-        "p5": 0.78,
-        "p1h": 4.55
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 28,
-        "p5": -0.41,
-        "p1h": 4.1
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 53,
-        "quality": 76,
-        "price": 0.0002988,
-        "p5": 2.23,
-        "p1h": 6.43
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "xwLEcRFvSLhXBwWuW1HL3UEH1VpVPanjA3JvXRGpump": {
-    "name": "elims",
-    "symbol": "ELIMS",
-    "score": 0,
-    "quality": 18,
-    "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 44060.98,
-    "tx5": 548,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 0,
-        "p5": 125.0,
-        "p1h": 286.0
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 0,
-        "p5": -31.06,
-        "p1h": 62.88
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 0,
-        "p5": -10.42,
-        "p1h": 76.77
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 0,
-        "quality": 18,
-        "price": 0.0001351,
-        "p5": 69.69,
-        "p1h": 313.0
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "9sw5nypHtFYJLpaitjL1sbe9o9tZQNoKJZDy6UKTpump": {
-    "name": "Meme Dream",
-    "symbol": "MEMEDREAM",
-    "score": 0,
-    "quality": 30,
-    "previous_score": 0.0,
-    "score_delta": 0.0,
-    "v5": 1046.67,
-    "tx5": 150,
-    "history": [
-      {
-        "time": "2026-08-19T04:20:52.283870+00:00",
-        "score": 5,
-        "p5": -5.75,
-        "p1h": 28.16
-      },
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 0,
-        "p5": 0.83,
-        "p1h": 28.55
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 0,
-        "p5": -3.56,
-        "p1h": 10.15
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 0,
-        "quality": 30,
-        "price": 6.287e-05,
-        "p5": -12.48,
-        "p1h": -26.75
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
   "37WhvcVyK6Mzk1oUmqRoS5zbcdZKhrxcU9Ry1vtBoR94": {
     "name": "Hobbes",
     "symbol": "HOBBES",
-    "score": 87,
-    "quality": 94,
-    "previous_score": 20.0,
-    "score_delta": 67.0,
-    "v5": 872.07,
-    "tx5": 20,
+    "score": 30,
+    "previous_score": 87.0,
+    "score_delta": -57.0,
+    "v5": 602.4,
+    "tx5": 9,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
@@ -442,36 +33,27 @@
         "price": 0.0001275,
         "p5": 11.72,
         "p1h": 16.69
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 30,
+        "p5": -6.53,
+        "p1h": 5.47
       }
     ],
     "last_alert": 1787114348.129413,
     "last_alert_score": 87,
     "last_alert_type": "🚀 BREAKOUT + 🚨 VERY STRONG",
-    "tracking": {
-      "timestamp": 1787114348.129413,
-      "price": 0.0001275,
-      "signal_type": "🚀 BREAKOUT + 🚨 VERY STRONG",
-      "quality": 94,
-      "score": 87,
-      "change_5m": null,
-      "change_15m": null,
-      "change_30m": null,
-      "checked_5m": false,
-      "checked_15m": false,
-      "checked_30m": false
-    },
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
   },
   "4Xg9qDuEP1vMEwqMr2yWo92Yn9a7xZu5BNQBbXVfpump": {
     "name": "Newbie",
     "symbol": "NEWBIE",
-    "score": 10,
-    "quality": 51,
-    "previous_score": 37.0,
-    "score_delta": -27.0,
-    "v5": 752.2,
-    "tx5": 36,
+    "score": 0,
+    "previous_score": 10.0,
+    "score_delta": -10.0,
+    "v5": 216.82,
+    "tx5": 20,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
@@ -498,90 +80,23 @@
         "price": 0.0001161,
         "p5": 1.13,
         "p1h": -26.72
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "5uoPKjTVSydv4LQVgAnPP6gkPsP1mKSTem5Rqn4pump": {
-    "name": "1000X Memecoin",
-    "symbol": "1000X",
-    "score": 0,
-    "quality": 13,
-    "previous_score": 10.0,
-    "score_delta": -10.0,
-    "v5": 116216.82,
-    "tx5": 3182,
-    "history": [
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 10,
-        "p5": 22.61,
-        "p1h": 22.61
       },
       {
-        "time": "2026-08-19T04:39:08.129413+00:00",
+        "time": "2026-08-19T04:43:05.049312+00:00",
         "score": 0,
-        "quality": 13,
-        "price": 7.282e-05,
-        "p5": 35.33,
-        "p1h": 133.0
+        "p5": 0.54,
+        "p1h": -32.04
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
-  },
-  "5E8ifewWjdGPDCRdmvbua3YvV1QzjiZs63qJYwuFpump": {
-    "name": "TrumpClug",
-    "symbol": "TRUMPCLUG",
-    "score": 50,
-    "quality": 72,
-    "previous_score": 0.0,
-    "score_delta": 50.0,
-    "v5": 23835.06,
-    "tx5": 1085,
-    "history": [
-      {
-        "time": "2026-08-19T04:25:42.328412+00:00",
-        "score": 48,
-        "p5": 18.05,
-        "p1h": 73.57
-      },
-      {
-        "time": "2026-08-19T04:33:28.598824+00:00",
-        "score": 0,
-        "p5": -39.93,
-        "p1h": 23.3
-      },
-      {
-        "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 50,
-        "quality": 72,
-        "price": 8.294e-05,
-        "p5": -5.09,
-        "p1h": 27.62
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
   },
   "CcFVSzr9R4HioBCSZKLHT9eYGdAA4Xk9NqeR3qMVUzbG": {
     "name": "BULLANA",
     "symbol": "BULLANA",
     "score": 0,
-    "quality": 20,
     "previous_score": 0.0,
     "score_delta": 0.0,
     "v5": 0.0,
@@ -612,24 +127,373 @@
         "price": 2.473e-05,
         "p5": 0.0,
         "p1h": -2.2
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 0,
+        "p5": 0.0,
+        "p1h": -3.49
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "HeXxaXU7jZS5LWjgCGSjSFjFPyzTkMkaJ4jHirzApump": {
+    "name": "Bullug",
+    "symbol": "BULLUG",
+    "score": 35,
+    "previous_score": 35.0,
+    "score_delta": 0.0,
+    "v5": 16062.14,
+    "tx5": 428,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 30,
+        "p5": 35.58,
+        "p1h": 49.27
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 30,
+        "p5": -11.33,
+        "p1h": 11.18
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 75,
+        "p5": 8.74,
+        "p1h": 12.91
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 35,
+        "quality": 75,
+        "price": 0.0003127,
+        "p5": -4.26,
+        "p1h": -5.52
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 35,
+        "p5": 0.05,
+        "p1h": 2.77
+      }
+    ],
+    "last_alert": 1787114008.598824,
+    "last_alert_score": 75,
+    "last_alert_type": "🚀 BREAKOUT",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "6E8fPgsBvwjGRHcoeLUW8iugy736SKo54VvYLbYMpump": {
+    "name": "CryptoGDEX",
+    "symbol": "CGX",
+    "score": 10,
+    "previous_score": 10.0,
+    "score_delta": 0.0,
+    "v5": 3.55,
+    "tx5": 1,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 10,
+        "p5": 0.0,
+        "p1h": -8.61
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 15,
+        "p5": 0.22,
+        "p1h": -8.87
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 15,
+        "p5": 0.0,
+        "p1h": -9.03
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 10,
+        "quality": 51,
+        "price": 0.000176,
+        "p5": -2.01,
+        "p1h": -15.63
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 10,
+        "p5": -0.77,
+        "p1h": -16.28
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "UMfGniBctBLYcy77zahNSWxrTLsdbphdbzasVJ8pump": {
+    "name": "memecoin.wiki",
+    "symbol": "WIKI",
+    "score": 0,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 20680.1,
+    "tx5": 475,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 0,
+        "p5": -14.26,
+        "p1h": 586.0
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": -17.76,
+        "p1h": 470.0
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 0,
+        "p5": -2.16,
+        "p1h": 482.0
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 0,
+        "quality": 30,
+        "price": 6.002e-05,
+        "p5": -54.88,
+        "p1h": 89.48
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 0,
+        "p5": -18.61,
+        "p1h": 80.84
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "5uoPKjTVSydv4LQVgAnPP6gkPsP1mKSTem5Rqn4pump": {
+    "name": "1000X Memecoin",
+    "symbol": "1000X",
+    "score": 0,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 99748.56,
+    "tx5": 2422,
+    "history": [
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 10,
+        "p5": 22.61,
+        "p1h": 22.61
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 0,
+        "quality": 13,
+        "price": 7.282e-05,
+        "p5": 35.33,
+        "p1h": 133.0
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 0,
+        "p5": -33.98,
+        "p1h": 65.12
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "6hosezP1x4Ng4zgYZtDFx58e6VBnFmnQ4ojyX32wpump": {
+    "name": "CyberTrump",
+    "symbol": "CYBERTRUMP",
+    "score": 55,
+    "previous_score": 70.0,
+    "score_delta": -15.0,
+    "v5": 2994.68,
+    "tx5": 268,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 75,
+        "p5": 8.91,
+        "p1h": 13.03
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 60,
+        "p5": 12.86,
+        "p1h": 36.86
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 30,
+        "p5": -13.12,
+        "p1h": 22.33
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 70,
+        "quality": 84,
+        "price": 0.0003466,
+        "p5": 3.5,
+        "p1h": 38.43
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 55,
+        "p5": -0.45,
+        "p1h": 6.38
+      }
+    ],
+    "last_alert": 1787114348.129413,
+    "last_alert_score": 70,
+    "last_alert_type": "🟢 EARLY",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "Fw9LotRCnRPR5KWGD1GKuU6Y93E4xA8ngDds4S3Gpump": {
+    "name": "ANSEMUG",
+    "symbol": "ANSEMUG",
+    "score": 25,
+    "previous_score": 20.0,
+    "score_delta": 5.0,
+    "v5": 19686.31,
+    "tx5": 548,
+    "history": [
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 20,
+        "quality": 48,
+        "price": 0.0002305,
+        "p5": 11.53,
+        "p1h": 235.0
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 25,
+        "p5": 8.7,
+        "p1h": 245.0
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "9sw5nypHtFYJLpaitjL1sbe9o9tZQNoKJZDy6UKTpump": {
+    "name": "Meme Dream",
+    "symbol": "MEMEDREAM",
+    "score": 0,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 1911.6,
+    "tx5": 109,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 5,
+        "p5": -5.75,
+        "p1h": 28.16
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": 0.83,
+        "p1h": 28.55
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 0,
+        "p5": -3.56,
+        "p1h": 10.15
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 0,
+        "quality": 30,
+        "price": 6.287e-05,
+        "p5": -12.48,
+        "p1h": -26.75
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 0,
+        "p5": 2.93,
+        "p1h": 38.73
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "xwLEcRFvSLhXBwWuW1HL3UEH1VpVPanjA3JvXRGpump": {
+    "name": "elims",
+    "symbol": "ELIMS",
+    "score": 0,
+    "previous_score": 0.0,
+    "score_delta": 0.0,
+    "v5": 32077.46,
+    "tx5": 435,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 0,
+        "p5": 125.0,
+        "p1h": 286.0
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 0,
+        "p5": -31.06,
+        "p1h": 62.88
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 0,
+        "p5": -10.42,
+        "p1h": 76.77
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 0,
+        "quality": 18,
+        "price": 0.0001351,
+        "p5": 69.69,
+        "p1h": 313.0
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 0,
+        "p5": -24.09,
+        "p1h": 193.0
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
   },
   "6ZC5kpZf9kLfxwMc4QVZfGJksTLrZQUTmKJCDaaopump": {
     "name": "MEMESLY",
     "symbol": "MEMESLY",
     "score": 0,
-    "quality": 31,
     "previous_score": 0.0,
     "score_delta": 0.0,
-    "v5": 109.37,
-    "tx5": 6,
+    "v5": 30.79,
+    "tx5": 3,
     "history": [
       {
         "time": "2026-08-19T04:20:52.283870+00:00",
@@ -656,39 +520,158 @@
         "price": 2.393e-05,
         "p5": -0.34,
         "p1h": -5.93
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 0,
+        "p5": 0.32,
+        "p1h": -11.73
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
   },
-  "Fw9LotRCnRPR5KWGD1GKuU6Y93E4xA8ngDds4S3Gpump": {
-    "name": "ANSEMUG",
-    "symbol": "ANSEMUG",
-    "score": 20,
-    "quality": 48,
-    "previous_score": 0.0,
-    "score_delta": 20.0,
-    "v5": 29905.03,
-    "tx5": 598,
+  "F4GpAFr6vrxU3Y887F3XWkXRgybCVjZNk63m72f6pump": {
+    "name": "Trump Coin",
+    "symbol": "TRUMPCOIN",
+    "score": 33,
+    "previous_score": 53.0,
+    "score_delta": -20.0,
+    "v5": 254.01,
+    "tx5": 2,
     "history": [
       {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 13,
+        "p5": 2.22,
+        "p1h": 3.76
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 23,
+        "p5": 0.78,
+        "p1h": 4.55
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 28,
+        "p5": -0.41,
+        "p1h": 4.1
+      },
+      {
         "time": "2026-08-19T04:39:08.129413+00:00",
-        "score": 20,
-        "quality": 48,
-        "price": 0.0002305,
-        "p5": 11.53,
-        "p1h": 235.0
+        "score": 53,
+        "quality": 76,
+        "price": 0.0002988,
+        "p5": 2.23,
+        "p1h": 6.43
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 33,
+        "p5": 0.97,
+        "p1h": 6.43
       }
     ],
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
-    "tracking": null,
-    "completed_stats": [],
-    "timestamp": "2026-08-19T04:39:08.129413+00:00"
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "aUWH9iX3BKKeMHP6aoAf2r2KPjLq8h9Kim2YC48pump": {
+    "name": "Meme Season",
+    "symbol": "MEMESEASON",
+    "score": 50,
+    "previous_score": 45.0,
+    "score_delta": 5.0,
+    "v5": 1317.34,
+    "tx5": 38,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 65,
+        "p5": 3.04,
+        "p1h": 9.37
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 50,
+        "p5": -2.32,
+        "p1h": 7.24
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 45,
+        "p5": 0.61,
+        "p1h": 12.32
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 45,
+        "quality": 64,
+        "price": 0.0007169,
+        "p5": -3.81,
+        "p1h": 7.29
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 50,
+        "p5": -2.0,
+        "p1h": 6.54
+      }
+    ],
+    "last_alert": 1787113252.28387,
+    "last_alert_score": 65,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
+  },
+  "FJBWgfc8wdEeUc2n7BN9EcmEJQUauvvpp9ZXvmF2pump": {
+    "name": "Solug",
+    "symbol": "SOLUG",
+    "score": 25,
+    "previous_score": 50.0,
+    "score_delta": -25.0,
+    "v5": 18015.56,
+    "tx5": 124,
+    "history": [
+      {
+        "time": "2026-08-19T04:20:52.283870+00:00",
+        "score": 25,
+        "p5": 4.75,
+        "p1h": 169.0
+      },
+      {
+        "time": "2026-08-19T04:25:42.328412+00:00",
+        "score": 5,
+        "p5": 1.12,
+        "p1h": 157.0
+      },
+      {
+        "time": "2026-08-19T04:33:28.598824+00:00",
+        "score": 30,
+        "p5": -7.14,
+        "p1h": 7.2
+      },
+      {
+        "time": "2026-08-19T04:39:08.129413+00:00",
+        "score": 50,
+        "quality": 57,
+        "price": 0.0001153,
+        "p5": 7.01,
+        "p1h": 22.86
+      },
+      {
+        "time": "2026-08-19T04:43:05.049312+00:00",
+        "score": 25,
+        "p5": 20.57,
+        "p1h": 34.58
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-19T04:43:05.049312+00:00"
   }
 }
