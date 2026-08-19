@@ -3,6 +3,11 @@ import json
 import requests
 from datetime import datetime, timezone
 
+
+# ============================================================
+# CONFIG
+# ============================================================
+
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ.get("CHAT_ID")
 
@@ -14,38 +19,24 @@ TOP_RESULTS = 10
 MIN_LIQUIDITY = 10_000
 MIN_VOLUME_24H = 10_000
 
-# ==================================================
-# SIGNAL SETTINGS
-# ==================================================
+# Сигналы
+EARLY_SCORE = 65
+STRONG_SCORE = 75
+VERY_STRONG_SCORE = 85
 
-ALERT_SCORE = 65
-
-BREAKOUT_DELTA = 30
+# Breakout
+BREAKOUT_DELTA = 25
 BREAKOUT_MIN_5M = 5
 BREAKOUT_MIN_1H = 0
 BREAKOUT_MIN_LIQUIDITY = 20_000
 
-# EARLY BREAKOUT
-EARLY_BREAKOUT_DELTA = 20
-EARLY_BREAKOUT_MIN_5M = 2
-EARLY_BREAKOUT_MAX_5M = 20
-EARLY_BREAKOUT_MIN_1H = 0
-EARLY_BREAKOUT_MAX_1H = 60
-EARLY_BREAKOUT_MIN_LIQUIDITY = 20_000
-EARLY_BREAKOUT_MIN_BUY_RATIO = 0.58
-
-# Повторные сигналы
-RE_ALERT_SCORE_INCREASE = 15
+# Повторное уведомление
 ALERT_COOLDOWN = 30 * 60
+RE_ALERT_SCORE_INCREASE = 15
 
-# ==================================================
-# RISK SETTINGS
-# ==================================================
-
-RISK_LOW_LIQUIDITY = 15_000
-RISK_EXTREME_TURNOVER = 50
-RISK_EXTREME_5M = 40
-RISK_EXTREME_BUY_RATIO = 0.90
+# Не уведомлять по токену после сильного падения
+DUMP_5M = -12
+DUMP_1H = -20
 
 BLOCKED = {
     "SOL",
@@ -62,9 +53,9 @@ ENDPOINTS = [
 ]
 
 
-# ==================================================
+# ============================================================
 # UTILS
-# ==================================================
+# ============================================================
 
 def num(x):
     try:
@@ -86,7 +77,6 @@ def money(x):
 
 
 def load_json(filename, default):
-
     if not os.path.exists(filename):
         return default
 
@@ -99,7 +89,6 @@ def load_json(filename, default):
 
 
 def save_json(filename, data):
-
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(
             data,
@@ -109,9 +98,9 @@ def save_json(filename, data):
         )
 
 
-# ==================================================
+# ============================================================
 # TOKEN ADDRESSES
-# ==================================================
+# ============================================================
 
 def get_addresses():
 
@@ -156,9 +145,9 @@ def get_addresses():
     return list(addresses)
 
 
-# ==================================================
+# ============================================================
 # BEST PAIR
-# ==================================================
+# ============================================================
 
 def get_pair(address):
 
@@ -179,15 +168,15 @@ def get_pair(address):
 
         data = response.json()
 
-        if not isinstance(data, list):
-            return None
-
-        if not data:
+        if not isinstance(data, list) or not data:
             return None
 
         data.sort(
             key=lambda p: num(
-                p.get("liquidity", {}).get("usd")
+                p.get(
+                    "liquidity",
+                    {}
+                ).get("usd")
             ),
             reverse=True
         )
@@ -205,173 +194,147 @@ def get_pair(address):
         return None
 
 
-# ==================================================
-# CLASSIFICATION
-# ==================================================
+# ============================================================
+# RISK
+# ============================================================
 
-def classify(
+def calculate_risk(
     p5,
     p1h,
     liquidity,
-    score
+    v24,
+    buys,
+    sells,
+    turnover
 ):
 
-    if p1h >= 150:
-        return "🔴 OVEREXTENDED"
+    risk = 0
+    reasons = []
 
-    if p1h >= 100 and p5 >= 5:
-        return "🔴 OVEREXTENDED"
+    # Очень маленькая ликвидность
+    if liquidity < 10_000:
 
-    if (
-        score >= 85
-        and p5 > 0
-        and p1h > 0
-        and p1h < 100
-        and liquidity >= 20_000
-    ):
-        return "🚨 VERY STRONG"
+        risk += 35
 
-    if (
-        score >= 75
-        and p5 > 0
-        and p1h > 0
-        and p1h < 100
-        and liquidity >= 20_000
-    ):
-        return "🔥 STRONG"
-
-    if (
-        score >= 65
-        and p5 > 0
-        and p1h > 0
-        and p1h < 100
-        and liquidity >= 20_000
-    ):
-        return "🟢 EARLY"
-
-    if (
-        score >= 40
-        and p5 > 0
-        and p1h > 0
-    ):
-        return "🟡 WATCH"
-
-    return "⚪ LOW MOMENTUM"
-
-
-# ==================================================
-# RISK ANALYSIS
-# ==================================================
-
-def risk_analysis(item):
-
-    risks = []
-    risk_score = 0
-
-    liquidity = item["liquidity"]
-    p5 = item["p5"]
-    buy_ratio = item["buy_ratio"]
-    turnover = item["turnover"]
-
-    # ------------------------------------------
-    # LOW LIQUIDITY
-    # ------------------------------------------
-
-    if liquidity < RISK_LOW_LIQUIDITY:
-
-        risk_score += 30
-
-        risks.append(
+        reasons.append(
             "очень низкая ликвидность"
         )
 
     elif liquidity < 20_000:
 
-        risk_score += 15
+        risk += 20
 
-        risks.append(
+        reasons.append(
             "низкая ликвидность"
         )
 
-    # ------------------------------------------
-    # EXTREME TURNOVER
-    # ------------------------------------------
+    elif liquidity < 30_000:
 
-    if turnover > RISK_EXTREME_TURNOVER:
+        risk += 10
 
-        risk_score += 30
-
-        risks.append(
-            "аномальный оборот относительно ликвидности"
+        reasons.append(
+            "небольшая ликвидность"
         )
 
-    # ------------------------------------------
-    # EXTREME 5M
-    # ------------------------------------------
+    # Слишком сильный рост
+    if p1h >= 200:
 
-    if p5 >= RISK_EXTREME_5M:
+        risk += 30
 
-        risk_score += 25
-
-        risks.append(
-            "экстремальный рост 5м"
+        reasons.append(
+            "экстремальный рост 1ч"
         )
 
-    # ------------------------------------------
-    # BUY IMBALANCE
-    # ------------------------------------------
+    elif p1h >= 120:
 
-    if (
-        item["buys5"] + item["sells5"] >= 20
-        and buy_ratio >= RISK_EXTREME_BUY_RATIO
-    ):
+        risk += 20
 
-        risk_score += 15
-
-        risks.append(
-            "аномально сильное преимущество покупок"
+        reasons.append(
+            "сильная перегретость"
         )
 
-    # ------------------------------------------
-    # OVEREXTENDED
-    # ------------------------------------------
+    elif p1h >= 80:
 
-    if item["p1h"] >= 150:
+        risk += 10
 
-        risk_score += 40
-
-        risks.append(
-            "токен сильно перегрет"
+        reasons.append(
+            "сильный рост 1ч"
         )
 
-    elif item["p1h"] >= 100:
+    # Резкий памп за 5 минут
+    if p5 >= 40:
 
-        risk_score += 25
+        risk += 25
 
-        risks.append(
-            "очень сильный рост за 1ч"
+        reasons.append(
+            "резкий памп 5м"
         )
 
-    risk_score = min(
-        100,
-        risk_score
-    )
+    elif p5 >= 25:
 
-    if risk_score >= 60:
-        level = "🔴 HIGH RISK"
+        risk += 15
 
-    elif risk_score >= 30:
-        level = "🟡 MEDIUM RISK"
+        reasons.append(
+            "сильный памп 5м"
+        )
 
-    else:
-        level = "🟢 LOW RISK"
+    # Сильное падение
+    if p5 <= DUMP_5M:
 
-    return level, risk_score, risks
+        risk += 20
+
+        reasons.append(
+            "резкое падение 5м"
+        )
+
+    if p1h <= DUMP_1H:
+
+        risk += 20
+
+        reasons.append(
+            "негативный тренд"
+        )
+
+    # Аномальный оборот
+    if turnover >= 50:
+
+        risk += 15
+
+        reasons.append(
+            "аномальный оборот"
+        )
+
+    # Дисбаланс сделок
+    total = buys + sells
+
+    if total >= 30:
+
+        ratio = buys / total
+
+        if ratio < 0.30:
+
+            risk += 20
+
+            reasons.append(
+                "сильное давление продавцов"
+            )
+
+        elif ratio > 0.90:
+
+            risk += 10
+
+            reasons.append(
+                "аномальный перевес покупок"
+            )
+
+    risk = min(100, risk)
+
+    return risk, reasons
 
 
-# ==================================================
+# ============================================================
 # ANALYZE
-# ==================================================
+# ============================================================
 
 def analyse(pair, old):
 
@@ -429,102 +392,172 @@ def analyse(pair, old):
     score = 0
     reasons = []
 
-    # ==================================================
-    # 5M
-    # ==================================================
+    # ========================================================
+    # 5M MOMENTUM
+    # ========================================================
 
-    if 3 <= p5 <= 10:
-
-        score += 20
-        reasons.append("умеренный рост 5м")
-
-    elif 10 < p5 <= 20:
+    if 2 <= p5 < 5:
 
         score += 15
-        reasons.append("сильный импульс 5м")
 
-    elif 20 < p5 <= 30:
+        reasons.append(
+            "начинается движение"
+        )
 
-        score += 5
-        reasons.append("резкий рост 5м")
+    elif 5 <= p5 < 10:
 
-    elif p5 > 30:
+        score += 22
+
+        reasons.append(
+            "хороший импульс 5м"
+        )
+
+    elif 10 <= p5 < 20:
+
+        score += 18
+
+        reasons.append(
+            "сильный импульс 5м"
+        )
+
+    elif 20 <= p5 < 30:
+
+        score += 8
+
+        reasons.append(
+            "сильный памп 5м"
+        )
+
+    elif p5 >= 30:
 
         score -= 15
-        reasons.append("слишком резкий памп")
 
-    elif p5 < -10:
+        reasons.append(
+            "слишком резкий памп"
+        )
 
-        score -= 25
-        reasons.append("падение 5м")
+    elif p5 <= -15:
 
-    # ==================================================
-    # 1H
-    # ==================================================
+        score -= 30
 
-    if 5 <= p1h <= 30:
+        reasons.append(
+            "сильное падение 5м"
+        )
+
+    elif p5 < -5:
+
+        score -= 15
+
+        reasons.append(
+            "падение 5м"
+        )
+
+    # ========================================================
+    # 1H TREND
+    # ========================================================
+
+    if 3 <= p1h < 15:
 
         score += 20
-        reasons.append("здоровый тренд 1ч")
 
-    elif 30 < p1h <= 60:
+        reasons.append(
+            "ранний тренд 1ч"
+        )
 
-        score += 10
-        reasons.append("сильный тренд 1ч")
+    elif 15 <= p1h < 30:
 
-    elif 60 < p1h < 100:
+        score += 25
 
-        score += 3
-        reasons.append("сильный рост 1ч")
+        reasons.append(
+            "здоровый тренд 1ч"
+        )
+
+    elif 30 <= p1h < 60:
+
+        score += 15
+
+        reasons.append(
+            "сильный тренд 1ч"
+        )
+
+    elif 60 <= p1h < 100:
+
+        score += 5
+
+        reasons.append(
+            "сильный рост 1ч"
+        )
 
     elif p1h >= 100:
 
         score -= 25
-        reasons.append("токен уже сильно вырос")
 
-    elif p1h < -30:
+        reasons.append(
+            "токен уже сильно вырос"
+        )
 
-        score -= 20
-        reasons.append("негативный тренд 1ч")
+    elif p1h <= -30:
 
-    # ==================================================
+        score -= 25
+
+        reasons.append(
+            "негативный тренд 1ч"
+        )
+
+    # ========================================================
     # LIQUIDITY
-    # ==================================================
+    # ========================================================
 
     if liquidity >= 100_000:
 
         score += 15
-        reasons.append("высокая ликвидность")
+
+        reasons.append(
+            "высокая ликвидность"
+        )
 
     elif liquidity >= 50_000:
 
         score += 13
-        reasons.append("хорошая ликвидность")
+
+        reasons.append(
+            "хорошая ликвидность"
+        )
 
     elif liquidity >= 30_000:
 
         score += 10
-        reasons.append("нормальная ликвидность")
+
+        reasons.append(
+            "нормальная ликвидность"
+        )
 
     elif liquidity >= 20_000:
 
         score += 5
-        reasons.append("приемлемая ликвидность")
+
+        reasons.append(
+            "приемлемая ликвидность"
+        )
 
     else:
 
         score -= 20
-        reasons.append("низкая ликвидность")
 
-    # ==================================================
-    # BUY / SELL
-    # ==================================================
+        reasons.append(
+            "низкая ликвидность"
+        )
+
+    # ========================================================
+    # BUY / SELL PRESSURE
+    # ========================================================
 
     if total_tx >= 10:
 
         if buy_ratio >= 0.75:
 
             score += 20
+
             reasons.append(
                 "сильное давление покупателей"
             )
@@ -532,6 +565,7 @@ def analyse(pair, old):
         elif buy_ratio >= 0.65:
 
             score += 15
+
             reasons.append(
                 "покупатели доминируют"
             )
@@ -539,6 +573,7 @@ def analyse(pair, old):
         elif buy_ratio >= 0.55:
 
             score += 7
+
             reasons.append(
                 "покупателей немного больше"
             )
@@ -546,13 +581,14 @@ def analyse(pair, old):
         elif buy_ratio <= 0.40:
 
             score -= 15
+
             reasons.append(
                 "продавцы доминируют"
             )
 
-    # ==================================================
+    # ========================================================
     # VOLUME ACCELERATION
-    # ==================================================
+    # ========================================================
 
     old_v5 = num(
         old.get("v5")
@@ -567,6 +603,7 @@ def analyse(pair, old):
         if volume_acceleration >= 3:
 
             score += 20
+
             reasons.append(
                 f"объём ускорился {volume_acceleration:.1f}x"
             )
@@ -574,6 +611,7 @@ def analyse(pair, old):
         elif volume_acceleration >= 2:
 
             score += 15
+
             reasons.append(
                 f"объём ускоряется {volume_acceleration:.1f}x"
             )
@@ -581,6 +619,7 @@ def analyse(pair, old):
         elif volume_acceleration >= 1.5:
 
             score += 10
+
             reasons.append(
                 f"объём растёт {volume_acceleration:.1f}x"
             )
@@ -588,13 +627,14 @@ def analyse(pair, old):
         elif volume_acceleration >= 1.2:
 
             score += 5
+
             reasons.append(
-                f"объём немного растёт {volume_acceleration:.1f}x"
+                f"объём растёт {volume_acceleration:.1f}x"
             )
 
-    # ==================================================
-    # TRANSACTIONS
-    # ==================================================
+    # ========================================================
+    # TX ACCELERATION
+    # ========================================================
 
     old_tx = int(
         old.get("tx5", 0) or 0
@@ -609,59 +649,109 @@ def analyse(pair, old):
         if tx_acceleration >= 2:
 
             score += 10
+
             reasons.append(
-                "число сделок резко растёт"
+                "сделок стало значительно больше"
             )
 
         elif tx_acceleration >= 1.5:
 
             score += 5
+
             reasons.append(
-                "число сделок растёт"
+                "количество сделок растёт"
             )
 
-    # ==================================================
+    # ========================================================
     # TURNOVER
-    # ==================================================
+    # ========================================================
 
     turnover = 0
 
     if liquidity > 0:
         turnover = v24 / liquidity
 
-    if turnover >= 2:
+    if 2 <= turnover <= 20:
 
         score += 5
+
         reasons.append(
             "активный оборот"
         )
 
-    if turnover > 50:
+    elif turnover > 50:
 
         score -= 10
+
         reasons.append(
             "аномальный оборот"
         )
 
+    # ========================================================
+    # SCORE
+    # ========================================================
+
     score = max(
         0,
-        min(
-            100,
-            score
-        )
+        min(100, score)
     )
 
-    stage = classify(
+    # ========================================================
+    # QUALITY
+    # ========================================================
+
+    quality = 0
+
+    if liquidity >= 100_000:
+        quality += 30
+    elif liquidity >= 50_000:
+        quality += 25
+    elif liquidity >= 30_000:
+        quality += 20
+    elif liquidity >= 20_000:
+        quality += 12
+
+    if v24 >= 1_000_000:
+        quality += 25
+    elif v24 >= 500_000:
+        quality += 20
+    elif v24 >= 100_000:
+        quality += 15
+    elif v24 >= 50_000:
+        quality += 10
+
+    if total_tx >= 1000:
+        quality += 20
+    elif total_tx >= 500:
+        quality += 15
+    elif total_tx >= 100:
+        quality += 10
+
+    if 0.40 <= buy_ratio <= 0.80:
+        quality += 15
+
+    if 0 < p1h < 100:
+        quality += 10
+
+    quality = min(100, quality)
+
+    # ========================================================
+    # RISK
+    # ========================================================
+
+    risk, risk_reasons = calculate_risk(
         p5,
         p1h,
         liquidity,
-        score
+        v24,
+        buys5,
+        sells5,
+        turnover
     )
 
-    item = {
-
+    return {
         "score": score,
-        "stage": stage,
+        "quality": quality,
 
         "p5": p5,
         "p1h": p1h,
@@ -683,30 +773,112 @@ def analyse(pair, old):
         "tx_acceleration":
             tx_acceleration,
 
-        "turnover": turnover,
+        "turnover":
+            turnover,
 
-        "reasons": reasons,
+        "reasons":
+            reasons,
+
+        "risk":
+            risk,
+
+        "risk_reasons":
+            risk_reasons,
     }
 
-    risk_level, risk_score, risk_reasons = risk_analysis(
-        item
-    )
 
-    item["risk_level"] = risk_level
-    item["risk_score"] = risk_score
-    item["risk_reasons"] = risk_reasons
+# ============================================================
+# CLASSIFICATION
+# ============================================================
 
-    return item
+def classify(item):
+
+    p5 = item["p5"]
+    p1h = item["p1h"]
+    score = item["score"]
+    quality = item["quality"]
+    risk = item["risk"]
+    liquidity = item["liquidity"]
+
+    # DUMPING
+    if (
+        p5 <= -12
+        or (
+            p1h <= -20
+            and p5 < 0
+        )
+    ):
+        return "🔻 DUMPING"
+
+    # OVEREXTENDED
+    if (
+        p1h >= 200
+        or (
+            p1h >= 120
+            and p5 >= 5
+        )
+    ):
+        return "🔴 OVEREXTENDED"
+
+    # VERY STRONG
+    if (
+        score >= 85
+        and quality >= 50
+        and risk < 50
+        and p5 > 0
+        and p1h > 0
+        and liquidity >= 20_000
+    ):
+        return "🚨 VERY STRONG"
+
+    # STRONG
+    if (
+        score >= 75
+        and quality >= 45
+        and risk < 50
+        and p5 > 0
+        and p1h > 0
+        and liquidity >= 20_000
+    ):
+        return "🔥 STRONG"
+
+    # EARLY
+    if (
+        score >= 65
+        and quality >= 35
+        and risk < 50
+        and p5 > 0
+        and p1h > 0
+        and p1h < 60
+        and liquidity >= 20_000
+    ):
+        return "🟢 EARLY"
+
+    # WATCH
+    if (
+        score >= 40
+        and p5 > 0
+        and p1h > 0
+        and risk < 70
+    ):
+        return "🟡 WATCH"
+
+    return "⚪ LOW MOMENTUM"
 
 
-# ==================================================
-# SIGNAL
-# ==================================================
+# ============================================================
+# SIGNAL TYPE
+# ============================================================
 
 def get_signal_type(item):
 
-    # Сначала проверяем перегрев
-    if item["stage"] == "🔴 OVEREXTENDED":
+    stage = item["stage"]
+
+    if stage in (
+        "🔻 DUMPING",
+        "🔴 OVEREXTENDED",
+        "⚪ LOW MOMENTUM"
+    ):
         return None
 
     score = item["score"]
@@ -714,93 +886,25 @@ def get_signal_type(item):
 
     p5 = item["p5"]
     p1h = item["p1h"]
+
     liquidity = item["liquidity"]
+    risk = item["risk"]
 
-    buy_ratio = item["buy_ratio"]
-    volume_acceleration = item["volume_acceleration"]
-    tx_acceleration = item["tx_acceleration"]
-
-    # ==================================================
-    # HIGH RISK НЕ ПРОПУСКАЕМ КАК ОБЫЧНЫЙ СИГНАЛ
-    # ==================================================
-
-    if item["risk_level"] == "🔴 HIGH RISK":
-        return None
-
-    # ==================================================
-    # EARLY BREAKOUT
-    # ==================================================
-
-    early_breakout = (
-
-        delta >= EARLY_BREAKOUT_DELTA
-
-        and
-
-        EARLY_BREAKOUT_MIN_5M
-        <= p5
-        <= EARLY_BREAKOUT_MAX_5M
-
-        and
-
-        EARLY_BREAKOUT_MIN_1H
-        <= p1h
-        <= EARLY_BREAKOUT_MAX_1H
-
-        and
-
-        liquidity >= EARLY_BREAKOUT_MIN_LIQUIDITY
-
-        and
-
-        buy_ratio >= EARLY_BREAKOUT_MIN_BUY_RATIO
-
-        and
-
-        (
-            volume_acceleration >= 1.2
-            or
-            tx_acceleration >= 1.2
-        )
-
-        and
-
-        score >= 50
-    )
-
-    if early_breakout:
-        return "🟣 EARLY BREAKOUT"
-
-    # ==================================================
-    # NORMAL BREAKOUT
-    # ==================================================
-
+    # BREAKOUT
     if (
         delta >= BREAKOUT_DELTA
         and p5 >= BREAKOUT_MIN_5M
         and p1h > BREAKOUT_MIN_1H
         and liquidity >= BREAKOUT_MIN_LIQUIDITY
-        and p1h < 150
+        and risk < 60
     ):
         return "🚀 BREAKOUT"
-
-    # ==================================================
-    # VERY STRONG
-    # ==================================================
 
     if score >= 85:
         return "🚨 VERY STRONG"
 
-    # ==================================================
-    # STRONG
-    # ==================================================
-
     if score >= 75:
         return "🔥 STRONG"
-
-    # ==================================================
-    # EARLY
-    # ==================================================
 
     if score >= 65:
         return "🟢 EARLY"
@@ -808,9 +912,9 @@ def get_signal_type(item):
     return None
 
 
-# ==================================================
+# ============================================================
 # SCAN
-# ==================================================
+# ============================================================
 
 def scan():
 
@@ -837,10 +941,7 @@ def scan():
     checked = 0
     filtered = 0
 
-    now = datetime.now(
-        timezone.utc
-    )
-
+    now = datetime.now(timezone.utc)
     now_iso = now.isoformat()
     now_ts = now.timestamp()
 
@@ -869,7 +970,6 @@ def scan():
         ).upper()
 
         if symbol in BLOCKED:
-
             filtered += 1
             continue
 
@@ -888,12 +988,10 @@ def scan():
         )
 
         if liquidity < MIN_LIQUIDITY:
-
             filtered += 1
             continue
 
         if volume < MIN_VOLUME_24H:
-
             filtered += 1
             continue
 
@@ -924,39 +1022,34 @@ def scan():
         result["address"] = address
         result["score_delta"] = score_delta
 
+        result["stage"] = classify(
+            result
+        )
+
         history = old.get(
             "history",
             []
         )
 
         history.append({
-
-            "time":
-                now_iso,
-
-            "score":
-                result["score"],
-
-            "p5":
-                result["p5"],
-
-            "p1h":
-                result["p1h"],
-
+            "time": now_iso,
+            "score": result["score"],
+            "quality": result["quality"],
+            "risk": result["risk"],
+            "p5": result["p5"],
+            "p1h": result["p1h"],
         })
 
-        history = history[-30:]
+        history = history[-40:]
 
         new_state[address] = {
 
-            "name":
-                name,
+            "name": name,
+            "symbol": symbol,
 
-            "symbol":
-                symbol,
-
-            "score":
-                result["score"],
+            "score": result["score"],
+            "quality": result["quality"],
+            "risk": result["risk"],
 
             "previous_score":
                 previous_score,
@@ -998,36 +1091,34 @@ def scan():
 
         results.append(result)
 
-    # ==================================================
+    # ========================================================
     # SORT
-    # ==================================================
+    # ========================================================
 
     results.sort(
         key=lambda x: (
             x["score"],
+            x["quality"],
             x["score_delta"]
         ),
         reverse=True
     )
 
     print(
-        f"Pairs checked: "
-        f"{checked}"
+        f"Pairs checked: {checked}"
     )
 
     print(
-        f"Filtered: "
-        f"{filtered}"
+        f"Filtered: {filtered}"
     )
 
     print(
-        f"Candidates: "
-        f"{len(results)}"
+        f"Candidates: {len(results)}"
     )
 
-    # ==================================================
+    # ========================================================
     # TOP
-    # ==================================================
+    # ========================================================
 
     print("\nTOP CANDIDATES:")
 
@@ -1035,18 +1126,19 @@ def scan():
 
         print(
             f"{item['symbol']} | "
-            f"{item['score']}/100 | "
+            f"Q {item['quality']}/100 | "
+            f"M {item['score']}/100 | "
             f"Δ {item['score_delta']:+.0f} | "
             f"{item['stage']} | "
             f"5m {item['p5']:+.1f}% | "
             f"1h {item['p1h']:+.1f}% | "
             f"liq {money(item['liquidity'])} | "
-            f"risk {item['risk_score']}/100"
+            f"risk {item['risk']}/100"
         )
 
-    # ==================================================
+    # ========================================================
     # SIGNALS
-    # ==================================================
+    # ========================================================
 
     signal_items = []
 
@@ -1084,34 +1176,27 @@ def scan():
         )
 
         cooldown_passed = (
-
             last_alert == 0
-
             or
-
             now_ts - last_alert
             >= ALERT_COOLDOWN
         )
 
         score_jump = (
             item["score"]
-            >=
-            last_alert_score
+            >= last_alert_score
             + RE_ALERT_SCORE_INCREASE
         )
 
         new_signal_type = (
-            signal_type != last_alert_type
+            signal_type
+            != last_alert_type
         )
 
         should_alert = (
-
             last_alert == 0
-
             or cooldown_passed
-
             or score_jump
-
             or new_signal_type
         )
 
@@ -1136,11 +1221,13 @@ def scan():
             signal_type
         )
 
-        item["signal_type"] = signal_type
+        item["signal_type"] = (
+            signal_type
+        )
 
-    # ==================================================
+    # ========================================================
     # SAVE
-    # ==================================================
+    # ========================================================
 
     save_json(
         STATE_FILE,
@@ -1163,6 +1250,12 @@ def scan():
             "score":
                 item["score"],
 
+            "quality":
+                item["quality"],
+
+            "risk":
+                item["risk"],
+
             "score_delta":
                 item["score_delta"],
 
@@ -1174,10 +1267,6 @@ def scan():
 
             "p1h":
                 item["p1h"],
-
-            "risk":
-                item["risk_score"],
-
         })
 
     signals = signals[-1000:]
@@ -1195,9 +1284,9 @@ def scan():
     return signal_items
 
 
-# ==================================================
+# ============================================================
 # TELEGRAM FORMAT
-# ==================================================
+# ============================================================
 
 def format_signal(item):
 
@@ -1205,9 +1294,12 @@ def format_signal(item):
         item["reasons"][:6]
     )
 
-    risk_reasons = ", ".join(
-        item["risk_reasons"][:4]
-    )
+    risk_text = "🟢 LOW"
+
+    if item["risk"] >= 70:
+        risk_text = "🔴 HIGH"
+    elif item["risk"] >= 40:
+        risk_text = "🟡 MEDIUM"
 
     address = item["address"]
 
@@ -1216,14 +1308,16 @@ def format_signal(item):
         + address
     )
 
-    text = (
-
+    return (
         f"{item['signal_type']}\n\n"
 
         f"🚀 {item['name']} "
-        f"({item['symbol']})\n"
+        f"({item['symbol']})\n\n"
 
-        f"⭐ Momentum: "
+        f"⭐ Quality: "
+        f"{item['quality']}/100\n"
+
+        f"⚡ Momentum: "
         f"{item['score']}/100\n"
 
         f"📊 Score change: "
@@ -1235,17 +1329,17 @@ def format_signal(item):
         f"📈 1h: "
         f"{item['p1h']:+.1f}%\n\n"
 
-        f"⚡ Volume 5m: "
-        f"{money(item['v5'])}\n"
+        f"💧 Liquidity: "
+        f"{money(item['liquidity'])}\n"
 
-        f"📈 Volume acceleration: "
+        f"💰 Volume 24h: "
+        f"{money(item['v24'])}\n"
+
+        f"⚡ Volume acceleration: "
         f"{item['volume_acceleration']:.1f}x\n"
 
         f"🔄 TX acceleration: "
         f"{item['tx_acceleration']:.1f}x\n\n"
-
-        f"💧 Liquidity: "
-        f"{money(item['liquidity'])}\n\n"
 
         f"🟢 Buys 5m: "
         f"{item['buys5']}\n"
@@ -1253,32 +1347,25 @@ def format_signal(item):
         f"🔴 Sells 5m: "
         f"{item['sells5']}\n\n"
 
-        f"🛡 Risk: "
-        f"{item['risk_level']} "
-        f"{item['risk_score']}/100\n"
-    )
-
-    if risk_reasons:
-
-        text += (
-            f"⚠️ {risk_reasons}\n\n"
-        )
-
-    text += (
+        f"⚠️ Risk: "
+        f"{item['risk']}/100 "
+        f"({risk_text})\n\n"
 
         f"🧠 {reasons}\n\n"
 
-        f"🔎 [DexScreener]({dex_url})\n\n"
+        f"🔎 [DexScreener]"
+        f"({dex_url})\n\n"
 
-        f"📋 `{address}`"
+        f"📋 `{address}`\n\n"
+
+        f"⚠️ Это алгоритмический сигнал, "
+        f"а не гарантия роста."
     )
 
-    return text
 
-
-# ==================================================
+# ============================================================
 # TELEGRAM
-# ==================================================
+# ============================================================
 
 def send_telegram(text):
 
@@ -1334,9 +1421,9 @@ def send_telegram(text):
         )
 
 
-# ==================================================
+# ============================================================
 # MAIN
-# ==================================================
+# ============================================================
 
 def main():
 
