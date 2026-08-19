@@ -1,227 +1,458 @@
 import os
 import requests
+import time
+
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
+
 TOKEN = os.environ["BOT_TOKEN"]
 
-DEX_API = "https://api.dexscreener.com/latest/dex/search"
+PROFILES_API = "https://api.dexscreener.com/token-profiles/latest/v1"
+TOKEN_PAIRS_API = "https://api.dexscreener.com/token-pairs/v1/solana/{}"
 
 
-def safe_float(value):
+def num(value):
     try:
         return float(value or 0)
     except:
         return 0.0
 
 
-def calculate_score(pair):
+def money(value):
+    value = num(value)
+
+    if value >= 1_000_000:
+        return f"${value / 1_000_000:.2f}M"
+
+    if value >= 1_000:
+        return f"${value / 1_000:.1f}K"
+
+    return f"${value:.0f}"
+
+
+def percent(value):
+    value = num(value)
+    return f"{value:+.1f}%"
+
+
+def score_pair(pair):
     score = 0
     reasons = []
 
-    price5m = safe_float(pair.get("priceChange", {}).get("m5"))
-    price1h = safe_float(pair.get("priceChange", {}).get("h1"))
+    change = pair.get("priceChange", {})
+    volume = pair.get("volume", {})
+    liquidity_data = pair.get("liquidity", {})
+    txns = pair.get("txns", {})
 
-    volume = safe_float(pair.get("volume", {}).get("h24"))
-    liquidity = safe_float(pair.get("liquidity", {}).get("usd"))
+    p5 = num(change.get("m5"))
+    p1h = num(change.get("h1"))
 
-    txns = pair.get("txns", {}).get("h1", {})
-    buys = int(txns.get("buys", 0) or 0)
-    sells = int(txns.get("sells", 0) or 0)
+    v5 = num(volume.get("m5"))
+    v1h = num(volume.get("h1"))
+    v24 = num(volume.get("h24"))
 
-    # Цена
-    if price5m >= 10:
-        score += 20
-        reasons.append("сильный рост за 5м")
-    elif price5m >= 5:
-        score += 12
-        reasons.append("рост за 5м")
+    liquidity = num(liquidity_data.get("usd"))
 
-    if price1h >= 20:
-        score += 20
+    tx1h = txns.get("h1", {})
+    buys = int(tx1h.get("buys", 0) or 0)
+    sells = int(tx1h.get("sells", 0) or 0)
+
+    total_tx = buys + sells
+
+    # ------------------------------------------------
+    # 1. PRICE MOMENTUM
+    # ------------------------------------------------
+
+    if p5 >= 20:
+        score += 25
+        reasons.append("🔥 сильный импульс 5м")
+
+    elif p5 >= 10:
+        score += 18
+        reasons.append("рост 5м")
+
+    elif p5 >= 5:
+        score += 10
+        reasons.append("положительная динамика")
+
+    # ------------------------------------------------
+    # 2. 1 HOUR MOMENTUM
+    # ------------------------------------------------
+
+    if p1h >= 50:
+        score += 15
         reasons.append("сильный рост за 1ч")
-    elif price1h >= 10:
-        score += 12
+
+    elif p1h >= 20:
+        score += 10
         reasons.append("рост за 1ч")
 
-    # Ликвидность
-    if liquidity >= 100_000:
+    # ------------------------------------------------
+    # 3. VOLUME
+    # ------------------------------------------------
+
+    if v1h >= 250_000:
         score += 15
-        reasons.append("хорошая ликвидность")
-    elif liquidity >= 25_000:
-        score += 8
-        reasons.append("приемлемая ликвидность")
-
-    # Объём
-    if volume >= 1_000_000:
-        score += 20
-        reasons.append("очень большой объём")
-    elif volume >= 250_000:
-        score += 12
         reasons.append("высокий объём")
-    elif volume >= 50_000:
-        score += 6
-        reasons.append("есть заметный объём")
 
-    # Покупки / продажи
-    total = buys + sells
+    elif v1h >= 50_000:
+        score += 8
+        reasons.append("заметный объём")
 
-    if total > 0:
-        buy_ratio = buys / total
+    # ------------------------------------------------
+    # 4. VOLUME / LIQUIDITY
+    # ------------------------------------------------
+
+    if liquidity > 0:
+
+        ratio = v24 / liquidity
+
+        if ratio >= 5:
+            score += 15
+            reasons.append("очень высокий оборот")
+
+        elif ratio >= 2:
+            score += 10
+            reasons.append("высокий оборот")
+
+        elif ratio >= 1:
+            score += 5
+            reasons.append("активная торговля")
+
+    # ------------------------------------------------
+    # 5. BUY / SELL PRESSURE
+    # ------------------------------------------------
+
+    if total_tx > 0:
+
+        buy_ratio = buys / total_tx
 
         if buy_ratio >= 0.70:
-            score += 20
-            reasons.append("покупок значительно больше продаж")
+            score += 15
+            reasons.append("покупатели доминируют")
+
         elif buy_ratio >= 0.60:
-            score += 10
+            score += 8
             reasons.append("покупок больше продаж")
 
-    # Штраф за очень маленькую ликвидность
-    if liquidity < 10_000:
-        score -= 20
-        reasons.append("⚠️ очень низкая ликвидность")
+        elif buy_ratio <= 0.35:
+            score -= 10
+            reasons.append("много продаж")
 
-    # Ограничиваем score
-    score = max(0, min(score, 100))
+    # ------------------------------------------------
+    # 6. LIQUIDITY
+    # ------------------------------------------------
+
+    if liquidity >= 100_000:
+        score += 10
+        reasons.append("хорошая ликвидность")
+
+    elif liquidity >= 25_000:
+        score += 6
+        reasons.append("нормальная ликвидность")
+
+    elif liquidity < 10_000:
+        score -= 20
+        reasons.append("⚠️ низкая ликвидность")
+
+    # ------------------------------------------------
+    # 7. TOO FEW TRANSACTIONS
+    # ------------------------------------------------
+
+    if total_tx < 10:
+        score -= 15
+        reasons.append("мало сделок")
+
+    # ------------------------------------------------
+    # LIMIT
+    # ------------------------------------------------
+
+    score = max(0, min(100, score))
 
     return score, reasons
 
 
-def format_money(value):
-    if value >= 1_000_000:
-        return f"${value / 1_000_000:.2f}M"
-    if value >= 1_000:
-        return f"${value / 1_000:.1f}K"
-    return f"${value:.0f}"
+def analyse_pair(pair):
+
+    base = pair.get("baseToken", {})
+
+    symbol = base.get("symbol", "?")
+    name = base.get("name", "Unknown")
+    address = base.get("address", "")
+
+    price = num(pair.get("priceUsd"))
+
+    change = pair.get("priceChange", {})
+    p5 = num(change.get("m5"))
+    p1h = num(change.get("h1"))
+
+    volume = pair.get("volume", {})
+
+    v5 = num(volume.get("m5"))
+    v1h = num(volume.get("h1"))
+    v24 = num(volume.get("h24"))
+
+    liquidity = num(
+        pair.get("liquidity", {}).get("usd")
+    )
+
+    txns = pair.get("txns", {}).get("h1", {})
+
+    buys = int(txns.get("buys", 0) or 0)
+    sells = int(txns.get("sells", 0) or 0)
+
+    score, reasons = score_pair(pair)
+
+    return {
+        "name": name,
+        "symbol": symbol,
+        "address": address,
+        "price": price,
+        "p5": p5,
+        "p1h": p1h,
+        "v5": v5,
+        "v1h": v1h,
+        "v24": v24,
+        "liquidity": liquidity,
+        "buys": buys,
+        "sells": sells,
+        "score": score,
+        "reasons": reasons,
+        "url": pair.get("url", "")
+    }
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     await update.message.reply_text(
-        "🤖 Token Scanner v2\n\n"
-        "/scan — поиск интересных токенов\n"
+        "🤖 Token Scanner v3\n\n"
+        "🔥 Новый сканер Solana-токенов\n\n"
+        "/scan — найти самые интересные движения\n"
         "/help — помощь"
     )
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     await update.message.reply_text(
         "📋 Команды:\n\n"
-        "/scan — сканирование Solana\n"
+        "/scan — сканирование новых токенов\n"
         "/help — помощь"
     )
 
 
 async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     message = await update.message.reply_text(
-        "🔎 Сканирую Solana...\n"
-        "Анализирую цену, объём, ликвидность и сделки."
+        "🔎 Сканирую Solana...\n\n"
+        "1️⃣ Получаю новые токены\n"
+        "2️⃣ Проверяю торговые пары\n"
+        "3️⃣ Анализирую объём\n"
+        "4️⃣ Считаю давление покупателей\n"
+        "5️⃣ Формирую рейтинг"
     )
 
     try:
+
+        # ============================================
+        # GET LATEST TOKEN PROFILES
+        # ============================================
+
         response = requests.get(
-            DEX_API,
-            params={"q": "SOL"},
+            PROFILES_API,
             timeout=15
         )
 
         if response.status_code != 200:
+
             await message.edit_text(
-                f"❌ DexScreener API вернул {response.status_code}"
+                f"❌ Profiles API: {response.status_code}"
             )
+
             return
 
-        data = response.json()
-        pairs = data.get("pairs", [])
+        profiles = response.json()
 
-        # Только Solana
-        pairs = [
-            p for p in pairs
-            if p.get("chainId") == "solana"
+        solana_profiles = [
+            x for x in profiles
+            if x.get("chainId") == "solana"
+            and x.get("tokenAddress")
         ]
 
-        results = []
+        # ограничиваем количество API запросов
+        solana_profiles = solana_profiles[:30]
 
-        for pair in pairs:
-            liquidity = safe_float(
-                pair.get("liquidity", {}).get("usd")
-            )
+        analysed = []
 
-            volume = safe_float(
-                pair.get("volume", {}).get("h24")
-            )
+        # ============================================
+        # GET PAIRS
+        # ============================================
 
-            # Отбрасываем совсем мусорные пары
-            if liquidity < 5_000 or volume < 5_000:
-                continue
+        for profile in solana_profiles:
 
-            score, reasons = calculate_score(pair)
+            address = profile["tokenAddress"]
 
-            results.append({
-                "pair": pair,
-                "score": score,
-                "reasons": reasons
-            })
+            try:
 
-        # Сначала лучшие
-        results.sort(
+                r = requests.get(
+                    TOKEN_PAIRS_API.format(address),
+                    timeout=10
+                )
+
+                if r.status_code != 200:
+                    continue
+
+                data = r.json()
+
+                pairs = data if isinstance(data, list) else []
+
+                if not pairs:
+                    continue
+
+                # выбираем наиболее ликвидную пару
+                pairs.sort(
+                    key=lambda p: num(
+                        p.get("liquidity", {}).get("usd")
+                    ),
+                    reverse=True
+                )
+
+                pair = pairs[0]
+
+                # ====================================
+                # BASIC FILTERS
+                # ====================================
+
+                base = pair.get("baseToken", {})
+
+                symbol = (
+                    base.get("symbol", "")
+                    .upper()
+                )
+
+                # исключаем крупные/стабильные активы
+                blocked = {
+                    "SOL",
+                    "WSOL",
+                    "USDC",
+                    "USDT",
+                    "USD1",
+                    "USDE"
+                }
+
+                if symbol in blocked:
+                    continue
+
+                liquidity = num(
+                    pair.get(
+                        "liquidity",
+                        {}
+                    ).get("usd")
+                )
+
+                volume = num(
+                    pair.get(
+                        "volume",
+                        {}
+                    ).get("h24")
+                )
+
+                # совсем маленький мусор
+                if liquidity < 5_000:
+                    continue
+
+                if volume < 5_000:
+                    continue
+
+                result = analyse_pair(pair)
+
+                analysed.append(result)
+
+            except Exception as e:
+
+                print(
+                    "PAIR ERROR:",
+                    address,
+                    e
+                )
+
+            # не создаём слишком много запросов мгновенно
+            time.sleep(0.15)
+
+        # ============================================
+        # SORT
+        # ============================================
+
+        analysed.sort(
             key=lambda x: x["score"],
             reverse=True
         )
 
-        results = results[:7]
+        analysed = analysed[:8]
 
-        if not results:
+        if not analysed:
+
             await message.edit_text(
-                "😕 Подходящих токенов сейчас не найдено."
+                "😕 Сейчас подходящих токенов не найдено."
             )
+
             return
 
-        text = "🔥 TOP SOLANA MOVES\n\n"
+        # ============================================
+        # FORMAT
+        # ============================================
 
-        for i, item in enumerate(results, 1):
-            pair = item["pair"]
-            score = item["score"]
-            reasons = item["reasons"]
+        text = "🔥 SOLANA TOKEN SCANNER\n\n"
 
-            base = pair.get("baseToken", {})
-            name = base.get("name", "Unknown")
-            symbol = base.get("symbol", "?")
-            address = base.get("address", "")
+        for i, token in enumerate(
+            analysed,
+            1
+        ):
 
-            price = safe_float(pair.get("priceUsd"))
-
-            price5m = safe_float(
-                pair.get("priceChange", {}).get("m5")
+            reasons = ", ".join(
+                token["reasons"][:3]
             )
-
-            price1h = safe_float(
-                pair.get("priceChange", {}).get("h1")
-            )
-
-            volume = safe_float(
-                pair.get("volume", {}).get("h24")
-            )
-
-            liquidity = safe_float(
-                pair.get("liquidity", {}).get("usd")
-            )
-
-            txns = pair.get("txns", {}).get("h1", {})
-            buys = int(txns.get("buys", 0) or 0)
-            sells = int(txns.get("sells", 0) or 0)
 
             text += (
-                f"{i}. 🚀 {name} ({symbol})\n"
-                f"⭐ Score: {score}/100\n"
-                f"💵 Price: ${price:.8f}\n"
-                f"📈 5m: {price5m:+.1f}% | "
-                f"1h: {price1h:+.1f}%\n"
-                f"💰 Volume 24h: {format_money(volume)}\n"
-                f"💧 Liquidity: {format_money(liquidity)}\n"
-                f"🟢 Buys: {buys} | 🔴 Sells: {sells}\n"
-                f"🧠 {', '.join(reasons[:3])}\n"
-                f"🔗 `{address}`\n\n"
+                f"{i}. 🚀 "
+                f"{token['name']} "
+                f"({token['symbol']})\n"
+
+                f"⭐ Score: "
+                f"{token['score']}/100\n"
+
+                f"💵 Price: "
+                f"${token['price']:.8f}\n"
+
+                f"📈 5m: "
+                f"{percent(token['p5'])} | "
+                f"1h: "
+                f"{percent(token['p1h'])}\n"
+
+                f"📊 Volume 1h: "
+                f"{money(token['v1h'])}\n"
+
+                f"💰 Volume 24h: "
+                f"{money(token['v24'])}\n"
+
+                f"💧 Liquidity: "
+                f"{money(token['liquidity'])}\n"
+
+                f"🟢 Buys: "
+                f"{token['buys']} | "
+                f"🔴 Sells: "
+                f"{token['sells']}\n"
+
+                f"🧠 {reasons}\n"
+
+                f"🔗 `{token['address']}`\n\n"
             )
+
+        text += (
+            "⚠️ Score — это только алгоритмическая "
+            "оценка активности, а не гарантия роста."
+        )
 
         await message.edit_text(
             text,
@@ -229,30 +460,52 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     except Exception as e:
-        print("ERROR:", e)
+
+        print(
+            "SCAN ERROR:",
+            e
+        )
 
         await message.edit_text(
-            "❌ Ошибка при анализе рынка.\n"
-            "Попробуй ещё раз через несколько секунд."
+            "❌ Ошибка сканирования.\n\n"
+            f"`{str(e)[:300]}`",
+            parse_mode="Markdown"
         )
 
 
 def main():
-    app = Application.builder().token(TOKEN).build()
 
-    app.add_handler(
-        CommandHandler("start", start)
+    app = (
+        Application
+        .builder()
+        .token(TOKEN)
+        .build()
     )
 
     app.add_handler(
-        CommandHandler("help", help_command)
+        CommandHandler(
+            "start",
+            start
+        )
     )
 
     app.add_handler(
-        CommandHandler("scan", scan)
+        CommandHandler(
+            "help",
+            help_command
+        )
     )
 
-    print("Token Scanner v2 started")
+    app.add_handler(
+        CommandHandler(
+            "scan",
+            scan
+        )
+    )
+
+    print(
+        "Token Scanner v3 started"
+    )
 
     app.run_polling()
 
