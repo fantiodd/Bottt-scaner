@@ -1,32 +1,40 @@
 import os
 import json
 import time
+import math
 import requests
-
 from datetime import datetime, timezone
 
 
 # ============================================================
-# CONFIG
+# SOLANA MOMENTUM SCANNER v4
 # ============================================================
 
-BOT_TOKEN = os.environ["BOT_TOKEN"]
+VERSION = "4.0"
+
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
+
+# Бесплатный публичный Solana RPC.
+# Для частого запуска лучше указать свой RPC через секрет SOLANA_RPC.
+SOLANA_RPC = os.environ.get(
+    "SOLANA_RPC",
+    "https://api.mainnet-beta.solana.com"
+)
 
 STATE_FILE = "state.json"
 SIGNALS_FILE = "signals.json"
 
-TOP_RESULTS = 10
+TOP_RESULTS = 12
 
 # ------------------------------------------------------------
-# MARKET FILTERS
+# FILTERS
 # ------------------------------------------------------------
 
 MIN_LIQUIDITY = 10_000
 MIN_VOLUME_24H = 10_000
 
-# Не берём совсем мёртвые токены
-MIN_TXNS_5M = 3
+MIN_SIGNAL_LIQUIDITY = 20_000
 
 # ------------------------------------------------------------
 # SIGNAL THRESHOLDS
@@ -36,29 +44,10 @@ EARLY_SCORE = 65
 STRONG_SCORE = 75
 VERY_STRONG_SCORE = 85
 
-# ------------------------------------------------------------
-# BREAKOUT
-# ------------------------------------------------------------
+BREAKOUT_DELTA = 22
 
-BREAKOUT_DELTA = 20
-BREAKOUT_MIN_5M = 4
+BREAKOUT_MIN_5M = 3
 BREAKOUT_MIN_1H = 0
-BREAKOUT_MIN_LIQUIDITY = 20_000
-BREAKOUT_MAX_RISK = 55
-
-# ------------------------------------------------------------
-# ALERTS
-# ------------------------------------------------------------
-
-ALERT_COOLDOWN = 30 * 60
-RE_ALERT_SCORE_INCREASE = 15
-
-# ------------------------------------------------------------
-# DUMP
-# ------------------------------------------------------------
-
-DUMP_5M = -12
-DUMP_1H = -20
 
 # ------------------------------------------------------------
 # RISK
@@ -66,22 +55,53 @@ DUMP_1H = -20
 
 MAX_SIGNAL_RISK = 55
 
+DUMP_5M = -12
+DUMP_1H = -20
+
+OVEREXTENDED_1H = 180
+OVEREXTENDED_5M = 35
+
 # ------------------------------------------------------------
-# HTTP
+# ALERT CONTROL
 # ------------------------------------------------------------
 
-HTTP_TIMEOUT = 12
+ALERT_COOLDOWN = 30 * 60
+RE_ALERT_SCORE_INCREASE = 15
 
-SESSION = requests.Session()
+# ------------------------------------------------------------
+# SECURITY
+# ------------------------------------------------------------
 
-SESSION.headers.update({
-    "User-Agent": "SolanaMomentumScanner/3.0"
-})
+SECURITY_CHECK_LIMIT = 12
 
+RUGCHECK_ENABLED = True
 
-# ============================================================
-# BLOCKED TOKENS
-# ============================================================
+# ------------------------------------------------------------
+# API
+# ------------------------------------------------------------
+
+DEX_PROFILE_URL = (
+    "https://api.dexscreener.com/"
+    "token-profiles/latest/v1"
+)
+
+DEX_BOOST_URL = (
+    "https://api.dexscreener.com/"
+    "token-boosts/latest/v1"
+)
+
+DEX_TOKEN_URL = (
+    "https://api.dexscreener.com/"
+    "tokens/v1/solana/"
+)
+
+RUGCHECK_URL = (
+    "https://api.rugcheck.xyz/v1/tokens/"
+)
+
+# ------------------------------------------------------------
+# BLOCKED
+# ------------------------------------------------------------
 
 BLOCKED = {
     "SOL",
@@ -90,32 +110,20 @@ BLOCKED = {
     "USDT",
     "USD1",
     "USDE",
-    "DAI",
+    "USDT0",
 }
 
 
 # ============================================================
-# DEXSCREENER SOURCES
+# SESSION
 # ============================================================
 
-ENDPOINTS = [
+SESSION = requests.Session()
 
-    "https://api.dexscreener.com/"
-    "token-profiles/latest/v1",
-
-    "https://api.dexscreener.com/"
-    "token-boosts/latest/v1",
-
-]
-
-
-# ============================================================
-# RUGCHECK
-# ============================================================
-
-RUGCHECK_BASE = (
-    "https://api.rugcheck.xyz"
-)
+SESSION.headers.update({
+    "User-Agent":
+        "SolanaMomentumScanner/4.0"
+})
 
 
 # ============================================================
@@ -123,21 +131,24 @@ RUGCHECK_BASE = (
 # ============================================================
 
 def num(value):
-
     try:
         return float(value or 0)
-
     except Exception:
         return 0.0
 
 
 def integer(value):
-
     try:
         return int(value or 0)
-
     except Exception:
         return 0
+
+
+def clamp(value, low=0, high=100):
+    return max(
+        low,
+        min(high, value)
+    )
 
 
 def money(value):
@@ -145,18 +156,16 @@ def money(value):
     value = num(value)
 
     if value >= 1_000_000:
-
-        return (
-            f"${value / 1_000_000:.2f}M"
-        )
+        return f"${value / 1_000_000:.2f}M"
 
     if value >= 1_000:
-
-        return (
-            f"${value / 1_000:.1f}K"
-        )
+        return f"${value / 1_000:.1f}K"
 
     return f"${value:.0f}"
+
+
+def pct(value):
+    return f"{num(value):+.1f}%"
 
 
 def load_json(filename, default):
@@ -181,88 +190,134 @@ def load_json(filename, default):
 
 def save_json(filename, data):
 
-    try:
+    tmp = filename + ".tmp"
 
-        with open(
-            filename,
-            "w",
-            encoding="utf-8"
-        ) as f:
+    with open(
+        tmp,
+        "w",
+        encoding="utf-8"
+    ) as f:
 
-            json.dump(
-                data,
-                f,
-                ensure_ascii=False,
-                indent=2
-            )
-
-    except Exception as e:
-
-        print(
-            "SAVE ERROR:",
-            filename,
-            e
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2
         )
 
+    os.replace(
+        tmp,
+        filename
+    )
 
-def safe_get(url, **kwargs):
 
-    try:
+def now_iso():
 
-        return SESSION.get(
-            url,
-            timeout=HTTP_TIMEOUT,
-            **kwargs
-        )
+    return datetime.now(
+        timezone.utc
+    ).isoformat()
 
-    except Exception as e:
 
-        print(
-            "HTTP ERROR:",
-            url,
-            e
-        )
+def now_ts():
 
-        return None
+    return time.time()
 
 
 # ============================================================
-# TOKEN ADDRESSES
+# HTTP
+# ============================================================
+
+def get_json(
+    url,
+    timeout=15,
+    retries=2
+):
+
+    for attempt in range(
+        retries + 1
+    ):
+
+        try:
+
+            response = SESSION.get(
+                url,
+                timeout=timeout
+            )
+
+            if response.status_code == 200:
+
+                return response.json()
+
+            if response.status_code == 429:
+
+                wait = 2 + attempt * 2
+
+                print(
+                    f"429 rate limit -> "
+                    f"sleep {wait}s"
+                )
+
+                time.sleep(wait)
+
+                continue
+
+            print(
+                f"HTTP {response.status_code}: "
+                f"{url}"
+            )
+
+        except Exception as e:
+
+            print(
+                "HTTP ERROR:",
+                e
+            )
+
+        if attempt < retries:
+
+            time.sleep(
+                1 + attempt
+            )
+
+    return None
+
+
+# ============================================================
+# TOKEN DISCOVERY
 # ============================================================
 
 def get_addresses():
 
     addresses = set()
 
-    for endpoint in ENDPOINTS:
+    endpoints = [
+        DEX_PROFILE_URL,
+        DEX_BOOST_URL
+    ]
 
-        response = safe_get(endpoint)
+    for endpoint in endpoints:
 
-        if not response:
-            continue
+        data = get_json(
+            endpoint
+        )
 
         print(
             f"{endpoint} -> "
-            f"{response.status_code}"
+            f"{'OK' if data is not None else 'FAILED'}"
         )
 
-        if response.status_code != 200:
-            continue
-
-        try:
-
-            data = response.json()
-
-        except Exception:
-
-            continue
-
-        if not isinstance(data, list):
+        if not isinstance(
+            data,
+            list
+        ):
             continue
 
         for item in data:
 
-            if item.get("chainId") != "solana":
+            if item.get(
+                "chainId"
+            ) != "solana":
+
                 continue
 
             address = item.get(
@@ -270,475 +325,113 @@ def get_addresses():
             )
 
             if address:
-                addresses.add(address)
 
-    return list(addresses)
-
-
-# ============================================================
-# BEST PAIR
-# ============================================================
-
-def get_pair(address):
-
-    url = (
-        "https://api.dexscreener.com/"
-        f"token-pairs/v1/solana/{address}"
-    )
-
-    response = safe_get(url)
-
-    if not response:
-        return None
-
-    if response.status_code != 200:
-        return None
-
-    try:
-
-        data = response.json()
-
-    except Exception:
-
-        return None
-
-    if not isinstance(data, list):
-        return None
-
-    if not data:
-        return None
-
-    # --------------------------------------------------------
-    # Best pair = liquidity + volume
-    # --------------------------------------------------------
-
-    def pair_score(pair):
-
-        liquidity = num(
-            pair.get(
-                "liquidity",
-                {}
-            ).get("usd")
-        )
-
-        volume = num(
-            pair.get(
-                "volume",
-                {}
-            ).get("h24")
-        )
-
-        return (
-            liquidity * 0.7
-            + min(volume, 1_000_000) * 0.3
-        )
-
-    data.sort(
-        key=pair_score,
-        reverse=True
-    )
-
-    return data[0]
-
-
-# ============================================================
-# RUGCHECK
-# ============================================================
-
-def get_rugcheck(address):
-
-    """
-    Дополнительный security слой.
-
-    Если API недоступен:
-    security_available = False
-
-    Мы НЕ считаем отсутствие ответа
-    доказательством безопасности.
-    """
-
-    url = (
-        f"{RUGCHECK_BASE}/v1/tokens/"
-        f"{address}/report"
-    )
-
-    response = safe_get(url)
-
-    if not response:
-
-        return {
-            "available": False,
-            "risk": 0,
-            "risks": [],
-            "raw": {}
-        }
-
-    if response.status_code != 200:
-
-        return {
-            "available": False,
-            "risk": 0,
-            "risks": [],
-            "raw": {}
-        }
-
-    try:
-
-        data = response.json()
-
-    except Exception:
-
-        return {
-            "available": False,
-            "risk": 0,
-            "risks": [],
-            "raw": {}
-        }
-
-    return parse_rugcheck(data)
-
-
-def parse_rugcheck(data):
-
-    risks = []
-
-    # --------------------------------------------------------
-    # RugCheck often exposes risks as an array.
-    # --------------------------------------------------------
-
-    raw_risks = data.get(
-        "risks",
-        []
-    )
-
-    if isinstance(raw_risks, list):
-
-        for risk in raw_risks:
-
-            if not isinstance(risk, dict):
-                continue
-
-            name = (
-                risk.get("name")
-                or risk.get("description")
-                or risk.get("type")
-                or "Unknown risk"
-            )
-
-            risks.append(
-                str(name)
-            )
-
-    # --------------------------------------------------------
-    # Try common score fields
-    # --------------------------------------------------------
-
-    raw_score = None
-
-    for key in (
-        "score",
-        "riskScore",
-        "rugScore"
-    ):
-
-        if key in data:
-
-            raw_score = num(
-                data.get(key)
-            )
-
-            break
-
-    # RugCheck scores may be on a large scale.
-    # We only convert obvious 0-10 scores.
-    risk = 0
-
-    if raw_score is not None:
-
-        if 0 <= raw_score <= 10:
-
-            risk = max(
-                0,
-                min(
-                    100,
-                    (10 - raw_score) * 10
+                addresses.add(
+                    address
                 )
-            )
 
-        elif 0 <= raw_score <= 100:
-
-            risk = raw_score
-
-    # --------------------------------------------------------
-    # Explicit risk levels
-    # --------------------------------------------------------
-
-    text = json.dumps(
-        data,
-        ensure_ascii=False
-    ).lower()
-
-    critical_words = [
-
-        "mint authority",
-        "freeze authority",
-        "unlocked liquidity",
-        "high holder concentration",
-        "rugged",
-        "honeypot",
-
-    ]
-
-    warning_count = sum(
-        1
-        for word in critical_words
-        if word in text
+    return list(
+        addresses
     )
 
-    if warning_count >= 1:
-
-        risk = max(
-            risk,
-            min(
-                90,
-                warning_count * 20
-            )
-        )
-
-    return {
-
-        "available": True,
-
-        "risk": int(
-            max(
-                0,
-                min(
-                    100,
-                    risk
-                )
-            )
-        ),
-
-        "risks": risks[:10],
-
-        "raw": data,
-
-    }
-
 
 # ============================================================
-# MARKET RISK
+# DEXSCREENER BATCH
 # ============================================================
 
-def calculate_market_risk(
-
-    p5,
-    p1h,
-    liquidity,
-    v24,
-    buys,
-    sells,
-    turnover,
-    total_tx
-
+def get_pairs_batch(
+    addresses
 ):
 
-    risk = 0
-    reasons = []
+    pairs = {}
 
-    # --------------------------------------------------------
-    # LIQUIDITY
-    # --------------------------------------------------------
+    # DexScreener accepts max 30 token addresses
+    # in this endpoint.
+    for i in range(
+        0,
+        len(addresses),
+        30
+    ):
 
-    if liquidity < 10_000:
+        chunk = addresses[
+            i:i + 30
+        ]
 
-        risk += 35
-
-        reasons.append(
-            "очень низкая ликвидность"
+        url = (
+            DEX_TOKEN_URL
+            + ",".join(chunk)
         )
 
-    elif liquidity < 20_000:
-
-        risk += 22
-
-        reasons.append(
-            "низкая ликвидность"
+        data = get_json(
+            url,
+            timeout=20
         )
 
-    elif liquidity < 30_000:
+        if not isinstance(
+            data,
+            list
+        ):
+            continue
 
-        risk += 10
+        for pair in data:
 
-        reasons.append(
-            "тонкая ликвидность"
-        )
+            if pair.get(
+                "chainId"
+            ) != "solana":
 
-    # --------------------------------------------------------
-    # OVEREXTENSION
-    # --------------------------------------------------------
+                continue
 
-    if p1h >= 250:
-
-        risk += 35
-
-        reasons.append(
-            "экстремальный рост 1ч"
-        )
-
-    elif p1h >= 200:
-
-        risk += 28
-
-        reasons.append(
-            "сильная перегретость"
-        )
-
-    elif p1h >= 120:
-
-        risk += 18
-
-        reasons.append(
-            "токен сильно вырос"
-        )
-
-    elif p1h >= 80:
-
-        risk += 10
-
-        reasons.append(
-            "сильный рост 1ч"
-        )
-
-    # --------------------------------------------------------
-    # 5M PUMP
-    # --------------------------------------------------------
-
-    if p5 >= 50:
-
-        risk += 30
-
-        reasons.append(
-            "экстремальный памп 5м"
-        )
-
-    elif p5 >= 30:
-
-        risk += 20
-
-        reasons.append(
-            "резкий памп 5м"
-        )
-
-    elif p5 >= 20:
-
-        risk += 10
-
-        reasons.append(
-            "быстрый памп 5м"
-        )
-
-    # --------------------------------------------------------
-    # DUMP
-    # --------------------------------------------------------
-
-    if p5 <= -20:
-
-        risk += 30
-
-        reasons.append(
-            "сильный dump 5м"
-        )
-
-    elif p5 <= -12:
-
-        risk += 20
-
-        reasons.append(
-            "резкое падение 5м"
-        )
-
-    if p1h <= -30:
-
-        risk += 25
-
-        reasons.append(
-            "сильный негативный тренд"
-        )
-
-    elif p1h <= -20:
-
-        risk += 15
-
-        reasons.append(
-            "негативный тренд"
-        )
-
-    # --------------------------------------------------------
-    # TURNOVER
-    # --------------------------------------------------------
-
-    if turnover >= 100:
-
-        risk += 20
-
-        reasons.append(
-            "экстремальный оборот"
-        )
-
-    elif turnover >= 50:
-
-        risk += 12
-
-        reasons.append(
-            "аномальный оборот"
-        )
-
-    # --------------------------------------------------------
-    # BUY / SELL
-    # --------------------------------------------------------
-
-    if total_tx >= 10:
-
-        ratio = (
-            buys / total_tx
-        )
-
-        if ratio <= 0.30:
-
-            risk += 20
-
-            reasons.append(
-                "сильное давление продавцов"
+            token = pair.get(
+                "baseToken",
+                {}
             )
 
-        elif ratio <= 0.40:
-
-            risk += 10
-
-            reasons.append(
-                "продавцы доминируют"
+            address = token.get(
+                "address"
             )
 
-        elif ratio >= 0.95:
+            if not address:
+                continue
 
-            risk += 8
-
-            reasons.append(
-                "аномальный перевес покупок"
+            old = pairs.get(
+                address
             )
 
-    return (
-        min(100, risk),
-        reasons
-    )
+            if old is None:
+
+                pairs[address] = pair
+
+                continue
+
+            # Keep the most liquid pair.
+            old_liq = num(
+                old.get(
+                    "liquidity",
+                    {}
+                ).get("usd")
+            )
+
+            new_liq = num(
+                pair.get(
+                    "liquidity",
+                    {}
+                ).get("usd")
+            )
+
+            if new_liq > old_liq:
+
+                pairs[address] = pair
+
+    return pairs
 
 
 # ============================================================
-# ANALYSIS
+# BASIC PAIR DATA
 # ============================================================
 
-def analyse(pair, old):
+def extract_pair(
+    pair
+):
 
     change = pair.get(
         "priceChange",
@@ -760,9 +453,9 @@ def analyse(pair, old):
         {}
     )
 
-    # --------------------------------------------------------
-    # PRICE
-    # --------------------------------------------------------
+    p1 = num(
+        change.get("m1")
+    )
 
     p5 = num(
         change.get("m5")
@@ -780,10 +473,6 @@ def analyse(pair, old):
         change.get("h24")
     )
 
-    # --------------------------------------------------------
-    # VOLUME
-    # --------------------------------------------------------
-
     v5 = num(
         volume.get("m5")
     )
@@ -792,24 +481,27 @@ def analyse(pair, old):
         volume.get("h1")
     )
 
+    v6h = num(
+        volume.get("h6")
+    )
+
     v24 = num(
         volume.get("h24")
     )
 
-    # --------------------------------------------------------
-    # LIQUIDITY
-    # --------------------------------------------------------
-
     liquidity = num(
-        liquidity_data.get("usd")
+        liquidity_data.get(
+            "usd"
+        )
     )
-
-    # --------------------------------------------------------
-    # TRANSACTIONS
-    # --------------------------------------------------------
 
     tx5 = txns.get(
         "m5",
+        {}
+    )
+
+    tx1h = txns.get(
+        "h1",
         {}
     )
 
@@ -821,55 +513,703 @@ def analyse(pair, old):
         tx5.get("sells")
     )
 
-    total_tx = (
-        buys5
-        + sells5
+    buys1h = integer(
+        tx1h.get("buys")
     )
 
-    buy_ratio = 0
+    sells1h = integer(
+        tx1h.get("sells")
+    )
 
-    if total_tx > 0:
+    total5 = (
+        buys5 +
+        sells5
+    )
 
-        buy_ratio = (
-            buys5 / total_tx
+    total1h = (
+        buys1h +
+        sells1h
+    )
+
+    buy_ratio = (
+        buys5 / total5
+        if total5
+        else 0
+    )
+
+    turnover = (
+        v24 / liquidity
+        if liquidity > 0
+        else 0
+    )
+
+    pair_created = integer(
+        pair.get(
+            "pairCreatedAt"
+        )
+    )
+
+    age_hours = 0
+
+    if pair_created:
+
+        age_seconds = (
+            time.time()
+            -
+            pair_created / 1000
         )
 
-    # ========================================================
-    # MOMENTUM
-    # ========================================================
+        age_hours = max(
+            0,
+            age_seconds / 3600
+        )
+
+    return {
+
+        "p1": p1,
+        "p5": p5,
+        "p1h": p1h,
+        "p6h": p6h,
+        "p24": p24,
+
+        "v5": v5,
+        "v1h": v1h,
+        "v6h": v6h,
+        "v24": v24,
+
+        "liquidity":
+            liquidity,
+
+        "buys5":
+            buys5,
+
+        "sells5":
+            sells5,
+
+        "buys1h":
+            buys1h,
+
+        "sells1h":
+            sells1h,
+
+        "total5":
+            total5,
+
+        "total1h":
+            total1h,
+
+        "buy_ratio":
+            buy_ratio,
+
+        "turnover":
+            turnover,
+
+        "age_hours":
+            age_hours,
+    }
+
+
+# ============================================================
+# SECURITY - SOLANA RPC
+# ============================================================
+
+def rpc_call(
+    method,
+    params
+):
+
+    payload = {
+
+        "jsonrpc":
+            "2.0",
+
+        "id":
+            1,
+
+        "method":
+            method,
+
+        "params":
+            params
+    }
+
+    try:
+
+        response = SESSION.post(
+
+            SOLANA_RPC,
+
+            json=payload,
+
+            timeout=15
+        )
+
+        if response.status_code != 200:
+
+            return None
+
+        data = response.json()
+
+        return data.get(
+            "result"
+        )
+
+    except Exception as e:
+
+        print(
+            "RPC ERROR:",
+            e
+        )
+
+        return None
+
+
+def get_token_supply(
+    address
+):
+
+    result = rpc_call(
+        "getTokenSupply",
+        [
+            address,
+            {
+                "commitment":
+                    "confirmed"
+            }
+        ]
+    )
+
+    if not result:
+        return 0
+
+    value = result.get(
+        "value",
+        {}
+    )
+
+    return num(
+        value.get(
+            "uiAmount"
+        )
+    )
+
+
+def get_largest_accounts(
+    address
+):
+
+    result = rpc_call(
+
+        "getTokenLargestAccounts",
+
+        [
+            address,
+            {
+                "commitment":
+                    "confirmed"
+            }
+        ]
+    )
+
+    if not result:
+
+        return []
+
+    return result.get(
+        "value",
+        []
+    )
+
+
+# ============================================================
+# TOKEN AUTHORITY PARSER
+# ============================================================
+
+def parse_mint_account(
+    address
+):
+
+    result = rpc_call(
+
+        "getAccountInfo",
+
+        [
+            address,
+
+            {
+                "encoding":
+                    "jsonParsed",
+
+                "commitment":
+                    "confirmed"
+            }
+        ]
+    )
+
+    if not result:
+
+        return {}
+
+    value = result.get(
+        "value"
+    )
+
+    if not value:
+
+        return {}
+
+    data = value.get(
+        "data"
+    )
+
+    if (
+        not isinstance(
+            data,
+            dict
+        )
+    ):
+
+        return {}
+
+    parsed = data.get(
+        "parsed",
+        {}
+    )
+
+    info = parsed.get(
+        "info",
+        {}
+    )
+
+    return {
+
+        "mint_authority":
+            info.get(
+                "mintAuthority"
+            ),
+
+        "freeze_authority":
+            info.get(
+                "freezeAuthority"
+            ),
+
+        "decimals":
+            info.get(
+                "decimals"
+            ),
+    }
+
+
+# ============================================================
+# HOLDER CONCENTRATION
+# ============================================================
+
+def holder_concentration(
+    address
+):
+
+    accounts = get_largest_accounts(
+        address
+    )
+
+    if not accounts:
+
+        return {
+
+            "top1": 0,
+            "top5": 0,
+            "top10": 0
+        }
+
+    total = get_token_supply(
+        address
+    )
+
+    if total <= 0:
+
+        return {
+
+            "top1": 0,
+            "top5": 0,
+            "top10": 0
+        }
+
+    amounts = []
+
+    for account in accounts:
+
+        amount = num(
+            account.get(
+                "uiAmount"
+            )
+        )
+
+        amounts.append(
+            amount
+        )
+
+    top1 = (
+        sum(amounts[:1])
+        / total
+        * 100
+    )
+
+    top5 = (
+        sum(amounts[:5])
+        / total
+        * 100
+    )
+
+    top10 = (
+        sum(amounts[:10])
+        / total
+        * 100
+    )
+
+    return {
+
+        "top1":
+            clamp(top1),
+
+        "top5":
+            clamp(top5),
+
+        "top10":
+            clamp(top10),
+    }
+
+
+# ============================================================
+# RUGCHECK
+# ============================================================
+
+def rugcheck(
+    address
+):
+
+    if not RUGCHECK_ENABLED:
+
+        return {}
+
+    url = (
+        RUGCHECK_URL
+        + address
+        + "/report"
+    )
+
+    data = get_json(
+        url,
+        timeout=15,
+        retries=1
+    )
+
+    if not isinstance(
+        data,
+        dict
+    ):
+
+        return {}
+
+    risks = data.get(
+        "risks",
+        []
+    )
+
+    score = num(
+        data.get(
+            "score"
+        )
+    )
+
+    return {
+
+        "score":
+            score,
+
+        "risks":
+            risks,
+
+        "raw":
+            data,
+    }
+
+
+# ============================================================
+# SECURITY SCORE
+# ============================================================
+
+def security_analysis(
+    address
+):
+
+    result = {
+
+        "risk":
+            0,
+
+        "reasons":
+            [],
+
+        "mint_authority":
+            None,
+
+        "freeze_authority":
+            None,
+
+        "top1":
+            0,
+
+        "top5":
+            0,
+
+        "top10":
+            0,
+
+        "rugcheck_score":
+            None,
+    }
+
+    # --------------------------------------------
+    # Authorities
+    # --------------------------------------------
+
+    authority = parse_mint_account(
+        address
+    )
+
+    mint_authority = authority.get(
+        "mint_authority"
+    )
+
+    freeze_authority = authority.get(
+        "freeze_authority"
+    )
+
+    result[
+        "mint_authority"
+    ] = mint_authority
+
+    result[
+        "freeze_authority"
+    ] = freeze_authority
+
+    if mint_authority:
+
+        result["risk"] += 25
+
+        result[
+            "reasons"
+        ].append(
+            "mint authority active"
+        )
+
+    if freeze_authority:
+
+        result["risk"] += 15
+
+        result[
+            "reasons"
+        ].append(
+            "freeze authority active"
+        )
+
+    # --------------------------------------------
+    # Holder concentration
+    # --------------------------------------------
+
+    holders = holder_concentration(
+        address
+    )
+
+    result.update(
+        holders
+    )
+
+    top1 = holders["top1"]
+    top5 = holders["top5"]
+    top10 = holders["top10"]
+
+    if top1 >= 20:
+
+        result["risk"] += 25
+
+        result[
+            "reasons"
+        ].append(
+            f"top holder {top1:.1f}%"
+        )
+
+    elif top1 >= 10:
+
+        result["risk"] += 12
+
+        result[
+            "reasons"
+        ].append(
+            f"top holder {top1:.1f}%"
+        )
+
+    if top5 >= 50:
+
+        result["risk"] += 20
+
+        result[
+            "reasons"
+        ].append(
+            f"top 5 hold {top5:.1f}%"
+        )
+
+    elif top5 >= 35:
+
+        result["risk"] += 10
+
+        result[
+            "reasons"
+        ].append(
+            f"top 5 hold {top5:.1f}%"
+        )
+
+    # --------------------------------------------
+    # RugCheck
+    # --------------------------------------------
+
+    rc = rugcheck(
+        address
+    )
+
+    if rc:
+
+        result[
+            "rugcheck_score"
+        ] = rc.get(
+            "score"
+        )
+
+        # RugCheck score interpretation
+        # is intentionally only an additional
+        # layer; it does not replace on-chain checks.
+
+        rc_score = num(
+            rc.get("score")
+        )
+
+        if rc_score >= 5000:
+
+            result["risk"] += 25
+
+            result[
+                "reasons"
+            ].append(
+                "high RugCheck risk"
+            )
+
+        elif rc_score >= 3000:
+
+            result["risk"] += 12
+
+            result[
+                "reasons"
+            ].append(
+                "elevated RugCheck risk"
+            )
+
+        risks = rc.get(
+            "risks",
+            []
+        )
+
+        if isinstance(
+            risks,
+            list
+        ):
+
+            serious = 0
+
+            for risk in risks:
+
+                if not isinstance(
+                    risk,
+                    dict
+                ):
+                    continue
+
+                level = str(
+                    risk.get(
+                        "level",
+                        ""
+                    )
+                ).lower()
+
+                if level in (
+                    "danger",
+                    "critical",
+                    "high"
+                ):
+
+                    serious += 1
+
+            if serious >= 2:
+
+                result["risk"] += 20
+
+                result[
+                    "reasons"
+                ].append(
+                    "multiple serious security flags"
+                )
+
+    result["risk"] = clamp(
+        result["risk"]
+    )
+
+    return result
+
+
+# ============================================================
+# MOMENTUM SCORE
+# ============================================================
+
+def momentum_analysis(
+    d,
+    old
+):
 
     score = 0
     reasons = []
 
-    # --------------------------------------------------------
-    # 5M
-    # --------------------------------------------------------
+    p5 = d["p5"]
+    p1h = d["p1h"]
 
-    if 1 <= p5 < 3:
+    v5 = d["v5"]
+    v1h = d["v1h"]
 
-        score += 8
+    liquidity = d["liquidity"]
+
+    total5 = d["total5"]
+
+    buy_ratio = d["buy_ratio"]
+
+    # ========================================================
+    # PRICE STRUCTURE
+    # ========================================================
+
+    if 2 <= p5 < 5:
+
+        score += 12
 
         reasons.append(
-            "появился импульс 5м"
-        )
-
-    elif 3 <= p5 < 5:
-
-        score += 15
-
-        reasons.append(
-            "ранний импульс 5м"
+            "раннее ускорение 5м"
         )
 
     elif 5 <= p5 < 10:
 
-        score += 22
+        score += 20
 
         reasons.append(
             "хороший импульс 5м"
         )
 
-    elif 10 <= p5 < 20:
+    elif 10 <= p5 < 18:
 
         score += 18
 
@@ -877,20 +1217,20 @@ def analyse(pair, old):
             "сильный импульс 5м"
         )
 
-    elif 20 <= p5 < 30:
+    elif 18 <= p5 < 30:
 
         score += 8
 
         reasons.append(
-            "сильный памп 5м"
+            "агрессивный импульс 5м"
         )
 
     elif p5 >= 30:
 
-        score -= 15
+        score -= 18
 
         reasons.append(
-            "слишком резкий памп"
+            "перегретый импульс 5м"
         )
 
     elif -5 < p5 < 0:
@@ -899,10 +1239,10 @@ def analyse(pair, old):
 
     elif -12 < p5 <= -5:
 
-        score -= 15
+        score -= 12
 
         reasons.append(
-            "падение 5м"
+            "ослабление 5м"
         )
 
     elif p5 <= -12:
@@ -913,72 +1253,64 @@ def analyse(pair, old):
             "сильное падение 5м"
         )
 
-    # --------------------------------------------------------
-    # 1H
-    # --------------------------------------------------------
+    # ========================================================
+    # 1H STRUCTURE
+    # ========================================================
 
-    if 2 <= p1h < 8:
+    if 3 <= p1h < 10:
 
-        score += 12
+        score += 14
 
         reasons.append(
             "ранний тренд 1ч"
         )
 
-    elif 8 <= p1h < 15:
+    elif 10 <= p1h < 25:
 
-        score += 20
-
-        reasons.append(
-            "хороший тренд 1ч"
-        )
-
-    elif 15 <= p1h < 30:
-
-        score += 25
+        score += 23
 
         reasons.append(
             "здоровый тренд 1ч"
         )
 
-    elif 30 <= p1h < 60:
+    elif 25 <= p1h < 45:
 
-        score += 15
+        score += 17
 
         reasons.append(
             "сильный тренд 1ч"
         )
 
-    elif 60 <= p1h < 100:
+    elif 45 <= p1h < 70:
 
-        score += 5
-
-        reasons.append(
-            "сильный рост 1ч"
-        )
-
-    elif 100 <= p1h < 150:
-
-        score -= 10
+        score += 9
 
         reasons.append(
-            "тренд уже перегревается"
+            "агрессивный тренд 1ч"
         )
 
-    elif 150 <= p1h:
+    elif 70 <= p1h < 100:
 
-        score -= 25
+        score += 3
+
+        reasons.append(
+            "токен уже сильно вырос"
+        )
+
+    elif 100 <= p1h < 180:
+
+        score -= 12
+
+        reasons.append(
+            "высокая перегретость 1ч"
+        )
+
+    elif p1h >= 180:
+
+        score -= 30
 
         reasons.append(
             "экстремальный рост 1ч"
-        )
-
-    elif -20 < p1h < -5:
-
-        score -= 10
-
-        reasons.append(
-            "слабый тренд 1ч"
         )
 
     elif p1h <= -20:
@@ -989,24 +1321,24 @@ def analyse(pair, old):
             "негативный тренд 1ч"
         )
 
-    # --------------------------------------------------------
-    # 6H / 24H CONTEXT
-    # --------------------------------------------------------
+    # ========================================================
+    # MOMENTUM CONSISTENCY
+    # ========================================================
 
-    if 0 < p6h < 100:
+    if p5 > 0 and p1h > 0:
 
-        score += 5
+        score += 8
 
-    elif p6h >= 150:
+        reasons.append(
+            "5м и 1ч направлены вверх"
+        )
 
-        score -= 5
-
-    if p24 < -30:
+    elif p5 > 0 and p1h < 0:
 
         score -= 10
 
         reasons.append(
-            "слабая динамика 24ч"
+            "рост 5м против тренда 1ч"
         )
 
     # ========================================================
@@ -1015,43 +1347,23 @@ def analyse(pair, old):
 
     if liquidity >= 150_000:
 
-        score += 18
-
-        reasons.append(
-            "очень хорошая ликвидность"
-        )
+        score += 15
 
     elif liquidity >= 100_000:
 
-        score += 15
-
-        reasons.append(
-            "высокая ликвидность"
-        )
+        score += 13
 
     elif liquidity >= 50_000:
 
-        score += 13
-
-        reasons.append(
-            "хорошая ликвидность"
-        )
+        score += 11
 
     elif liquidity >= 30_000:
 
-        score += 10
-
-        reasons.append(
-            "нормальная ликвидность"
-        )
+        score += 8
 
     elif liquidity >= 20_000:
 
-        score += 5
-
-        reasons.append(
-            "приемлемая ликвидность"
-        )
+        score += 4
 
     else:
 
@@ -1062,10 +1374,10 @@ def analyse(pair, old):
         )
 
     # ========================================================
-    # BUY / SELL PRESSURE
+    # BUY PRESSURE
     # ========================================================
 
-    if total_tx >= 5:
+    if total5 >= 10:
 
         if buy_ratio >= 0.75:
 
@@ -1107,49 +1419,45 @@ def analyse(pair, old):
         old.get("v5")
     )
 
-    volume_acceleration = 1.0
+    volume_acc = 1.0
 
     if old_v5 > 0 and v5 > 0:
 
-        volume_acceleration = (
+        volume_acc = (
             v5 / old_v5
         )
 
-        if volume_acceleration >= 4:
+        if volume_acc >= 3:
 
-            score += 20
-
-            reasons.append(
-                f"объём x{volume_acceleration:.1f}"
-            )
-
-        elif volume_acceleration >= 3:
-
-            score += 16
+            score += 18
 
             reasons.append(
-                f"объём ускоряется x{volume_acceleration:.1f}"
+                f"объём x{volume_acc:.1f}"
             )
 
-        elif volume_acceleration >= 2:
+        elif volume_acc >= 2:
 
-            score += 12
+            score += 13
 
             reasons.append(
-                f"объём растёт x{volume_acceleration:.1f}"
+                f"объём ускоряется x{volume_acc:.1f}"
             )
 
-        elif volume_acceleration >= 1.5:
+        elif volume_acc >= 1.5:
 
             score += 8
 
+        elif volume_acc >= 1.2:
+
+            score += 4
+
+        elif volume_acc < 0.7:
+
+            score -= 7
+
             reasons.append(
-                f"объём растёт x{volume_acceleration:.1f}"
+                "объём ослабевает"
             )
-
-        elif volume_acceleration < 0.5:
-
-            score -= 5
 
     # ========================================================
     # TRANSACTION ACCELERATION
@@ -1159,23 +1467,24 @@ def analyse(pair, old):
         old.get("tx5")
     )
 
-    tx_acceleration = 1.0
+    tx_acc = 1.0
 
-    if old_tx > 0 and total_tx > 0:
+    if old_tx > 0 and total5 > 0:
 
-        tx_acceleration = (
-            total_tx / old_tx
+        tx_acc = (
+            total5 /
+            old_tx
         )
 
-        if tx_acceleration >= 3:
+        if tx_acc >= 2.5:
 
             score += 12
 
             reasons.append(
-                "сделок резко больше"
+                "резкое ускорение сделок"
             )
 
-        elif tx_acceleration >= 2:
+        elif tx_acc >= 1.7:
 
             score += 8
 
@@ -1183,7 +1492,7 @@ def analyse(pair, old):
                 "сделок становится больше"
             )
 
-        elif tx_acceleration >= 1.5:
+        elif tx_acc >= 1.3:
 
             score += 4
 
@@ -1191,20 +1500,14 @@ def analyse(pair, old):
     # TURNOVER
     # ========================================================
 
-    turnover = 0
-
-    if liquidity > 0:
-
-        turnover = (
-            v24 / liquidity
-        )
+    turnover = d["turnover"]
 
     if 2 <= turnover <= 20:
 
         score += 5
 
         reasons.append(
-            "активный оборот"
+            "здоровый оборот"
         )
 
     elif turnover > 50:
@@ -1216,187 +1519,175 @@ def analyse(pair, old):
         )
 
     # ========================================================
-    # MOMENTUM SCORE
+    # FINAL
     # ========================================================
 
-    score = int(
-        max(
-            0,
-            min(
-                100,
-                score
-            )
-        )
-    )
-
-    # ========================================================
-    # QUALITY SCORE
-    # ========================================================
-
-    quality = 0
-
-    # liquidity
-    if liquidity >= 150_000:
-        quality += 30
-
-    elif liquidity >= 100_000:
-        quality += 27
-
-    elif liquidity >= 50_000:
-        quality += 24
-
-    elif liquidity >= 30_000:
-        quality += 20
-
-    elif liquidity >= 20_000:
-        quality += 12
-
-    # volume
-    if v24 >= 2_000_000:
-        quality += 25
-
-    elif v24 >= 1_000_000:
-        quality += 22
-
-    elif v24 >= 500_000:
-        quality += 18
-
-    elif v24 >= 100_000:
-        quality += 15
-
-    elif v24 >= 50_000:
-        quality += 10
-
-    # transactions
-    if total_tx >= 1000:
-        quality += 20
-
-    elif total_tx >= 500:
-        quality += 17
-
-    elif total_tx >= 100:
-        quality += 12
-
-    elif total_tx >= 50:
-        quality += 7
-
-    # buy/sell balance
-    if 0.45 <= buy_ratio <= 0.80:
-        quality += 10
-
-    # positive trend
-    if 0 < p1h < 100:
-        quality += 10
-
-    quality = min(
-        100,
-        quality
-    )
-
-    # ========================================================
-    # MARKET RISK
-    # ========================================================
-
-    market_risk, risk_reasons = calculate_market_risk(
-
-        p5=p5,
-        p1h=p1h,
-        liquidity=liquidity,
-        v24=v24,
-        buys=buys5,
-        sells=sells5,
-        turnover=turnover,
-        total_tx=total_tx
-
+    score = clamp(
+        score
     )
 
     return {
 
-        "score": score,
+        "score":
+            score,
 
-        "quality": quality,
+        "volume_acc":
+            volume_acc,
 
-        "market_risk": market_risk,
-
-        "p5": p5,
-        "p1h": p1h,
-        "p6h": p6h,
-        "p24": p24,
-
-        "v5": v5,
-        "v1h": v1h,
-        "v24": v24,
-
-        "liquidity": liquidity,
-
-        "buys5": buys5,
-        "sells5": sells5,
-        "total_tx5": total_tx,
-
-        "buy_ratio": buy_ratio,
-
-        "volume_acceleration":
-            volume_acceleration,
-
-        "tx_acceleration":
-            tx_acceleration,
-
-        "turnover":
-            turnover,
+        "tx_acc":
+            tx_acc,
 
         "reasons":
             reasons,
-
-        "risk_reasons":
-            risk_reasons,
-
     }
 
 
 # ============================================================
-# FINAL RISK
+# QUALITY SCORE
 # ============================================================
 
-def calculate_final_risk(
-    market_risk,
-    rugcheck
+def quality_analysis(
+    d,
+    security
 ):
 
-    if not rugcheck.get(
-        "available",
-        False
+    score = 0
+
+    liquidity = d[
+        "liquidity"
+    ]
+
+    v24 = d[
+        "v24"
+    ]
+
+    total1h = d[
+        "total1h"
+    ]
+
+    age = d[
+        "age_hours"
+    ]
+
+    top5 = security.get(
+        "top5",
+        0
+    )
+
+    # Liquidity
+    if liquidity >= 150_000:
+        score += 25
+    elif liquidity >= 100_000:
+        score += 22
+    elif liquidity >= 50_000:
+        score += 18
+    elif liquidity >= 30_000:
+        score += 14
+    elif liquidity >= 20_000:
+        score += 9
+
+    # Volume
+    if v24 >= 2_000_000:
+        score += 25
+    elif v24 >= 1_000_000:
+        score += 22
+    elif v24 >= 500_000:
+        score += 18
+    elif v24 >= 100_000:
+        score += 13
+    elif v24 >= 50_000:
+        score += 8
+
+    # Transaction activity
+    if total1h >= 5000:
+        score += 20
+    elif total1h >= 2000:
+        score += 17
+    elif total1h >= 1000:
+        score += 14
+    elif total1h >= 500:
+        score += 10
+    elif total1h >= 100:
+        score += 6
+
+    # Age
+    if 2 <= age <= 72:
+
+        score += 10
+
+    elif age > 72:
+
+        score += 7
+
+    elif age < 1:
+
+        score += 3
+
+    # Holder distribution
+    if top5 < 25:
+
+        score += 20
+
+    elif top5 < 40:
+
+        score += 13
+
+    elif top5 < 55:
+
+        score += 7
+
+    return clamp(
+        score
+    )
+
+
+# ============================================================
+# CONFIDENCE
+# ============================================================
+
+def confidence_analysis(
+    momentum,
+    quality,
+    risk,
+    d
+):
+
+    score = 0
+
+    score += (
+        momentum["score"]
+        * 0.45
+    )
+
+    score += (
+        quality
+        * 0.35
+    )
+
+    score += (
+        (100 - risk)
+        * 0.20
+    )
+
+    # Confirmation bonus
+    if (
+        d["p5"] > 0
+        and d["p1h"] > 0
+        and d["buy_ratio"] > 0.55
     ):
 
-        # Если security слой отсутствует,
-        # НЕ делаем вид, что риск нулевой.
-        return min(
-            100,
-            market_risk + 10
-        )
+        score += 5
 
-    rug_risk = num(
-        rugcheck.get(
-            "risk",
-            0
-        )
-    )
+    # Contradiction penalty
+    if (
+        d["p5"] > 5
+        and d["p1h"] < 0
+    ):
 
-    # Market = 55%
-    # On-chain/security = 45%
+        score -= 10
 
-    final = (
-        market_risk * 0.55
-        + rug_risk * 0.45
-    )
-
-    return int(
-        max(
-            0,
-            min(
-                100,
-                final
-            )
-        )
+    return clamp(
+        score
     )
 
 
@@ -1404,19 +1695,28 @@ def calculate_final_risk(
 # CLASSIFICATION
 # ============================================================
 
-def classify(item):
+def classify(
+    d,
+    momentum,
+    quality,
+    confidence,
+    security
+):
 
-    p5 = item["p5"]
-    p1h = item["p1h"]
+    p5 = d["p5"]
+    p1h = d["p1h"]
 
-    score = item["score"]
-    quality = item["quality"]
-    risk = item["risk"]
-    liquidity = item["liquidity"]
+    risk = security[
+        "risk"
+    ]
 
-    # --------------------------------------------------------
-    # DUMPING
-    # --------------------------------------------------------
+    m = momentum[
+        "score"
+    ]
+
+    # --------------------------------------------
+    # DUMP
+    # --------------------------------------------
 
     if (
         p5 <= DUMP_5M
@@ -1428,72 +1728,72 @@ def classify(item):
 
         return "🔻 DUMPING"
 
-    # --------------------------------------------------------
+    # --------------------------------------------
     # OVEREXTENDED
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        p1h >= 200
+        p1h >= OVEREXTENDED_1H
         or (
-            p1h >= 120
-            and p5 >= 5
+            p5 >= OVEREXTENDED_5M
+            and p1h >= 60
         )
     ):
 
         return "🔴 OVEREXTENDED"
 
-    # --------------------------------------------------------
+    # --------------------------------------------
     # VERY STRONG
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        score >= VERY_STRONG_SCORE
+        m >= VERY_STRONG_SCORE
         and quality >= 50
-        and risk < 50
+        and confidence >= 70
+        and risk < MAX_SIGNAL_RISK
         and p5 > 0
         and p1h > 0
-        and liquidity >= 20_000
     ):
 
         return "🚨 VERY STRONG"
 
-    # --------------------------------------------------------
+    # --------------------------------------------
     # STRONG
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        score >= STRONG_SCORE
-        and quality >= 45
-        and risk < 50
+        m >= STRONG_SCORE
+        and quality >= 40
+        and confidence >= 62
+        and risk < MAX_SIGNAL_RISK
         and p5 > 0
         and p1h > 0
-        and liquidity >= 20_000
     ):
 
         return "🔥 STRONG"
 
-    # --------------------------------------------------------
+    # --------------------------------------------
     # EARLY
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        score >= EARLY_SCORE
+        m >= EARLY_SCORE
         and quality >= 35
+        and confidence >= 55
         and risk < MAX_SIGNAL_RISK
         and p5 > 0
         and p1h > 0
         and p1h < 60
-        and liquidity >= 20_000
     ):
 
         return "🟢 EARLY"
 
-    # --------------------------------------------------------
+    # --------------------------------------------
     # WATCH
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        score >= 40
+        m >= 40
         and p5 > 0
         and p1h > 0
         and risk < 70
@@ -1505,54 +1805,16 @@ def classify(item):
 
 
 # ============================================================
-# CONFIDENCE
-# ============================================================
-
-def calculate_confidence(item):
-
-    momentum = item["score"]
-    quality = item["quality"]
-    risk = item["risk"]
-
-    confidence = (
-
-        momentum * 0.45
-        + quality * 0.35
-        + (100 - risk) * 0.20
-
-    )
-
-    # Без security API уменьшаем confidence
-    if not item.get(
-        "security_available",
-        False
-    ):
-
-        confidence -= 8
-
-    # Мало сделок = слабее статистика
-    if item["total_tx5"] < MIN_TXNS_5M:
-
-        confidence -= 10
-
-    return int(
-        max(
-            0,
-            min(
-                100,
-                confidence
-            )
-        )
-    )
-
-
-# ============================================================
 # SIGNAL TYPE
 # ============================================================
 
-def get_signal_type(item):
+def signal_type(
+    item
+):
 
-    stage = item["stage"]
+    stage = item[
+        "stage"
+    ]
 
     if stage in (
         "🔻 DUMPING",
@@ -1562,61 +1824,63 @@ def get_signal_type(item):
 
         return None
 
-    score = item["score"]
-    delta = item["score_delta"]
+    d = item
 
-    p5 = item["p5"]
-    p1h = item["p1h"]
-
-    liquidity = item["liquidity"]
-    risk = item["risk"]
-
-    confidence = item["confidence"]
-
-    # --------------------------------------------------------
+    # --------------------------------------------
     # BREAKOUT
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        delta >= BREAKOUT_DELTA
-        and p5 >= BREAKOUT_MIN_5M
-        and p1h > BREAKOUT_MIN_1H
-        and liquidity >= BREAKOUT_MIN_LIQUIDITY
-        and risk < BREAKOUT_MAX_RISK
-        and confidence >= 55
+        d["score_delta"]
+        >= BREAKOUT_DELTA
+
+        and d["p5"]
+        >= BREAKOUT_MIN_5M
+
+        and d["p1h"]
+        > BREAKOUT_MIN_1H
+
+        and d["liquidity"]
+        >= MIN_SIGNAL_LIQUIDITY
+
+        and d["risk"]
+        < MAX_SIGNAL_RISK
+
+        and d["volume_acc"]
+        >= 1.2
     ):
 
         return "🚀 BREAKOUT"
 
-    # --------------------------------------------------------
+    # --------------------------------------------
     # VERY STRONG
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        score >= VERY_STRONG_SCORE
-        and confidence >= 65
+        d["score"]
+        >= VERY_STRONG_SCORE
     ):
 
         return "🚨 VERY STRONG"
 
-    # --------------------------------------------------------
+    # --------------------------------------------
     # STRONG
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        score >= STRONG_SCORE
-        and confidence >= 60
+        d["score"]
+        >= STRONG_SCORE
     ):
 
         return "🔥 STRONG"
 
-    # --------------------------------------------------------
+    # --------------------------------------------
     # EARLY
-    # --------------------------------------------------------
+    # --------------------------------------------
 
     if (
-        score >= EARLY_SCORE
-        and confidence >= 55
+        d["score"]
+        >= EARLY_SCORE
     ):
 
         return "🟢 EARLY"
@@ -1647,28 +1911,26 @@ def scan():
         f"{len(addresses)}"
     )
 
-    results = []
-    new_state = {}
-
-    checked = 0
-    filtered = 0
-    security_checked = 0
-
-    now = datetime.now(
-        timezone.utc
+    pairs = get_pairs_batch(
+        addresses
     )
 
-    now_iso = now.isoformat()
-    now_ts = now.timestamp()
+    print(
+        f"Pairs received: "
+        f"{len(pairs)}"
+    )
 
-    for address in addresses:
+    results = []
 
-        pair = get_pair(address)
+    new_state = {}
 
-        if not pair:
-            continue
+    filtered = 0
 
-        checked += 1
+    security_checked = 0
+
+    scan_time = now_iso()
+
+    for address, pair in pairs.items():
 
         base = pair.get(
             "baseToken",
@@ -1680,9 +1942,11 @@ def scan():
             "Unknown"
         )
 
-        symbol = base.get(
-            "symbol",
-            "?"
+        symbol = str(
+            base.get(
+                "symbol",
+                "?"
+            )
         ).upper()
 
         if symbol in BLOCKED:
@@ -1690,50 +1954,22 @@ def scan():
             filtered += 1
             continue
 
-        liquidity = num(
-            pair.get(
-                "liquidity",
-                {}
-            ).get("usd")
+        d = extract_pair(
+            pair
         )
 
-        volume = num(
-            pair.get(
-                "volume",
-                {}
-            ).get("h24")
-        )
-
-        txns = pair.get(
-            "txns",
-            {}
-        )
-
-        tx5 = txns.get(
-            "m5",
-            {}
-        )
-
-        total_tx5 = (
-            integer(
-                tx5.get("buys")
-            )
-            +
-            integer(
-                tx5.get("sells")
-            )
-        )
-
-        # ----------------------------------------------------
-        # Basic filtering
-        # ----------------------------------------------------
-
-        if liquidity < MIN_LIQUIDITY:
+        if (
+            d["liquidity"]
+            < MIN_LIQUIDITY
+        ):
 
             filtered += 1
             continue
 
-        if volume < MIN_VOLUME_24H:
+        if (
+            d["v24"]
+            < MIN_VOLUME_24H
+        ):
 
             filtered += 1
             continue
@@ -1743,86 +1979,199 @@ def scan():
             {}
         )
 
-        result = analyse(
-            pair,
+        momentum = momentum_analysis(
+            d,
             old
+        )
+
+        # ----------------------------------------------------
+        # Security only for potentially interesting tokens.
+        # This prevents RPC overload.
+        # ----------------------------------------------------
+
+        preliminary = (
+            momentum["score"]
+            >= 35
+            or d["p5"] > 3
+            or d["p1h"] > 10
+        )
+
+        if preliminary:
+
+            security = security_analysis(
+                address
+            )
+
+            security_checked += 1
+
+        else:
+
+            security = {
+
+                "risk":
+                    0,
+
+                "reasons":
+                    [],
+
+                "mint_authority":
+                    None,
+
+                "freeze_authority":
+                    None,
+
+                "top1":
+                    0,
+
+                "top5":
+                    0,
+
+                "top10":
+                    0,
+
+                "rugcheck_score":
+                    None,
+            }
+
+        quality = quality_analysis(
+            d,
+            security
+        )
+
+        confidence = confidence_analysis(
+            momentum,
+            quality,
+            security["risk"],
+            d
         )
 
         previous_score = num(
             old.get(
-                "score",
-                0
+                "score"
             )
         )
 
         score_delta = (
-            result["score"]
+            momentum["score"]
             - previous_score
         )
 
-        result["name"] = name
-        result["symbol"] = symbol
-        result["address"] = address
+        item = {
 
-        result["score_delta"] = (
-            score_delta
-        )
+            "address":
+                address,
 
-        # ----------------------------------------------------
-        # Security
-        # ----------------------------------------------------
+            "name":
+                name,
 
-        rugcheck = get_rugcheck(
-            address
-        )
+            "symbol":
+                symbol,
 
-        if rugcheck.get(
-            "available",
-            False
-        ):
+            "score":
+                momentum["score"],
 
-            security_checked += 1
+            "quality":
+                quality,
 
-        result["rugcheck"] = rugcheck
+            "confidence":
+                confidence,
 
-        result["security_available"] = (
-            rugcheck.get(
-                "available",
-                False
-            )
-        )
+            "risk":
+                security["risk"],
 
-        result["security_risk"] = num(
-            rugcheck.get(
-                "risk",
-                0
-            )
-        )
+            "score_delta":
+                score_delta,
 
-        result["risk"] = calculate_final_risk(
+            "p1":
+                d["p1"],
 
-            result["market_risk"],
+            "p5":
+                d["p5"],
 
-            rugcheck
+            "p1h":
+                d["p1h"],
 
-        )
+            "p6h":
+                d["p6h"],
 
-        # ----------------------------------------------------
-        # Confidence
-        # ----------------------------------------------------
+            "p24":
+                d["p24"],
 
-        result["confidence"] = (
-            calculate_confidence(
-                result
-            )
-        )
+            "v5":
+                d["v5"],
 
-        # ----------------------------------------------------
-        # Classification
-        # ----------------------------------------------------
+            "v1h":
+                d["v1h"],
 
-        result["stage"] = classify(
-            result
+            "v6h":
+                d["v6h"],
+
+            "v24":
+                d["v24"],
+
+            "liquidity":
+                d["liquidity"],
+
+            "buys5":
+                d["buys5"],
+
+            "sells5":
+                d["sells5"],
+
+            "buy_ratio":
+                d["buy_ratio"],
+
+            "total5":
+                d["total5"],
+
+            "total1h":
+                d["total1h"],
+
+            "turnover":
+                d["turnover"],
+
+            "age_hours":
+                d["age_hours"],
+
+            "volume_acc":
+                momentum["volume_acc"],
+
+            "tx_acc":
+                momentum["tx_acc"],
+
+            "reasons":
+                momentum["reasons"],
+
+            "risk_reasons":
+                security["reasons"],
+
+            "mint_authority":
+                security["mint_authority"],
+
+            "freeze_authority":
+                security["freeze_authority"],
+
+            "top1":
+                security["top1"],
+
+            "top5":
+                security["top5"],
+
+            "top10":
+                security["top10"],
+
+            "rugcheck_score":
+                security[
+                    "rugcheck_score"
+                ],
+        }
+
+        item["stage"] = classify(
+            d,
+            momentum,
+            quality,
+            confidence,
+            security
         )
 
         # ----------------------------------------------------
@@ -1837,39 +2186,31 @@ def scan():
         history.append({
 
             "time":
-                now_iso,
+                scan_time,
 
             "score":
-                result["score"],
+                item["score"],
 
             "quality":
-                result["quality"],
-
-            "risk":
-                result["risk"],
+                item["quality"],
 
             "confidence":
-                result["confidence"],
+                item["confidence"],
+
+            "risk":
+                item["risk"],
 
             "p5":
-                result["p5"],
+                item["p5"],
 
             "p1h":
-                result["p1h"],
+                item["p1h"],
 
             "liquidity":
-                result["liquidity"],
-
-            "v24":
-                result["v24"],
-
+                item["liquidity"],
         })
 
-        history = history[-50:]
-
-        # ----------------------------------------------------
-        # State
-        # ----------------------------------------------------
+        history = history[-60:]
 
         new_state[address] = {
 
@@ -1880,38 +2221,22 @@ def scan():
                 symbol,
 
             "score":
-                result["score"],
+                item["score"],
 
             "quality":
-                result["quality"],
-
-            "risk":
-                result["risk"],
+                item["quality"],
 
             "confidence":
-                result["confidence"],
+                item["confidence"],
 
-            "previous_score":
-                previous_score,
-
-            "score_delta":
-                score_delta,
+            "risk":
+                item["risk"],
 
             "v5":
-                result["v5"],
+                item["v5"],
 
             "tx5":
-                result["total_tx5"],
-
-            "liquidity":
-                result["liquidity"],
-
-            "price":
-                num(
-                    pair.get(
-                        "priceUsd"
-                    )
-                ),
+                item["total5"],
 
             "history":
                 history,
@@ -1935,20 +2260,11 @@ def scan():
                 ),
 
             "timestamp":
-                now_iso,
-
+                scan_time,
         }
 
         results.append(
-            result
-        )
-
-        # ----------------------------------------------------
-        # Small delay to reduce API pressure
-        # ----------------------------------------------------
-
-        time.sleep(
-            0.05
+            item
         )
 
     # ========================================================
@@ -1970,12 +2286,6 @@ def scan():
         ),
 
         reverse=True
-
-    )
-
-    print(
-        f"Pairs checked: "
-        f"{checked}"
     )
 
     print(
@@ -1993,15 +2303,13 @@ def scan():
         f"{security_checked}"
     )
 
-    # ========================================================
-    # TOP
-    # ========================================================
-
     print(
         "\nTOP CANDIDATES:"
     )
 
-    for item in results[:TOP_RESULTS]:
+    for item in results[
+        :TOP_RESULTS
+    ]:
 
         print(
 
@@ -2017,14 +2325,15 @@ def scan():
 
             f"{item['stage']} | "
 
-            f"5m {item['p5']:+.1f}% | "
+            f"5m {pct(item['p5'])} | "
 
-            f"1h {item['p1h']:+.1f}% | "
+            f"1h {pct(item['p1h'])} | "
 
-            f"liq {money(item['liquidity'])} | "
+            f"liq "
+            f"{money(item['liquidity'])} | "
 
-            f"risk {item['risk']}/100"
-
+            f"risk "
+            f"{item['risk']}/100"
         )
 
     # ========================================================
@@ -2033,13 +2342,16 @@ def scan():
 
     signal_items = []
 
+    current_time = now_ts()
+
     for item in results:
 
-        signal_type = get_signal_type(
+        stype = signal_type(
             item
         )
 
-        if not signal_type:
+        if not stype:
+
             continue
 
         old = state.get(
@@ -2054,14 +2366,14 @@ def scan():
             )
         )
 
-        last_alert_score = num(
+        last_score = num(
             old.get(
                 "last_alert_score",
                 0
             )
         )
 
-        last_alert_type = old.get(
+        last_type = old.get(
             "last_alert_type",
             ""
         )
@@ -2072,28 +2384,29 @@ def scan():
 
             or
 
-            now_ts - last_alert
-            >= ALERT_COOLDOWN
-
+            current_time
+            -
+            last_alert
+            >=
+            ALERT_COOLDOWN
         )
 
         score_jump = (
 
             item["score"]
             >=
-            last_alert_score
-            + RE_ALERT_SCORE_INCREASE
-
+            last_score
+            +
+            RE_ALERT_SCORE_INCREASE
         )
 
-        new_signal_type = (
-
-            signal_type
-            !=
-            last_alert_type
-
+        type_changed = (
+            stype != last_type
         )
 
+        # Breakout is special:
+        # if a token becomes breakout after
+        # an EARLY alert, send it again.
         should_alert = (
 
             last_alert == 0
@@ -2102,12 +2415,16 @@ def scan():
 
             or score_jump
 
-            or new_signal_type
-
+            or type_changed
         )
 
         if not should_alert:
+
             continue
+
+        item[
+            "signal_type"
+        ] = stype
 
         signal_items.append(
             item
@@ -2115,28 +2432,24 @@ def scan():
 
         new_state[
             item["address"]
-        ]["last_alert"] = (
-            now_ts
-        )
+        ][
+            "last_alert"
+        ] = current_time
 
         new_state[
             item["address"]
-        ]["last_alert_score"] = (
-            item["score"]
-        )
+        ][
+            "last_alert_score"
+        ] = item["score"]
 
         new_state[
             item["address"]
-        ]["last_alert_type"] = (
-            signal_type
-        )
-
-        item["signal_type"] = (
-            signal_type
-        )
+        ][
+            "last_alert_type"
+        ] = stype
 
     # ========================================================
-    # SAVE STATE
+    # SAVE
     # ========================================================
 
     save_json(
@@ -2144,16 +2457,12 @@ def scan():
         new_state
     )
 
-    # ========================================================
-    # SAVE SIGNAL HISTORY
-    # ========================================================
-
     for item in signal_items:
 
         signals.append({
 
             "timestamp":
-                now_iso,
+                scan_time,
 
             "address":
                 item["address"],
@@ -2161,23 +2470,23 @@ def scan():
             "symbol":
                 item["symbol"],
 
+            "signal":
+                item["signal_type"],
+
             "score":
                 item["score"],
 
             "quality":
                 item["quality"],
 
-            "risk":
-                item["risk"],
-
             "confidence":
                 item["confidence"],
 
+            "risk":
+                item["risk"],
+
             "score_delta":
                 item["score_delta"],
-
-            "stage":
-                item["signal_type"],
 
             "p5":
                 item["p5"],
@@ -2185,9 +2494,13 @@ def scan():
             "p1h":
                 item["p1h"],
 
+            "liquidity":
+                item["liquidity"],
         })
 
-    signals = signals[-2000:]
+    signals = signals[
+        -2000:
+    ]
 
     save_json(
         SIGNALS_FILE,
@@ -2203,69 +2516,16 @@ def scan():
 
 
 # ============================================================
-# TELEGRAM FORMAT
+# TELEGRAM
 # ============================================================
 
-def risk_label(risk):
+def format_signal(
+    item
+):
 
-    if risk >= 70:
-        return "🔴 HIGH"
-
-    if risk >= 40:
-        return "🟡 MEDIUM"
-
-    return "🟢 LOW"
-
-
-def security_label(item):
-
-    if not item.get(
-        "security_available",
-        False
-    ):
-
-        return (
-            "⚪ unavailable"
-        )
-
-    risk = item.get(
-        "security_risk",
-        0
-    )
-
-    if risk >= 70:
-
-        return "🔴 HIGH"
-
-    if risk >= 40:
-
-        return "🟡 MEDIUM"
-
-    return "🟢 LOW"
-
-
-def format_signal(item):
-
-    reasons = ", ".join(
-
-        item["reasons"][:5]
-
-    )
-
-    risk_reasons = ", ".join(
-
-        item["risk_reasons"][:4]
-
-    )
-
-    if not risk_reasons:
-
-        risk_reasons = (
-            "критических рыночных "
-            "признаков не обнаружено"
-        )
-
-    address = item["address"]
+    address = item[
+        "address"
+    ]
 
     dex_url = (
         "https://dexscreener.com/"
@@ -2273,107 +2533,154 @@ def format_signal(item):
         + address
     )
 
-    solscan_url = (
-        "https://solscan.io/token/"
-        + address
+    risk = item[
+        "risk"
+    ]
+
+    if risk >= 70:
+
+        risk_text = "🔴 HIGH"
+
+    elif risk >= 40:
+
+        risk_text = "🟡 MEDIUM"
+
+    else:
+
+        risk_text = "🟢 LOW"
+
+    reasons = (
+        item["reasons"][:5]
+        +
+        item["risk_reasons"][:3]
     )
 
-    security_status = (
-        security_label(item)
+    reason_text = ", ".join(
+        reasons
     )
+
+    security_lines = []
+
+    if item[
+        "mint_authority"
+    ]:
+
+        security_lines.append(
+            "⚠️ Mint authority: ACTIVE"
+        )
+
+    else:
+
+        security_lines.append(
+            "✅ Mint authority: revoked/unknown"
+        )
+
+    if item[
+        "freeze_authority"
+    ]:
+
+        security_lines.append(
+            "⚠️ Freeze authority: ACTIVE"
+        )
+
+    else:
+
+        security_lines.append(
+            "✅ Freeze authority: revoked/unknown"
+        )
+
+    if item["top5"]:
+
+        security_lines.append(
+            f"👥 Top 5: "
+            f"{item['top5']:.1f}%"
+        )
 
     return (
 
         f"{item['signal_type']}\n\n"
 
-        f"🚀 {item['name']} "
+        f"🚀 *{item['name']}* "
         f"({item['symbol']})\n\n"
 
-        f"⭐ Quality: "
-        f"{item['quality']}/100\n"
-
-        f"⚡ Momentum: "
-        f"{item['score']}/100\n"
-
         f"🎯 Confidence: "
-        f"{item['confidence']}/100\n"
+        f"{item['confidence']:.0f}/100\n"
 
-        f"📊 Score Δ: "
+        f"⭐ Momentum: "
+        f"{item['score']:.0f}/100\n"
+
+        f"🏆 Quality: "
+        f"{item['quality']:.0f}/100\n"
+
+        f"📊 Δ Score: "
         f"{item['score_delta']:+.0f}\n\n"
 
         f"📈 5m: "
-        f"{item['p5']:+.1f}%\n"
+        f"{pct(item['p5'])}\n"
 
         f"📈 1h: "
-        f"{item['p1h']:+.1f}%\n"
+        f"{pct(item['p1h'])}\n"
 
         f"📈 6h: "
-        f"{item['p6h']:+.1f}%\n\n"
+        f"{pct(item['p6h'])}\n\n"
 
         f"💧 Liquidity: "
         f"{money(item['liquidity'])}\n"
 
         f"💰 Volume 24h: "
-        f"{money(item['v24'])}\n\n"
+        f"{money(item['v24'])}\n"
 
-        f"⚡ Volume x: "
-        f"{item['volume_acceleration']:.1f}\n"
+        f"⚡ Volume: "
+        f"x{item['volume_acc']:.1f}\n"
 
-        f"🔄 TX x: "
-        f"{item['tx_acceleration']:.1f}\n\n"
+        f"🔄 Transactions: "
+        f"x{item['tx_acc']:.1f}\n\n"
 
         f"🟢 Buys 5m: "
         f"{item['buys5']}\n"
 
         f"🔴 Sells 5m: "
-        f"{item['sells5']}\n"
+        f"{item['sells5']}\n\n"
 
-        f"⚖️ Buy ratio: "
-        f"{item['buy_ratio'] * 100:.0f}%\n\n"
-
-        f"🛡 Market risk: "
-        f"{item['market_risk']}/100\n"
-
-        f"🔐 Security risk: "
-        f"{item['security_risk']}/100 "
-        f"({security_status})\n"
-
-        f"⚠️ Final risk: "
+        f"⚠️ Risk: "
         f"{item['risk']}/100 "
-        f"({risk_label(item['risk'])})\n\n"
+        f"{risk_text}\n\n"
 
-        f"🧠 Momentum:\n"
-        f"{reasons}\n\n"
+        f"🔐 Security:\n"
+        + "\n".join(
+            security_lines
+        )
+        + "\n\n"
 
-        f"⚠️ Risk:\n"
-        f"{risk_reasons}\n\n"
+        f"🧠 *Why:*\n"
+        f"{reason_text}\n\n"
 
         f"🔎 [DexScreener]"
-        f"({dex_url})\n"
-
-        f"🔐 [Solscan]"
-        f"({solscan_url})\n\n"
+        f"({dex_url})\n\n"
 
         f"📋 `{address}`\n\n"
 
         f"⚠️ Алгоритмический сигнал. "
-        f"Он не гарантирует рост и "
-        f"не является рекомендацией "
-        f"покупать токен."
-
+        f"Это не гарантия роста."
     )
 
 
-# ============================================================
-# TELEGRAM
-# ============================================================
+def send_telegram(
+    text
+):
 
-def send_telegram(text):
+    if not BOT_TOKEN:
+
+        print(
+            "BOT_TOKEN is missing"
+        )
+
+        return False
 
     if not CHAT_ID:
 
         print(
-            "CHAT_ID is not configured"
+            "CHAT_ID is missing"
         )
 
         return False
@@ -2383,40 +2690,41 @@ def send_telegram(text):
         f"bot{BOT_TOKEN}/sendMessage"
     )
 
+    payload = {
+
+        "chat_id":
+            CHAT_ID,
+
+        "text":
+            text,
+
+        "parse_mode":
+            "Markdown",
+
+        "disable_web_page_preview":
+            False,
+    }
+
     try:
 
         response = SESSION.post(
 
             url,
 
-            json={
-
-                "chat_id":
-                    CHAT_ID,
-
-                "text":
-                    text,
-
-                "parse_mode":
-                    "Markdown",
-
-                "disable_web_page_preview":
-                    False,
-
-            },
+            json=payload,
 
             timeout=15
-
         )
 
         print(
             "Telegram:",
             response.status_code,
-            response.text[:300]
+            response.text[:250]
         )
 
         return (
-            response.status_code == 200
+            response.status_code
+            == 200
         )
 
     except Exception as e:
@@ -2435,11 +2743,17 @@ def send_telegram(text):
 
 def main():
 
+    print()
     print(
-        "\n"
-        "========================================\n"
-        "   SOLANA MOMENTUM SCANNER v3\n"
-        "========================================\n"
+        "========================================"
+    )
+
+    print(
+        f"   SOLANA MOMENTUM SCANNER v{VERSION}"
+    )
+
+    print(
+        "========================================"
     )
 
     signals = scan()
@@ -2453,10 +2767,6 @@ def main():
 
         send_telegram(
             format_signal(item)
-        )
-
-        time.sleep(
-            0.5
         )
 
 
