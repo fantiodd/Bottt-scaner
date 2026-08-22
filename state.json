@@ -1,91 +1,50 @@
 {
-  "7sAnqhZvNCVKqc3Jj6QVDrdqtmnZJY3NePgXTqRtpump": {
-    "name": "CallCat",
-    "symbol": "CALLCAT",
-    "score": 26,
-    "quality": 97,
-    "confidence": 65.65,
-    "risk": 0,
-    "v5": 13273.83,
-    "tx5": 458,
+  "654ZBNYZ2oFgvvwkdQYa9e5s1jeQNHRjSvocEy1Dpump": {
+    "name": "Moon Cat",
+    "symbol": "LUNY",
+    "momentum": 20,
+    "quality": 57,
+    "confidence": 54.25,
+    "risk": 20,
+    "previous_momentum": 0.0,
+    "v5": 28079.99,
+    "tx5": 2417,
     "history": [
       {
         "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 26,
-        "quality": 97,
-        "confidence": 65.65,
+        "score": 53,
+        "quality": 65,
+        "confidence": 71.6,
         "risk": 0,
-        "p5": 4.6,
-        "p1h": -16.56,
-        "liquidity": 136243.74
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "5GqrNZdY3cLFDKxU6yStPwZmFrHyQ27fXiA9u4Nfpump": {
-    "name": "Mani",
-    "symbol": "MANI",
-    "score": 0,
-    "quality": 53,
-    "confidence": 43.55,
-    "risk": 0,
-    "v5": 19645.62,
-    "tx5": 458,
-    "history": [
+        "p5": 5.76,
+        "p1h": 82.36,
+        "liquidity": 22555.24
+      },
       {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 0,
-        "quality": 53,
-        "confidence": 43.55,
-        "risk": 0,
-        "p5": 40.56,
-        "p1h": 85.62,
-        "liquidity": 19775.02
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 20,
+        "quality": 57,
+        "confidence": 54.25,
+        "risk": 20,
+        "p5": 0.95,
+        "p1h": 83.28
       }
     ],
     "last_alert": 0,
-    "last_alert_score": 0,
+    "last_alert_confidence": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "6AgMvzWD6XbhD1GAoaj4PbVgDWdiDeThTmBUzKws8Mr1": {
-    "name": "BULLFROG",
-    "symbol": "BULLFROG",
-    "score": 0,
-    "quality": 33,
-    "confidence": 31.549999999999997,
-    "risk": 0,
-    "v5": 19043.8,
-    "tx5": 501,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 0,
-        "quality": 33,
-        "confidence": 31.549999999999997,
-        "risk": 0,
-        "p5": 57.26,
-        "p1h": 57.26,
-        "liquidity": 18482.31
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
   },
   "7oZ2V1p8Mvmc6FPCF7S7NqYWr8cntWLW2kmDBLuSpump": {
     "name": "Trumpcate Coin",
     "symbol": "TRUMPCATE",
-    "score": 0,
-    "quality": 67,
-    "confidence": 48.45,
-    "risk": 0,
-    "v5": 39055.77,
-    "tx5": 747,
+    "momentum": 0,
+    "quality": 65,
+    "confidence": 48.55,
+    "risk": 18,
+    "previous_momentum": 0.0,
+    "v5": 31663.01,
+    "tx5": 680,
     "history": [
       {
         "time": "2026-08-22T12:21:15.172928+00:00",
@@ -96,20 +55,478 @@
         "p5": 49.19,
         "p1h": 166.0,
         "liquidity": 37455.14
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 65,
+        "confidence": 48.55,
+        "risk": 18,
+        "p5": -11.29,
+        "p1h": 135.0
       }
     ],
     "last_alert": 0,
-    "last_alert_score": 0,
+    "last_alert_confidence": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "WoFihq2bf1wdxxwzzqKAGh3VCtf9nP9AamsiTqJAtxH": {
+    "name": "World Oil Fund Institution",
+    "symbol": "WOFI",
+    "momentum": 2,
+    "quality": 28,
+    "confidence": 40.8,
+    "risk": 0,
+    "previous_momentum": 0.0,
+    "v5": 6.46,
+    "tx5": 1,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 11,
+        "quality": 48,
+        "confidence": 41.75,
+        "risk": 0,
+        "p5": 0.0,
+        "p1h": 0.15,
+        "liquidity": 60511.82
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 2,
+        "quality": 28,
+        "confidence": 40.8,
+        "risk": 0,
+        "p5": -0.13,
+        "p1h": 0.03
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "DRT25JAiZahvdFTLroV1UW3aSYYEKXHxregsMZmcpump": {
+    "name": "dNetes",
+    "symbol": "DNETES",
+    "momentum": 0,
+    "quality": 36,
+    "confidence": 38.0,
+    "risk": 40,
+    "previous_momentum": 0.0,
+    "v5": 26411.83,
+    "tx5": 561,
+    "history": [
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 36,
+        "confidence": 38.0,
+        "risk": 40,
+        "p5": -16.23,
+        "p1h": -16.23
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "xbwGuiwLGxKEJEwUye5t2KU1SMkSbwCVzUbr6jmheBn": {
+    "name": "Zeroeffortcoin",
+    "symbol": "ZEC",
+    "momentum": 0,
+    "quality": 42,
+    "confidence": 35.8,
+    "risk": 38,
+    "previous_momentum": 0.0,
+    "v5": 4907.07,
+    "tx5": 73,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 13,
+        "quality": 47,
+        "confidence": 47.3,
+        "risk": 0,
+        "p5": 8.83,
+        "p1h": 243.0,
+        "liquidity": 22850.83
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 42,
+        "confidence": 35.8,
+        "risk": 38,
+        "p5": -5.43,
+        "p1h": 144.0
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "5GqrNZdY3cLFDKxU6yStPwZmFrHyQ27fXiA9u4Nfpump": {
+    "name": "Mani",
+    "symbol": "MANI",
+    "momentum": 20,
+    "quality": 58,
+    "confidence": 50.0,
+    "risk": 50,
+    "previous_momentum": 0.0,
+    "v5": 26042.57,
+    "tx5": 499,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 0,
+        "quality": 53,
+        "confidence": 43.55,
+        "risk": 0,
+        "p5": 40.56,
+        "p1h": 85.62,
+        "liquidity": 19775.02
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 20,
+        "quality": 58,
+        "confidence": 50.0,
+        "risk": 50,
+        "p5": -37.85,
+        "p1h": 18.44
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "BFLuu3KxHtiJvCTKrb3EkHLnggm1gacbYejaTC9Xpump": {
+    "name": "Lena Brandt",
+    "symbol": "LENA",
+    "momentum": 0,
+    "quality": 35,
+    "confidence": 37.0,
+    "risk": 45,
+    "previous_momentum": 0.0,
+    "v5": 2940.72,
+    "tx5": 96,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 0,
+        "quality": 45,
+        "confidence": 35.75,
+        "risk": 0,
+        "p5": -13.12,
+        "p1h": -37.55,
+        "liquidity": 10793.99
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 35,
+        "confidence": 37.0,
+        "risk": 45,
+        "p5": -4.69,
+        "p1h": -41.6
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "CB9dDufT3ZuQXqqSfa1c5kY935TEreyBw9XJXxHKpump": {
+    "name": "unstable coin",
+    "symbol": "USDUC",
+    "momentum": 58,
+    "quality": 70,
+    "confidence": 73.7,
+    "risk": 0,
+    "previous_momentum": 0.0,
+    "v5": 3368.83,
+    "tx5": 5,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 12,
+        "quality": 65,
+        "confidence": 48.15,
+        "risk": 0,
+        "p5": -0.03,
+        "p1h": 0.95,
+        "liquidity": 628379.94
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 58,
+        "quality": 70,
+        "confidence": 73.7,
+        "risk": 0,
+        "p5": 2.82,
+        "p1h": 3.8
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "5YyFARizABCqN7GPAPgS66LTsQ4D9o9TzWjamH5Wpump": {
+    "name": "Sentinel Coin",
+    "symbol": "SENT",
+    "momentum": 30,
+    "quality": 29,
+    "confidence": 37.0,
+    "risk": 35,
+    "previous_momentum": 0.0,
+    "v5": 102.16,
+    "tx5": 1,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 50,
+        "quality": 41,
+        "confidence": 52.85,
+        "risk": 45,
+        "p5": 5.3,
+        "p1h": 7.03,
+        "liquidity": 34725.44
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 30,
+        "quality": 29,
+        "confidence": 37.0,
+        "risk": 35,
+        "p5": 2.36,
+        "p1h": 9.55
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "7bQQgwnNf1qPBdTcuouKtYthsHaGLxxs2X38fgzBTq2w": {
+    "name": "ANSEM6900",
+    "symbol": "ANSEM6900",
+    "momentum": 0,
+    "quality": 30,
+    "confidence": 35.75,
+    "risk": 45,
+    "previous_momentum": 0.0,
+    "v5": 205.43,
+    "tx5": 15,
+    "history": [
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 30,
+        "confidence": 35.75,
+        "risk": 45,
+        "p5": 3.47,
+        "p1h": -59.94
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "5xC8SdxnMx7ToMd4foewMsxGGQ9zTVu7mUJxfnPCpump": {
+    "name": "BabyCate",
+    "symbol": "BABYCATE",
+    "momentum": 0,
+    "quality": 45,
+    "confidence": 43.25,
+    "risk": 20,
+    "previous_momentum": 0.0,
+    "v5": 740.47,
+    "tx5": 108,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 0,
+        "quality": 57,
+        "confidence": 39.95,
+        "risk": 0,
+        "p5": -18.75,
+        "p1h": -18.05,
+        "liquidity": 14422.93
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 45,
+        "confidence": 43.25,
+        "risk": 20,
+        "p5": -7.33,
+        "p1h": -13.59
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "AtifcdqN2LutV5pkwjbtZtrxmu7wRqYfwrx1r3e7pump": {
+    "name": "Swole Doge",
+    "symbol": "SWOGE",
+    "momentum": 46,
+    "quality": 55,
+    "confidence": 64.15,
+    "risk": 20,
+    "previous_momentum": 0.0,
+    "v5": 6121.75,
+    "tx5": 121,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 0,
+        "quality": 53,
+        "confidence": 38.55,
+        "risk": 0,
+        "p5": -51.84,
+        "p1h": 48.56,
+        "liquidity": 18113.72
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 46,
+        "quality": 55,
+        "confidence": 64.15,
+        "risk": 20,
+        "p5": 13.57,
+        "p1h": 69.96
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "A1TJ3cWdzwcjZMm9Pcb3E51iNjV5eZE3SpZXUrboMARA": {
+    "name": "ArmaraOS",
+    "symbol": "ARMARA",
+    "momentum": 30,
+    "quality": 23,
+    "confidence": 52.75,
+    "risk": 0,
+    "previous_momentum": 0.0,
+    "v5": 99.89,
+    "tx5": 4,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 1,
+        "quality": 45,
+        "confidence": 36.2,
+        "risk": 0,
+        "p5": 0.06,
+        "p1h": -1.09,
+        "liquidity": 57378.21
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 30,
+        "quality": 23,
+        "confidence": 52.75,
+        "risk": 0,
+        "p5": 0.1,
+        "p1h": -0.75
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "897wEhKQtCKXuxxoDA8BH9LWnSpdTKLVzqh1J8xFpump": {
+    "name": "Bullballs Coin",
+    "symbol": "BULLBALLS",
+    "momentum": 10,
+    "quality": 35,
+    "confidence": 41.75,
+    "risk": 40,
+    "previous_momentum": 0.0,
+    "v5": 13.71,
+    "tx5": 3,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 0,
+        "quality": 55,
+        "confidence": 39.25,
+        "risk": 0,
+        "p5": -0.38,
+        "p1h": 22.58,
+        "liquidity": 11251.78
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 10,
+        "quality": 35,
+        "confidence": 41.75,
+        "risk": 40,
+        "p5": 0.72,
+        "p1h": 6.05
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "EeJRS87pgqDQew8JHXS9RGBYjPANhXEFNfqZPuoQpump": {
+    "name": "Fingers",
+    "symbol": "FINGERS",
+    "momentum": 0,
+    "quality": 73,
+    "confidence": 49.5,
+    "risk": 25,
+    "previous_momentum": 0.0,
+    "v5": 15328.0,
+    "tx5": 230,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 0,
+        "quality": 87,
+        "confidence": 50.45,
+        "risk": 0,
+        "p5": -2.36,
+        "p1h": -20.95,
+        "liquidity": 65418.75
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 73,
+        "confidence": 49.5,
+        "risk": 25,
+        "p5": -7.52,
+        "p1h": -39.89
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
   },
   "9vciqoMDquKyjEEtLkenQ4TxSjDEUNxcQdjhHXNHpump": {
     "name": "bullpen",
     "symbol": "BULLPEN",
-    "score": 4,
-    "quality": 36,
-    "confidence": 34.4,
-    "risk": 0,
+    "momentum": 2,
+    "quality": 22,
+    "confidence": 24.8,
+    "risk": 30,
+    "previous_momentum": 0.0,
     "v5": 0.0,
     "tx5": 0,
     "history": [
@@ -122,360 +539,68 @@
         "p5": 0.0,
         "p1h": 0.12,
         "liquidity": 22800.14
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "CB9dDufT3ZuQXqqSfa1c5kY935TEreyBw9XJXxHKpump": {
-    "name": "unstable coin",
-    "symbol": "USDUC",
-    "score": 12,
-    "quality": 65,
-    "confidence": 48.15,
-    "risk": 0,
-    "v5": 517.55,
-    "tx5": 2,
-    "history": [
+      },
       {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 12,
-        "quality": 65,
-        "confidence": 48.15,
-        "risk": 0,
-        "p5": -0.03,
-        "p1h": 0.95,
-        "liquidity": 628379.94
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "xbwGuiwLGxKEJEwUye5t2KU1SMkSbwCVzUbr6jmheBn": {
-    "name": "Zeroeffortcoin",
-    "symbol": "ZEC",
-    "score": 13,
-    "quality": 47,
-    "confidence": 47.3,
-    "risk": 0,
-    "v5": 3453.04,
-    "tx5": 66,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 13,
-        "quality": 47,
-        "confidence": 47.3,
-        "risk": 0,
-        "p5": 8.83,
-        "p1h": 243.0,
-        "liquidity": 22850.83
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "654ZBNYZ2oFgvvwkdQYa9e5s1jeQNHRjSvocEy1Dpump": {
-    "name": "Moon Cat",
-    "symbol": "LUNY",
-    "score": 53,
-    "quality": 65,
-    "confidence": 71.6,
-    "risk": 0,
-    "v5": 31704.65,
-    "tx5": 1792,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 53,
-        "quality": 65,
-        "confidence": 71.6,
-        "risk": 0,
-        "p5": 5.76,
-        "p1h": 82.36,
-        "liquidity": 22555.24
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "q23J3Uw3Mscbe3rcvYxaAjNYBnJmLdLGULmTowWpump": {
-    "name": "OFFICIAL MELANIA",
-    "symbol": "MELANIA",
-    "score": 6,
-    "quality": 65,
-    "confidence": 45.45,
-    "risk": 0,
-    "v5": 23149.8,
-    "tx5": 1317,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 6,
-        "quality": 65,
-        "confidence": 45.45,
-        "risk": 0,
-        "p5": -21.23,
-        "p1h": 64.65,
-        "liquidity": 26890.08
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "WoFihq2bf1wdxxwzzqKAGh3VCtf9nP9AamsiTqJAtxH": {
-    "name": "World Oil Fund Institution",
-    "symbol": "WOFI",
-    "score": 11,
-    "quality": 48,
-    "confidence": 41.75,
-    "risk": 0,
-    "v5": 0.0,
-    "tx5": 0,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 11,
-        "quality": 48,
-        "confidence": 41.75,
-        "risk": 0,
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 2,
+        "quality": 22,
+        "confidence": 24.8,
+        "risk": 30,
         "p5": 0.0,
-        "p1h": 0.15,
-        "liquidity": 60511.82
+        "p1h": 0.12
       }
     ],
     "last_alert": 0,
-    "last_alert_score": 0,
+    "last_alert_confidence": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
   },
-  "897wEhKQtCKXuxxoDA8BH9LWnSpdTKLVzqh1J8xFpump": {
-    "name": "Bullballs Coin",
-    "symbol": "BULLBALLS",
-    "score": 0,
-    "quality": 55,
-    "confidence": 39.25,
-    "risk": 0,
-    "v5": 78.79,
-    "tx5": 6,
+  "7sAnqhZvNCVKqc3Jj6QVDrdqtmnZJY3NePgXTqRtpump": {
+    "name": "CallCat",
+    "symbol": "CALLCAT",
+    "momentum": 0,
+    "quality": 80,
+    "confidence": 40.0,
+    "risk": 20,
+    "previous_momentum": 0.0,
+    "v5": 15396.23,
+    "tx5": 441,
     "history": [
       {
         "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 0,
-        "quality": 55,
-        "confidence": 39.25,
+        "score": 26,
+        "quality": 97,
+        "confidence": 65.65,
         "risk": 0,
-        "p5": -0.38,
-        "p1h": 22.58,
-        "liquidity": 11251.78
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "CGEDT9QZDvvH5GmVkWJH2BXiMJqMJySC9ihWyr7Spump": {
-    "name": "Burnie Senders",
-    "symbol": "BURNIE",
-    "score": 15,
-    "quality": 65,
-    "confidence": 49.5,
-    "risk": 0,
-    "v5": 0.0,
-    "tx5": 0,
-    "history": [
+        "p5": 4.6,
+        "p1h": -16.56,
+        "liquidity": 136243.74
+      },
       {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 15,
-        "quality": 65,
-        "confidence": 49.5,
-        "risk": 0,
-        "p5": 0.0,
-        "p1h": 1.48,
-        "liquidity": 288870.71
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 80,
+        "confidence": 40.0,
+        "risk": 20,
+        "p5": -11.15,
+        "p1h": -18.29
       }
     ],
     "last_alert": 0,
-    "last_alert_score": 0,
+    "last_alert_confidence": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "AtifcdqN2LutV5pkwjbtZtrxmu7wRqYfwrx1r3e7pump": {
-    "name": "Swole Doge",
-    "symbol": "SWOGE",
-    "score": 0,
-    "quality": 53,
-    "confidence": 38.55,
-    "risk": 0,
-    "v5": 21328.98,
-    "tx5": 273,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 0,
-        "quality": 53,
-        "confidence": 38.55,
-        "risk": 0,
-        "p5": -51.84,
-        "p1h": 48.56,
-        "liquidity": 18113.72
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "HCrpPqRJNd2JUNnhsueXQTQZDkDbfXYDzgmz5tS9pump": {
-    "name": "Rizzenstein",
-    "symbol": "RIZZSTEIN",
-    "score": 16,
-    "quality": 38,
-    "confidence": 40.5,
-    "risk": 0,
-    "v5": 56.19,
-    "tx5": 2,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 16,
-        "quality": 38,
-        "confidence": 40.5,
-        "risk": 0,
-        "p5": 1.39,
-        "p1h": 10.96,
-        "liquidity": 11918.74
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "24EX9CQqEpR9mNUDTjkooKqRTf2pkY2mgbDqwNDwpump": {
-    "name": "Pepe Cate Coin",
-    "symbol": "PATE",
-    "score": 48,
-    "quality": 63,
-    "confidence": 68.65,
-    "risk": 0,
-    "v5": 1047.18,
-    "tx5": 25,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 48,
-        "quality": 63,
-        "confidence": 68.65,
-        "risk": 0,
-        "p5": 6.42,
-        "p1h": 80.09,
-        "liquidity": 27156.71
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "5AbfQ5tGU4YT1v5r43v8z9UeKmUZcXvMxGrCfsMXpump": {
-    "name": "Nihilist The Penguin",
-    "symbol": "NTP",
-    "score": 0,
-    "quality": 43,
-    "confidence": 35.05,
-    "risk": 0,
-    "v5": 273.08,
-    "tx5": 6,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 0,
-        "quality": 43,
-        "confidence": 35.05,
-        "risk": 0,
-        "p5": -5.82,
-        "p1h": 1.88,
-        "liquidity": 17114.39
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "5YyFARizABCqN7GPAPgS66LTsQ4D9o9TzWjamH5Wpump": {
-    "name": "Sentinel Coin",
-    "symbol": "SENT",
-    "score": 50,
-    "quality": 41,
-    "confidence": 52.85,
-    "risk": 45,
-    "v5": 736.84,
-    "tx5": 1,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 50,
-        "quality": 41,
-        "confidence": 52.85,
-        "risk": 45,
-        "p5": 5.3,
-        "p1h": 7.03,
-        "liquidity": 34725.44
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "BFLuu3KxHtiJvCTKrb3EkHLnggm1gacbYejaTC9Xpump": {
-    "name": "Lena Brandt",
-    "symbol": "LENA",
-    "score": 0,
-    "quality": 45,
-    "confidence": 35.75,
-    "risk": 0,
-    "v5": 5321.09,
-    "tx5": 152,
-    "history": [
-      {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 0,
-        "quality": 45,
-        "confidence": 35.75,
-        "risk": 0,
-        "p5": -13.12,
-        "p1h": -37.55,
-        "liquidity": 10793.99
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
   },
   "Fh7mLxtPAysdvHcMcJ37A3vc6WvBVh7JVDwxmwk6pump": {
     "name": "GIVEBACK",
     "symbol": "GBACK",
-    "score": 49,
-    "quality": 65,
-    "confidence": 69.8,
-    "risk": 0,
-    "v5": 2919.16,
-    "tx5": 2,
+    "momentum": 20,
+    "quality": 55,
+    "confidence": 41.75,
+    "risk": 20,
+    "previous_momentum": 0.0,
+    "v5": 0.0,
+    "tx5": 0,
     "history": [
       {
         "time": "2026-08-22T12:21:15.172928+00:00",
@@ -486,48 +611,140 @@
         "p5": 4.2,
         "p1h": 5.27,
         "liquidity": 317547.12
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 20,
+        "quality": 55,
+        "confidence": 41.75,
+        "risk": 20,
+        "p5": 0.0,
+        "p1h": 3.15
       }
     ],
     "last_alert": 0,
-    "last_alert_score": 0,
+    "last_alert_confidence": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
   },
-  "A1TJ3cWdzwcjZMm9Pcb3E51iNjV5eZE3SpZXUrboMARA": {
-    "name": "ArmaraOS",
-    "symbol": "ARMARA",
-    "score": 1,
+  "CGEDT9QZDvvH5GmVkWJH2BXiMJqMJySC9ihWyr7Spump": {
+    "name": "Burnie Senders",
+    "symbol": "BURNIE",
+    "momentum": 2,
     "quality": 45,
-    "confidence": 36.2,
-    "risk": 0,
-    "v5": 4.61,
-    "tx5": 2,
+    "confidence": 32.05,
+    "risk": 20,
+    "previous_momentum": 0.0,
+    "v5": 359.71,
+    "tx5": 3,
     "history": [
       {
         "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 1,
-        "quality": 45,
-        "confidence": 36.2,
+        "score": 15,
+        "quality": 65,
+        "confidence": 49.5,
         "risk": 0,
-        "p5": 0.06,
-        "p1h": -1.09,
-        "liquidity": 57378.21
+        "p5": 0.0,
+        "p1h": 1.48,
+        "liquidity": 288870.71
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 2,
+        "quality": 45,
+        "confidence": 32.05,
+        "risk": 20,
+        "p5": -0.9,
+        "p1h": -0.29
       }
     ],
     "last_alert": 0,
-    "last_alert_score": 0,
+    "last_alert_confidence": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "HCrpPqRJNd2JUNnhsueXQTQZDkDbfXYDzgmz5tS9pump": {
+    "name": "Rizzenstein",
+    "symbol": "RIZZSTEIN",
+    "momentum": 48,
+    "quality": 25,
+    "confidence": 42.45,
+    "risk": 40,
+    "previous_momentum": 0.0,
+    "v5": 113.58,
+    "tx5": 4,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 16,
+        "quality": 38,
+        "confidence": 40.5,
+        "risk": 0,
+        "p5": 1.39,
+        "p1h": 10.96,
+        "liquidity": 11918.74
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 48,
+        "quality": 25,
+        "confidence": 42.45,
+        "risk": 40,
+        "p5": -2.41,
+        "p1h": 7.44
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
+  },
+  "5AbfQ5tGU4YT1v5r43v8z9UeKmUZcXvMxGrCfsMXpump": {
+    "name": "Nihilist The Penguin",
+    "symbol": "NTP",
+    "momentum": 7,
+    "quality": 15,
+    "confidence": 23.55,
+    "risk": 40,
+    "previous_momentum": 0.0,
+    "v5": 4.85,
+    "tx5": 1,
+    "history": [
+      {
+        "time": "2026-08-22T12:21:15.172928+00:00",
+        "score": 0,
+        "quality": 43,
+        "confidence": 35.05,
+        "risk": 0,
+        "p5": -5.82,
+        "p1h": 1.88,
+        "liquidity": 17114.39
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 7,
+        "quality": 15,
+        "confidence": 23.55,
+        "risk": 40,
+        "p5": 1.43,
+        "p1h": -1.97
+      }
+    ],
+    "last_alert": 0,
+    "last_alert_confidence": 0,
+    "last_alert_type": "",
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
   },
   "AX2QTrujcWri5cP87QK2nQChfFeCSFzcTa7n2AwRpump": {
     "name": "Dotecoin",
     "symbol": "DOTE",
-    "score": 1,
-    "quality": 67,
-    "confidence": 43.9,
-    "risk": 0,
-    "v5": 2173.39,
-    "tx5": 45,
+    "momentum": 2,
+    "quality": 56,
+    "confidence": 33.3,
+    "risk": 30,
+    "previous_momentum": 0.0,
+    "v5": 2258.72,
+    "tx5": 43,
     "history": [
       {
         "time": "2026-08-22T12:21:15.172928+00:00",
@@ -538,63 +755,56 @@
         "p5": -2.38,
         "p1h": 2.3,
         "liquidity": 27717.3
+      },
+      {
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 2,
+        "quality": 56,
+        "confidence": 33.3,
+        "risk": 30,
+        "p5": 1.26,
+        "p1h": 2.53
       }
     ],
     "last_alert": 0,
-    "last_alert_score": 0,
+    "last_alert_confidence": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
   },
-  "EeJRS87pgqDQew8JHXS9RGBYjPANhXEFNfqZPuoQpump": {
-    "name": "Fingers",
-    "symbol": "FINGERS",
-    "score": 0,
-    "quality": 87,
-    "confidence": 50.45,
-    "risk": 0,
-    "v5": 17028.83,
-    "tx5": 239,
+  "6AgMvzWD6XbhD1GAoaj4PbVgDWdiDeThTmBUzKws8Mr1": {
+    "name": "BULLFROG",
+    "symbol": "BULLFROG",
+    "momentum": 0,
+    "quality": 40,
+    "confidence": 22.8,
+    "risk": 68,
+    "previous_momentum": 0.0,
+    "v5": 10787.25,
+    "tx5": 268,
     "history": [
       {
         "time": "2026-08-22T12:21:15.172928+00:00",
         "score": 0,
-        "quality": 87,
-        "confidence": 50.45,
+        "quality": 33,
+        "confidence": 31.549999999999997,
         "risk": 0,
-        "p5": -2.36,
-        "p1h": -20.95,
-        "liquidity": 65418.75
-      }
-    ],
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
-  },
-  "5xC8SdxnMx7ToMd4foewMsxGGQ9zTVu7mUJxfnPCpump": {
-    "name": "BabyCate",
-    "symbol": "BABYCATE",
-    "score": 0,
-    "quality": 57,
-    "confidence": 39.95,
-    "risk": 0,
-    "v5": 4928.19,
-    "tx5": 190,
-    "history": [
+        "p5": 57.26,
+        "p1h": 57.26,
+        "liquidity": 18482.31
+      },
       {
-        "time": "2026-08-22T12:21:15.172928+00:00",
-        "score": 0,
-        "quality": 57,
-        "confidence": 39.95,
-        "risk": 0,
-        "p5": -18.75,
-        "p1h": -18.05,
-        "liquidity": 14422.93
+        "time": "2026-08-22T12:26:03.888286+00:00",
+        "momentum": 0,
+        "quality": 40,
+        "confidence": 22.8,
+        "risk": 68,
+        "p5": 30.65,
+        "p1h": 110.0
       }
     ],
     "last_alert": 0,
-    "last_alert_score": 0,
+    "last_alert_confidence": 0,
     "last_alert_type": "",
-    "timestamp": "2026-08-22T12:21:15.172928+00:00"
+    "timestamp": "2026-08-22T12:26:03.888286+00:00"
   }
 }
