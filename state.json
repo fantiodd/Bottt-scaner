@@ -1,389 +1,13 @@
 {
-  "215UoqLTUoW75bsck1biuUhMLQKTNBG4kRUPPA7tpump": {
-    "name": "Save Moji",
-    "symbol": "MOJI",
-    "score": 0,
-    "quality": 38,
-    "confidence": 3.2,
-    "risk": 25,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -2.11,
-    "p1h": 5.47,
-    "v5": 12331.13,
-    "tx5": 197,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 0,
-        "quality": 38,
-        "confidence": 3.2,
-        "risk": 25,
-        "p5": -2.11,
-        "p1h": 5.47,
-        "v5": 12331.13,
-        "tx5": 197
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "AdYHGgcLYCQSpaSuJPWNJsMKE9RoFQFiBkxr5x88pump": {
-    "name": "CyberTroll",
-    "symbol": "CYBERTROLL",
-    "score": 17,
-    "quality": 58,
-    "confidence": 13.9,
-    "risk": 22,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -3.17,
-    "p1h": 104.0,
-    "v5": 53224.03,
-    "tx5": 985,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 17,
-        "quality": 58,
-        "confidence": 13.9,
-        "risk": 22,
-        "p5": -3.17,
-        "p1h": 104.0,
-        "v5": 53224.03,
-        "tx5": 985
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "8ont4auqyUv5hJ1MH9pKRuHhfnpGfErM1nBjmkQTd3wo": {
-    "name": "Very Important Pup",
-    "symbol": "$VIP",
-    "score": 4,
-    "quality": 40,
-    "confidence": 11.4,
-    "risk": 0,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": 0.08,
-    "p1h": -13.09,
-    "v5": 267.67,
-    "tx5": 13,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 4,
-        "quality": 40,
-        "confidence": 11.4,
-        "risk": 0,
-        "p5": 0.08,
-        "p1h": -13.09,
-        "v5": 267.67,
-        "tx5": 13
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "4TMWU9rVqFeo5vRnQKEHhyYDCfSfpmnKhDqZMRagpump": {
-    "name": "Big Bull Cat",
-    "symbol": "BBC",
-    "score": 0,
-    "quality": 20,
-    "confidence": 0,
-    "risk": 25,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": 10.58,
-    "p1h": -10.06,
-    "v5": 732.31,
-    "tx5": 28,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 0,
-        "quality": 20,
-        "confidence": 0,
-        "risk": 25,
-        "p5": 10.58,
-        "p1h": -10.06,
-        "v5": 732.31,
-        "tx5": 28
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "2pVVVVxXZ4xg9Y7YZPMQh4yDkstkRBD8APr11NUPpump": {
-    "name": "UpCat",
-    "symbol": "UPCAT",
-    "score": 13,
-    "quality": 59,
-    "confidence": 10.3,
-    "risk": 32,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -13.58,
-    "p1h": 73.33,
-    "v5": 34301.8,
-    "tx5": 1557,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 13,
-        "quality": 59,
-        "confidence": 10.3,
-        "risk": 32,
-        "p5": -13.58,
-        "p1h": 73.33,
-        "v5": 34301.8,
-        "tx5": 1557
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "4FqqLmDcRTeFBJkGUemYwhsUuSPCdUPS6TWqDaLCpump": {
-    "name": "Pibblepan’s Coin ",
-    "symbol": "PIBBLE",
-    "score": 3,
-    "quality": 15,
-    "confidence": 4.8,
-    "risk": 0,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -0.81,
-    "p1h": -9.38,
-    "v5": 130.52,
-    "tx5": 1,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 3,
-        "quality": 15,
-        "confidence": 4.8,
-        "risk": 0,
-        "p5": -0.81,
-        "p1h": -9.38,
-        "v5": 130.52,
-        "tx5": 1
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "DREc3Bg1dwa3FkA1H1tGscpx2Lr9rw3hMzDj8287pump": {
-    "name": "Callout This Coin",
-    "symbol": "CALLOUT",
-    "score": 0,
-    "quality": 39,
-    "confidence": 0,
-    "risk": 65,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": 32.55,
-    "p1h": -30.25,
-    "v5": 6799.3,
-    "tx5": 204,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 0,
-        "quality": 39,
-        "confidence": 0,
-        "risk": 65,
-        "p5": 32.55,
-        "p1h": -30.25,
-        "v5": 6799.3,
-        "tx5": 204
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "ErWFD2gFDxxvvo2bVY9PLS6cNqP5EZtRz8PjBp7Epump": {
-    "name": "CyberCoin",
-    "symbol": "CYBERCOIN",
-    "score": 0,
-    "quality": 62,
-    "confidence": 13.2,
-    "risk": 25,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -6.49,
-    "p1h": -61.37,
-    "v5": 13278.68,
-    "tx5": 671,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 0,
-        "quality": 62,
-        "confidence": 13.2,
-        "risk": 25,
-        "p5": -6.49,
-        "p1h": -61.37,
-        "v5": 13278.68,
-        "tx5": 671
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "9HHTQ7YMx82E987cNqF9KczyZrfKgqvKNyA2yHSVpump": {
-    "name": "Cybercat",
-    "symbol": "CYBERCAT",
-    "score": 0,
-    "quality": 66,
-    "confidence": 13.0,
-    "risk": 30,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -10.37,
-    "p1h": -26.19,
-    "v5": 22828.02,
-    "tx5": 458,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 0,
-        "quality": 66,
-        "confidence": 13.0,
-        "risk": 30,
-        "p5": -10.37,
-        "p1h": -26.19,
-        "v5": 22828.02,
-        "tx5": 458
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "AgLh3XRYxVpYzuBceQ3mnEk8bDtfBdpZdURnrj39pump": {
-    "name": "Catoshi Nakameowto",
-    "symbol": "CATOSHI",
-    "score": 11,
-    "quality": 30,
-    "confidence": 9.1,
-    "risk": 25,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -0.75,
-    "p1h": 40.25,
-    "v5": 1320.61,
-    "tx5": 36,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 11,
-        "quality": 30,
-        "confidence": 9.1,
-        "risk": 25,
-        "p5": -0.75,
-        "p1h": 40.25,
-        "v5": 1320.61,
-        "tx5": 36
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "95uiDSC7JA9xx8honVi6158M5TNndsnYP6gBm46Rpump": {
-    "name": "808 MAFIA",
-    "symbol": "808",
-    "score": 2,
-    "quality": 46,
-    "confidence": 19.7,
-    "risk": 50,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": 41.79,
-    "p1h": 35.73,
-    "v5": 3893.37,
-    "tx5": 77,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 2,
-        "quality": 46,
-        "confidence": 19.7,
-        "risk": 50,
-        "p5": 41.79,
-        "p1h": 35.73,
-        "v5": 3893.37,
-        "tx5": 77
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
-  "5hspQiDgwG3R2Js9L3zqFa78WRAY8rm9SfJSAS6zpump": {
-    "name": "The Most Valuable Thing In Life",
-    "symbol": "YOURSELF",
-    "score": 0,
-    "quality": 39,
-    "confidence": 3.5,
-    "risk": 25,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -10.83,
-    "p1h": -11.11,
-    "v5": 6814.98,
-    "tx5": 100,
-    "last_alert": 0,
-    "last_alert_score": 0,
-    "last_alert_type": "",
-    "history": [
-      {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 0,
-        "quality": 39,
-        "confidence": 3.5,
-        "risk": 25,
-        "p5": -10.83,
-        "p1h": -11.11,
-        "v5": 6814.98,
-        "tx5": 100
-      }
-    ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
-  },
   "G2Zkzr1yNdZoBybizCxCktikxBkVTpMdYaokUBfRpump": {
     "name": "MultiTool",
     "symbol": "MULTITOOL",
-    "score": 0,
-    "quality": 53,
-    "confidence": 0,
-    "risk": 57,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": -18.7,
-    "p1h": -48.54,
-    "v5": 3517.31,
-    "tx5": 111,
+    "momentum": 0,
+    "quality": 23,
+    "confidence": 21.9,
+    "risk": 25,
+    "v5": 0.0,
+    "tx5": 0,
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
@@ -398,101 +22,384 @@
         "p1h": -48.54,
         "v5": 3517.31,
         "tx5": 111
+      },
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 0,
+        "quality": 23,
+        "confidence": 21.9,
+        "risk": 25,
+        "p5": 0.0,
+        "p1h": -4.57,
+        "v5": 0.0,
+        "v24": 172649.8,
+        "tx5": 0
       }
     ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
   },
-  "3ELi815nAMuBPEMXMob5TLj68S8Ne3Yay7mRF2aApump": {
-    "name": "lose it all and get it back",
-    "symbol": "PRESTIGE",
-    "score": 41,
-    "quality": 46,
-    "confidence": 29.9,
-    "risk": 0,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": 6.22,
-    "p1h": -9.16,
-    "v5": 4339.22,
-    "tx5": 38,
+  "78YrJ8hacDMWgdUZHohunxGPVQ85fW1Jjft2ho8epump": {
+    "name": "Goopy",
+    "symbol": "GOOPY",
+    "momentum": 17,
+    "quality": 58,
+    "confidence": 46.8,
+    "risk": 12,
+    "v5": 1837.08,
+    "tx5": 81,
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
     "history": [
       {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 41,
-        "quality": 46,
-        "confidence": 29.9,
-        "risk": 0,
-        "p5": 6.22,
-        "p1h": -9.16,
-        "v5": 4339.22,
-        "tx5": 38
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 17,
+        "quality": 58,
+        "confidence": 46.8,
+        "risk": 12,
+        "p5": -0.21,
+        "p1h": 47.03,
+        "v5": 1837.08,
+        "v24": 511864.74,
+        "tx5": 81
       }
     ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
   },
-  "23e4CNuJxvBQ7RjNLc8Bh3yN3pQq6jeiTbyzJGXYPgme": {
-    "name": "Official Fomo Mascot",
-    "symbol": "REMUS",
-    "score": 37,
-    "quality": 54,
-    "confidence": 38.5,
+  "AWTc58nVTUuy9MHyXkdJoD6weWVsS4KAbstV3YGvpump": {
+    "name": "The Original Doge",
+    "symbol": "OGDOGE",
+    "momentum": 19,
+    "quality": 38,
+    "confidence": 42.0,
+    "risk": 25,
+    "v5": 2057.49,
+    "tx5": 45,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 19,
+        "quality": 38,
+        "confidence": 42.0,
+        "risk": 25,
+        "p5": 8.88,
+        "p1h": -9.78,
+        "v5": 2057.49,
+        "v24": 103141.63,
+        "tx5": 45
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "AJQ9BpSYugBQ8C7gWYssjES6r69T5eAnu3MFqewqpump": {
+    "name": "Machine Net Asset Value",
+    "symbol": "MNAV",
+    "momentum": 0,
+    "quality": 48,
+    "confidence": 35.8,
+    "risk": 43,
+    "v5": 50681.13,
+    "tx5": 1258,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 0,
+        "quality": 48,
+        "confidence": 35.8,
+        "risk": 43,
+        "p5": -12.73,
+        "p1h": 53.44,
+        "v5": 50681.13,
+        "v24": 177491.58,
+        "tx5": 1258
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "5xrGXVNZjdyuGerGcLuGqk5tg38BG3eK5kTcF8QGpump": {
+    "name": "Cash Cat",
+    "symbol": "CASHCAT",
+    "momentum": 0,
+    "quality": 57,
+    "confidence": 35.7,
+    "risk": 57,
+    "v5": 10249.63,
+    "tx5": 228,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 0,
+        "quality": 57,
+        "confidence": 35.7,
+        "risk": 57,
+        "p5": -36.06,
+        "p1h": -74.61,
+        "v5": 10249.63,
+        "v24": 1271566.57,
+        "tx5": 228
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "HtTYHz1Kf3rrQo6AqDLmss7gq5WrkWAaXn3tupUZbonk": {
+    "name": "Kori The Pom",
+    "symbol": "KORI",
+    "momentum": 23,
+    "quality": 55,
+    "confidence": 55.7,
     "risk": 0,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": 1.34,
-    "p1h": 2.88,
-    "v5": 72.93,
+    "v5": 685.59,
     "tx5": 3,
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
     "history": [
       {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 37,
-        "quality": 54,
-        "confidence": 38.5,
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 23,
+        "quality": 55,
+        "confidence": 55.7,
         "risk": 0,
-        "p5": 1.34,
-        "p1h": 2.88,
-        "v5": 72.93,
+        "p5": 0.1,
+        "p1h": 3.76,
+        "v5": 685.59,
+        "v24": 105841.9,
         "tx5": 3
       }
     ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
   },
-  "9ddBkYDHiqVvxecCG7RM6Tmen9fTeTPPquhLLwTopump": {
-    "name": "Kimchi's Cat",
-    "symbol": "MISO",
-    "score": 0,
-    "quality": 68,
-    "confidence": 20.2,
+  "De3uNV7rJpN5uJuchVUHmzEji88ov1jxUrHBpGTypump": {
+    "name": "SIRIUS",
+    "symbol": "SIRIUS",
+    "momentum": 29,
+    "quality": 43,
+    "confidence": 47.5,
     "risk": 35,
-    "previous_score": 0.0,
-    "score_delta": 0,
-    "p5": 1.56,
-    "p1h": 524.0,
-    "v5": 48068.18,
-    "tx5": 3990,
+    "v5": 5008.1,
+    "tx5": 136,
     "last_alert": 0,
     "last_alert_score": 0,
     "last_alert_type": "",
     "history": [
       {
-        "time": "2026-08-23T18:57:22.004448+00:00",
-        "score": 0,
-        "quality": 68,
-        "confidence": 20.2,
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 29,
+        "quality": 43,
+        "confidence": 47.5,
         "risk": 35,
-        "p5": 1.56,
-        "p1h": 524.0,
-        "v5": 48068.18,
-        "tx5": 3990
+        "p5": 25.06,
+        "p1h": 41.58,
+        "v5": 5008.1,
+        "v24": 69173.36,
+        "tx5": 136
       }
     ],
-    "timestamp": "2026-08-23T18:57:22.004448+00:00"
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "HsrJz1Crk8cNWiFu9eRMYvgnVu8zzti3Rz7rWRNkpump": {
+    "name": "Tailing",
+    "symbol": "TAILING",
+    "momentum": 0,
+    "quality": 23,
+    "confidence": 21.9,
+    "risk": 25,
+    "v5": 39.41,
+    "tx5": 3,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 0,
+        "quality": 23,
+        "confidence": 21.9,
+        "risk": 25,
+        "p5": 0.8,
+        "p1h": -4.29,
+        "v5": 39.41,
+        "v24": 310146.98,
+        "tx5": 3
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "AX9N4bdJY7M8FgyhxtfPPtVM9pUfuzRQmsJdCbLNpump": {
+    "name": "Jeju Island",
+    "symbol": "JEJU",
+    "momentum": 29,
+    "quality": 25,
+    "confidence": 44.1,
+    "risk": 25,
+    "v5": 15000.94,
+    "tx5": 368,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 29,
+        "quality": 25,
+        "confidence": 44.1,
+        "risk": 25,
+        "p5": 6.47,
+        "p1h": 6.47,
+        "v5": 15000.94,
+        "v24": 15000.94,
+        "tx5": 368
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "D9qNfYpFtP9E3YpjBJDCD5PuWoD3445cC9K6PMX5pump": {
+    "name": "Power Trenchers",
+    "symbol": "TRENCHERS",
+    "momentum": 44,
+    "quality": 66,
+    "confidence": 67.4,
+    "risk": 0,
+    "v5": 2974.49,
+    "tx5": 85,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 44,
+        "quality": 66,
+        "confidence": 67.4,
+        "risk": 0,
+        "p5": 3.23,
+        "p1h": 16.42,
+        "v5": 2974.49,
+        "v24": 704903.65,
+        "tx5": 85
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "52ZzDVDPk8S4T1rfKNWSvtDnzhLN8omMK1xLCBBWpump": {
+    "name": "Mr.Cate",
+    "symbol": "MRCATE",
+    "momentum": 38,
+    "quality": 80,
+    "confidence": 74.2,
+    "risk": 0,
+    "v5": 13911.5,
+    "tx5": 519,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 38,
+        "quality": 80,
+        "confidence": 74.2,
+        "risk": 0,
+        "p5": 7.43,
+        "p1h": 69.19,
+        "v5": 13911.5,
+        "v24": 1564152.27,
+        "tx5": 519
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "6ehEcTMCc85aNF4x9CWx8HuvWGhxQtvKdhKVf2HDpump": {
+    "name": "TOES",
+    "symbol": "TOESCOIN",
+    "momentum": 10,
+    "quality": 85,
+    "confidence": 59.5,
+    "risk": 0,
+    "v5": 210.26,
+    "tx5": 137,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 10,
+        "quality": 85,
+        "confidence": 59.5,
+        "risk": 0,
+        "p5": -0.09,
+        "p1h": 2.68,
+        "v5": 210.26,
+        "v24": 584595.59,
+        "tx5": 137
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "8dphQxaQpvt7qbjRZrBkriYNN3MBZRTikZ7S17XSpump": {
+    "name": "COCKROACH COIN",
+    "symbol": "COCK",
+    "momentum": 0,
+    "quality": 20,
+    "confidence": 26.0,
+    "risk": 25,
+    "v5": 79.56,
+    "tx5": 8,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 0,
+        "quality": 20,
+        "confidence": 26.0,
+        "risk": 25,
+        "p5": -0.62,
+        "p1h": -7.2,
+        "v5": 79.56,
+        "v24": 15652.23,
+        "tx5": 8
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
+  },
+  "AUc7hszwXTyRXAkHjjrytyT7sB7r85sc3FxPW5tepump": {
+    "name": "OTC Sol",
+    "symbol": "OTC",
+    "momentum": 11,
+    "quality": 55,
+    "confidence": 43.9,
+    "risk": 10,
+    "v5": 11.87,
+    "tx5": 9,
+    "last_alert": 0,
+    "last_alert_score": 0,
+    "last_alert_type": "",
+    "history": [
+      {
+        "time": "2026-08-25T08:43:15.241406+00:00",
+        "momentum": 11,
+        "quality": 55,
+        "confidence": 43.9,
+        "risk": 10,
+        "p5": 32.81,
+        "p1h": 34.02,
+        "v5": 11.87,
+        "v24": 478945.2,
+        "tx5": 9
+      }
+    ],
+    "timestamp": "2026-08-25T08:43:15.241406+00:00"
   }
 }
